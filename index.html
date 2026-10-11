@@ -334,6 +334,29 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
 .ask[hidden]{display:none}
 .ask{flex-basis:100%;background:var(--wash);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
 .bad-t{color:var(--bad)} .good-t{color:var(--good)}
+/* ===== first-visit skill check (home.js) ===== */
+.sk-sheet{max-width:min(920px,100%);max-height:100dvh;gap:12px}
+@media (min-width:600px){.sk-sheet{border-radius:20px;max-height:calc(100dvh - 48px)}}
+.sk-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sk-opt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;min-height:64px;padding:10px 14px}
+.sk-opt small{color:var(--muted);font-weight:400}
+@media (max-width:420px){.sk-opts{grid-template-columns:1fr}}
+.sk-top{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}
+.sk-prog{display:flex;gap:6px}.sk-prog i{width:22px;height:8px;border-radius:4px;background:var(--line)}
+.sk-prog i.on{background:var(--good)}.sk-prog i.cur{background:var(--accent)}
+.sk-sheet .stage{gap:14px}
+.sk-sheet .board{width:min(100%,420px,calc(100dvh - 260px))}
+@media (max-width:820px){.sk-sheet .board{width:min(100%,360px,calc(100dvh - 330px))}}
+@media (max-height:520px) and (orientation:landscape){.sk-sheet .board{width:min(100%,calc(100dvh - 120px))}.sk-sheet .stage{grid-template-columns:auto minmax(0,1fr)}.sk-sheet .stage>.panel{max-height:none;overflow:visible}}
+.sk-rec{display:flex;flex-wrap:wrap;gap:10px}.sk-rec>div{flex:1 1 200px;background:var(--wash);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.sk-banner{margin-top:12px}
+/* ===== /skill check ===== */
+/* === โหมดการเล่นและสรุปหลังจบเกม (game-modes) === */
+.mtag{display:inline-block;font-size:.72rem;padding:1px 8px;border-radius:999px;border:1px solid var(--line);background:var(--wash);color:var(--muted);margin-left:6px;vertical-align:middle;font-weight:500}
+.mtag.real{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.sumbox{display:flex;flex-direction:column;gap:8px;padding:12px 14px;margin:8px 0 14px;border:1px solid var(--line);border-radius:8px;background:var(--wash)}
+.sumbox h3{margin:6px 0 0}
+.sgraph svg{width:100%;max-width:420px;height:auto;display:block;background:var(--surface);border-radius:6px}
 </style>
 <div class="wrap">
 <div class="topbar">
@@ -383,7 +406,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
       <aside class="panel side">
         <div class="turn" id="turn" aria-live="polite"></div>
         <table class="tally"><tbody id="tally"></tbody></table>
-        <div class="tutor"><span class="eyebrow">ติวเตอร์</span><p id="tutor-text" aria-live="polite"></p></div>
+        <div class="tutor"><span class="eyebrow">ติวเตอร์</span><p id="tutor-text" aria-live="polite"></p><div class="btns" id="tutor-act" hidden><button class="btn" id="tutor-redo" type="button">ลองเล่นตานี้ใหม่</button></div></div>
         <p class="warn" id="gnote" hidden></p>
         <div class="btns"><button class="btn" id="b-pass">ผ่าน</button><button class="btn" id="b-undo">ถอยหนึ่งตา</button><button class="btn" id="b-hint" hidden>ขอคำใบ้</button><button class="btn" id="b-resign">ยอมแพ้</button><button class="btn primary" id="b-retry" hidden>ลองเดินตานี้ใหม่</button><button class="btn primary" id="b-final" hidden>ยืนยันผลการนับ</button></div>
         <p class="fb" id="play-fb" aria-live="polite"></p>
@@ -654,15 +677,15 @@ const SENSEI = [
     exp: 'เล่นมาครึ่งปี สัปดาห์ละครั้ง', style: 'รูปร่างพอใช้ แต่พลาดบ่อยและอ่านไม่ลึก', fit: 'คนที่เรียนจบขั้น 2 และอยากลองกระดานใหญ่ขึ้น', goal: 'ลงโทษตาพลาดของคู่แข่งให้ได้' },
   { id: 's4', name: 'ครูจิ้งจอก', kind: 'fox', fur: '#E27B32', rank: '12 คิว', belt: 'สายเขียว', bc: '#3E9B5F', n: 13, eng: 'kata', temp: 1.5, blunder: 0.22,
     exp: 'เล่นมาหนึ่งปี', style: 'ชอบตัดและสู้ระยะประชิด', fit: 'คนที่รู้จักบันได ตาข่าย และสองตาแล้ว', goal: 'ต่อหมากให้แข็งแรงก่อนออกไปสู้' },
-  { id: 's5', name: 'ครูนกฮูก', kind: 'owl', fur: '#8D6E53', rank: '9 คิว', belt: 'สายฟ้า', bc: '#3C8FD0', n: 19, eng: 'kata', temp: 1.25, blunder: 0.12,
+  { id: 's5', name: 'ครูนกฮูก', kind: 'owl', fur: '#8D6E53', rank: '8 คิว', belt: 'สายฟ้า', bc: '#3C8FD0', n: 19, eng: 'kata', temp: 1.25, blunder: 0.12,
     exp: 'เล่นมาสองปี ผ่านมาหลายร้อยกระดาน', style: 'เปิดเกมตามหลัก มุม ข้าง กลาง', fit: 'คนที่เล่นกระดาน 19 x 19 จบได้สบาย', goal: 'เปิดเกมไม่เสียเปรียบใน 50 ตาแรก' },
   { id: 's6', name: 'ครูเสือ', kind: 'tiger', fur: '#F0A43A', rank: '6 คิว', belt: 'สายน้ำตาล', bc: '#8A5A33', n: 19, eng: 'kata', temp: 1.0, blunder: 0.05,
     exp: 'เล่นจริงจังมาสามปี ลงแข่งเป็นประจำ', style: 'โจมตีกลุ่มอ่อนอย่างต่อเนื่อง', fit: 'คนที่ชนะครูนกฮูกได้มากกว่าแพ้', goal: 'ไม่มีกลุ่มอ่อนเกินหนึ่งกลุ่มในเวลาเดียวกัน' },
-  { id: 's7', name: 'เซนเซแมวดำ', kind: 'cat', fur: '#232327', rank: '1 ดั้ง', belt: 'สายดำ', bc: '#1B1B1E', n: 19, eng: 'kata', temp: 0.3, blunder: 0,
+  { id: 's7', name: 'เซนเซแมวดำ', kind: 'cat', fur: '#232327', rank: '1 คิว', belt: 'สายดำ', bc: '#1B1B1E', n: 19, eng: 'kata', temp: 0.3, blunder: 0,
     exp: 'เล่นมากว่าห้าปี สอบผ่านระดับดั้ง', style: 'เดินตามสัญชาตญาณที่ฝึกมาดี แทบไม่มีตาเสียรูป', fit: 'ผู้เล่นคิวต้น ๆ ที่ตั้งเป้าสอบดั้ง', goal: 'แพ้ไม่เกิน 10 แต้มให้ได้ก่อน แล้วค่อยหวังชนะ' },
-  { id: 's8', name: 'อาจารย์กระเรียน', kind: 'crane', fur: '#F3F2EC', rank: '3 ดั้ง', belt: 'สายดำขีดแดง', bc: '#1B1B1E', bc2: '#C5382C', n: 19, eng: 'kata', temp: 0.12, blunder: 0, mode: 'policy', visits: 8,
+  { id: 's8', name: 'อาจารย์กระเรียน', kind: 'crane', fur: '#F3F2EC', rank: '1 ดั้ง', belt: 'สายดำขีดแดง', bc: '#1B1B1E', bc2: '#C5382C', n: 19, eng: 'kata', temp: 0.12, blunder: 0, mode: 'policy', visits: 8,
     exp: 'เล่นมาเป็นสิบปี สอนในสำนัก', style: 'อ่านล่วงหน้าทุกตา ใจเย็น เก็บแต้มแม่น', fit: 'ผู้เล่นระดับดั้งที่อยากทดสอบการอ่าน', goal: 'หาตาที่เสียเกิน 5 แต้มของตัวเองให้เหลือไม่เกินสามตา' },
-  { id: 's9', name: 'ปรมาจารย์มังกร', kind: 'dragon', fur: '#2F8474', rank: '5 ดั้งขึ้นไป', belt: 'สายแดง', bc: '#C5382C', n: 19, eng: 'kata', mode: 'search', visits: 24,
+  { id: 's9', name: 'ปรมาจารย์มังกร', kind: 'dragon', fur: '#2F8474', rank: '4 ดั้ง', belt: 'สายแดง', bc: '#C5382C', n: 19, eng: 'kata', mode: 'search', visits: 24,
     exp: 'ฝึกจากการเล่นกับตัวเองหลายล้านกระดาน', style: 'คิดลึกที่สุดในสำนัก ใช้เวลาคิดตาละไม่กี่วินาที', fit: 'ผู้เล่นแนวหน้าที่อยากได้คู่ซ้อมที่ไม่มีวันเหนื่อย', goal: 'เรียนจากตาที่มังกรเลือก มากกว่าหวังผลแพ้ชนะ' },
   { id: 's10', name: 'เทพมังกรฟ้า', kind: 'dragon', fur: '#3F74C8', rank: 'เหนือมืออาชีพ', belt: 'สายทอง', bc: '#D4A72C', n: 19, eng: 'server', mode: 'search', visits: 300,
     exp: 'ใช้ KataGo รุ่นใหญ่ที่รันบนเครื่องของสำนัก', style: 'ระดับเดียวกับเอไอที่มืออาชีพใช้ซ้อม', fit: 'ครูและผู้เล่นระดับดั้งที่อยากวัดฝีมือกับของจริง', goal: 'ดูว่าเสียแต้มช่วงไหนของเกมมากที่สุด' },
@@ -795,6 +818,7 @@ function drawBoard(el, o) {
     const t = o.terr && o.terr[i];
     if (t && (!v || dead)) h += `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" fill="${t === 1 ? '#111' : '#fbfaf5'}" stroke="${t === 1 ? '#111' : '#6b5a36'}" stroke-width=".8"/>`;
   }
+  if (o.area) { const a = o.area; h += `<rect class="harea" x="${P(a.x0) - 15}" y="${P(a.y0) - 15}" width="${(a.x1 - a.x0) * C + 30}" height="${(a.y1 - a.y0) * C + 30}" rx="10" fill="#1d4ed826" stroke="#1d4ed8" stroke-width="2.4" stroke-dasharray="6 4"/>`; }
   for (const i of o.marks || []) h += `<circle cx="${P(i % n)}" cy="${P((i / n) | 0)}" r="5.5" fill="#1d4ed8"/>`;
   for (const i of o.hints || []) h += `<circle cx="${P(i % n)}" cy="${P((i / n) | 0)}" r="11" fill="#1d4ed833" stroke="#1d4ed8" stroke-width="2.2" stroke-dasharray="4 3"/>`;
   for (const r of o.rings || []) h += `<circle cx="${P(r.i % n)}" cy="${P((r.i / n) | 0)}" r="16.5" fill="none" stroke="${r.color}" stroke-width="3"/>`;
@@ -946,7 +970,7 @@ function avatar(s, px) {
 }
 
 // ---------- ห้องประลอง ----------
-let sel = null, selSize = 9, selCol = 1, selHc = 0, friendSize = 9;
+let selMode = 'teach', sel = null, selSize = 9, selCol = 1, selHc = 0, friendSize = 9;
 const hcMax = n => n === 19 ? 9 : n === 7 ? 0 : 5;
 const bySid = id => SENSEI.find(s => s.id === id);
 const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
@@ -966,7 +990,7 @@ const approx = s => /^\d+ (คิว|ดั้ง)/.test(s.rank) ? 'ประม
 const srvChip = () => `<span class="srv${Srv.online ? ' on' : ''}">${Srv.online ? 'ออนไลน์' : Srv.checked ? 'ออฟไลน์' : 'กำลังตรวจ'}</span>`;
 function renderRoster(rid) {
   $('#roster').innerHTML = SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 };
-    return `<button class="scard" data-id="${s.id}" aria-pressed="${s.id === sel}">${avatar(s, 48)}<span class="nm">${esc(s.name)}${s.id === rid ? '<span class="tag">แนะนำ</span>' : ''}</span><span class="rk">${esc(s.rank)} ${belt(s)}</span><span class="rec">ชนะ ${r.w} แพ้ ${r.l}${s.eng === 'server' ? ' ' + srvChip() : ''}</span></button>`; }).join('');
+    return `<button class="scard" data-id="${s.id}" aria-pressed="${s.id === sel}">${avatar(s, 48)}<span class="nm">${esc(s.name)}${s.id === rid ? '<span class="tag">แนะนำ</span>' : ''}</span><span class="rk">${esc(s.rank)} ${belt(s)}</span><span class="rec">ชนะ ${r.w} แพ้ ${r.l}${r.tw || r.tl ? ` <small>(สอน ${r.tw || 0}/${r.tl || 0})</small>` : ''}${s.eng === 'server' ? ' ' + srvChip() : ''}</span></button>`; }).join('');
   paintScene(rid);
 }
 function renderDetail() {
@@ -978,6 +1002,7 @@ function renderDetail() {
     <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
     ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ โคมิ 0.5</p>' : ''}</div>
+    <div><p class="lab">โหมดการเล่น</p><div class="seg" id="md-seg" role="group" aria-label="โหมดการเล่น"><button data-md="teach" aria-pressed="${selMode === 'teach'}">โหมดสอน</button><button data-md="real" aria-pressed="${selMode === 'real'}">โหมดประลองจริง</button></div><p class="small">${selMode === 'teach' ? 'มีคำใบ้สองขั้น ถอยตาได้ ติวเตอร์คอยบอก และถ้าพลาดใหญ่จะเสนอให้ลองตานั้นใหม่ ชัยชนะนับแยกต่างหาก' : 'ไม่มีคำใบ้ ไม่มีถอยตา ไม่มีติวเตอร์ เหมือนแข่งจริง ชัยชนะนับเป็น \u2018ชนะแล้ว\u2019 ของคู่ประลอง'}</p></div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
 }
 function renderExplain() {
@@ -1123,19 +1148,20 @@ $('#roster').onclick = e => {
 $('#detail').onclick = e => {
   const t = e.target.closest('button'); if (!t) return;
   if (t.disabled) return;
+  if (t.dataset.md) { selMode = t.dataset.md; renderDetail(); const nb = $(`#detail [data-md="${selMode}"]`); if (nb) nb.focus(); return; }
   if (t.dataset.sz || t.dataset.hc) {
     if (t.dataset.sz) selSize = +t.dataset.sz; else selHc = +t.dataset.hc;
     const a = t.dataset.sz ? 'sz' : 'hc', v = t.dataset[a]; renderDetail(); const nb = $(`#detail [data-${a}="${v}"]`); if (nb) nb.focus();
   }
   else if (t.dataset.col) { selCol = +t.dataset.col; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); }
-  else if (t.id === 'start') { const s = bySid(sel); if (s.eng === 'server' && !Srv.online) return; startGame(s, selSize, selCol, null, { hc: selHc }); }
+  else if (t.id === 'start') { const s = bySid(sel); if (s.eng === 'server' && !Srv.online) return; startGame(s, selSize, selCol, null, { hc: selHc, mode: selMode }); }
 };
 $('#friend-size').onclick = e => { const t = e.target.closest('button'); if (!t) return; friendSize = +t.dataset.fs; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); };
 $('#friend-start').onclick = () => startGame(null, friendSize, 1, null, {});
 
 // ---------- หน้าเกม ----------
 const GB = $('#play-board');
-let G, S = null, human = 1, token = 0, over = null, dead = new Set(), busy = false, rec = [], pre = null, fresh = -1, hintIdx = -1, review = null, degraded = false, kataOK = false, tutorMsg = '', retry = false, lastSgf = '', HC = 0, prac = null, pracSaved = null, lastRec = null;
+let hintBusy = false, gmode = 'teach', hintStage = 0, hintPt = -1, redoNo = 0, G, S = null, human = 1, token = 0, over = null, dead = new Set(), busy = false, rec = [], pre = null, fresh = -1, hintIdx = -1, review = null, degraded = false, kataOK = false, tutorMsg = '', retry = false, lastSgf = '', HC = 0, prac = null, pracSaved = null, lastRec = null;
 const hcN = () => HC ? 2 * HC - 1 : 0, mno = () => G.moves.length - hcN(), undoBase = () => prac ? prac.moves.length : hcN();
 function hcPoints(n, hc) {
   const e = n === 9 ? 2 : 3, lo = e, hi = n - 1 - e, mid = n >> 1, P = (x, y) => y * n + x;
@@ -1151,7 +1177,7 @@ function setupHandicap(g, hc) {
 const cname = c => c === 1 ? 'ดำ' : 'ขาว';
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const gfb = t => { $('#play-fb').textContent = t; };
-const tutor = t => { if (prac && prac.lock) return; $('#tutor-text').textContent = t; };
+const tutor = t => { if ((prac && prac.lock) || gmode === 'real') return; $('#tutor-text').textContent = t; };
 const usesAI = s => !!s && (s.eng === 'kata' || s.eng === 'server');
 const isKata = () => usesAI(S) && kataOK && !degraded;
 const engine = () => S.eng === 'server' ? Srv : Kata;
@@ -1170,14 +1196,18 @@ async function startGame(s, n, col, res, opt = {}) {
   if (!prac) { pracSaved = null; deep = null; lastRec = null; }
   HC = s ? (res ? res.hc : prac ? prac.hc : opt.hc) || 0 : 0;
   S = s; human = s ? (HC ? 1 : col) : 1; G = new Go(n, res ? res.komi : prac ? prac.komi : HC ? 0.5 : n === 19 ? 7.5 : 6.5);
-  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; review = null; degraded = false; kataOK = false; retry = false;
+  if (prac) gmode = 'teach';
+  else if (res) { const gm = store.get('go-gmode', null); gmode = gm && gm.mode === 'teach' && gm.sid === (s ? s.id : null) && gm.n === n && gm.col === human ? 'teach' : 'real'; }
+  else { gmode = !s || opt.mode !== 'real' ? 'teach' : 'real'; store.set('go-gmode', { mode: gmode, sid: s ? s.id : null, n, col: human }); }
+  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; redoNo = 0; review = null; degraded = false; kataOK = false; retry = false;
+  $('.tutor').hidden = gmode === 'real'; $('#tutor-act').hidden = true;
   if (res) replayInto(res);
   else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
   else { if (HC) setupHandicap(G, HC); clearGame(); }
   $('#pbanner').hidden = !prac;
   GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
   $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
-  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})${HC ? ' · ต่อ ' + HC + ' เม็ด' : ''}</span></div>`
+  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})${HC ? ' · ต่อ ' + HC + ' เม็ด' : ''}</span>${prac ? '' : modeTag(gmode)}</div>`
     : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
     + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
   tutor(prac ? 'ลองเดินใหม่จากตำแหน่งนี้ แล้วติวเตอร์จะบอกว่าดีกว่าตาเดิมในเกมจริงหรือไม่' : res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
@@ -1200,13 +1230,14 @@ async function startGame(s, n, col, res, opt = {}) {
   if (res && G.passes >= 2) return endScoring();
   if (botToMove()) botTurn(); else startPre();
 }
+const modeTag = m => `<span class="mtag ${m}">${m === 'real' ? 'ประลองจริง' : 'โหมดสอน'}</span>`;
 function gameTitle() { return !over ? `ตาที่ ${mno() + 1} · ${cname(G.turn)}เดิน${S ? (G.turn === human ? ' (คุณ)' : '') : ''}` : ''; }
 function renderGame() {
   const sc = over && over.type === 'score' && !over.pending ? G.score(dead) : null;
   if (review) {
     const rings = review.idx >= 0 ? [{ i: review.idx, color: '#dc2626' }] : []; if (review.best >= 0 && review.best !== review.idx) rings.push({ i: review.best, color: '#2563eb' });
     drawBoard(GB, { n: G.n, grid: review.before, rings });
-  } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], terr: sc && sc.terr, dead: sc ? dead : null });
+  } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], area: hintStage === 1 && hintPt >= 0 ? hintArea(hintPt) : null, terr: sc && sc.terr, dead: sc ? dead : null });
   const myTurn = !over && !busy && !review && (!S || G.turn === human), canTap = myTurn || (!!over && over.type === 'score' && !over.pending && !over.final && !review);
   GB.classList.toggle('static', !canTap);
   $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · โคมิ ${G.komi}`;
@@ -1221,8 +1252,8 @@ function renderGame() {
     : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>โคมิให้ขาว</td><td>${G.komi}</td></tr>`;
   const fin = !!over && !!over.final;
   $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
-  $('#b-undo').disabled = G.moves.length <= undoBase() || busy || fin;
-  const hb = $('#b-hint'); hb.hidden = !(usesAI(S) && !degraded); $('#b-retry').hidden = !retry; hb.disabled = !myTurn || !kataOK;
+  const ub = $('#b-undo'); ub.hidden = gmode === 'real'; ub.disabled = G.moves.length <= undoBase() || busy || fin;
+  const hb = $('#b-hint'); hb.hidden = !(S && gmode === 'teach' && !over); $('#b-retry').hidden = !retry; hb.disabled = !myTurn || hintBusy; hb.textContent = hintStage === 1 ? 'ดูจุดที่แน่นอน' : 'ขอคำใบ้';
   const fb = $('#b-final'); fb.hidden = !(over && over.type === 'score' && !over.final); fb.disabled = !!(over && over.pending);
   GB._redraw = renderGame;
   saveGame();
@@ -1271,7 +1302,7 @@ async function settle(t, a, my) {
   if (my !== token) return;
   if (p) t.best = p.best;
   if (a && p) { t.lead0 = p.lead; t.lead1 = a.lead; t.loss = Math.max(0, (p.lead - a.lead) * (human === 1 ? 1 : -1)); }
-  if (t.loss != null) kataTutor(t); else if (t.facts) tutorSay(t.facts, G.name(t.idx));
+  if (t.loss != null) { kataTutor(t); if (gmode === 'teach' && !prac && t.loss >= 5) { redoNo = t.no; $('#tutor-act').hidden = false; } } else if (t.facts) tutorSay(t.facts, G.name(t.idx));
 }
 async function botTurn() {
   const my = token; busy = true; renderGame();
@@ -1313,7 +1344,7 @@ function humanPlay(i) {
   const r = G.play(i);
   if (!r.ok) { gfb(WHY[r.reason]); return; }
   if (prac) { if (gb) { prac.moved = true; prac.lock = true; pracJudge(i, gb, G.clone(), token); } else prac.lock = false; }
-  fresh = i; hintIdx = -1; gfb('');
+  fresh = i; hintIdx = -1; hintStage = 0; hintPt = -1; $('#tutor-act').hidden = true; gfb('');
   if (S) rec.push({ no, idx: i, before, facts: f, preP, loss: null, best: -1 });
   if (S && !isKata()) tutorSay(f, G.name(i));
   else if (!S) tutorSay(f, G.name(i));
@@ -1345,9 +1376,10 @@ function finish() {
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
   o.res = { won, margin, text }; if (!prac) clearGame();
+  $('#tutor-act').hidden = true;
   if (S && !prac) {
-    const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 };
-    if (won) { if (!degraded) { const e = r.we == null ? r.w : r.we; r.w++; r.we = e + (HC ? 0 : 1); } } else r.l++;
+    const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 }, tm = gmode === 'teach';
+    if (won) { if (!degraded) { if (tm) r.tw = (r.tw || 0) + 1; else { const e = r.we == null ? r.w : r.we; r.w++; r.we = e + (HC ? 0 : 1); } } } else if (tm) r.tl = (r.tl || 0) + 1; else r.l++;
     store.set('go-rec', recs);
     lastSgf = logGame(o, won, margin);
   }
@@ -1369,7 +1401,7 @@ function logGame(o, won, margin) {
   else { const d = G.score(dead); re = d.b > d.w ? `B+${margin}` : `W+${margin}`; }
   const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
   const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
-    margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC,
+    margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC, mode: gmode,
     avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
   matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
   return sgf;
@@ -1389,11 +1421,13 @@ function copyText(text, btn, host) {
   let p; try { p = navigator.clipboard.writeText(text); } catch (e) { return fail(); }
   p.then(() => { btn.textContent = 'คัดลอกแล้ว'; clearTimeout(btn._ct); btn._ct = setTimeout(() => { btn.textContent = btn.dataset.label; }, 1600); }, fail);
 }
+const isTeach = r => r.mode === 'teach';
+const logTag = r => `<small class="mtag ${isTeach(r) ? 'teach' : 'real'}">${isTeach(r) ? 'สอน' : 'จริง'}</small>`;
 const logRes = r => r.resign ? 'ยอมแพ้' : r.result === 'W' ? `ชนะ${r.handicap ? ' (ต่อ ' + r.handicap + ')' : ' ' + r.margin}${r.handicap ? ' ' + r.margin : ''}` : `แพ้ ${r.margin}`;
 const logAvg = r => r.deep ? r.deep.avg : r.avgLoss;
 const logRows = () => matchLog.slice().reverse();
 function logSummary() {
-  const by = {}; matchLog.forEach(r => { const b = by[r.sid] = by[r.sid] || { name: r.sname, w: 0, l: 0, m: 0, mc: 0 }; r.result === 'W' ? b.w++ : b.l++; if (r.margin != null) { b.m += r.result === 'W' ? r.margin : -r.margin; b.mc++; } });
+  const by = {}; matchLog.forEach(r => { const b = by[r.sid] = by[r.sid] || { name: r.sname, w: 0, l: 0, tw: 0, tl: 0, m: 0, mc: 0 }; const k = r.result === 'W' ? 1 : 0; if (isTeach(r)) { k ? b.tw++ : b.tl++; } else { k ? b.w++ : b.l++; } if (r.margin != null) { b.m += r.result === 'W' ? r.margin : -r.margin; b.mc++; } });
   return Object.values(by);
 }
 function renderLog() {
@@ -1401,9 +1435,9 @@ function renderLog() {
   clearManual();
   if (!matchLog.length) { box.innerHTML = '<p class="small">ยังไม่มีเกมที่จบ เล่นกับคู่ประลองสักกระดาน ผลจะมาอยู่ที่นี่</p>'; return; }
   const rows = logRows().slice(0, 20);
-  box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}</p>`).join('')}</div>
+  box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}${b.tw || b.tl ? ` <small>(โหมดสอน ชนะ ${b.tw} แพ้ ${b.tl})</small>` : ''}</p>`).join('')}</div>
     <div class="logscroll"><table class="logt"><thead><tr><th>วันที่</th><th>คู่ประลอง</th><th>กระดาน</th><th>ผล</th><th>แต้มเสียเฉลี่ยต่อตา</th><th></th></tr></thead><tbody>${rows.map((r, k) =>
-      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
+      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))} ${logTag(r)}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
     <div class="btns"><button class="btn" id="log-copy">คัดลอกสรุปผล</button><button class="btn" id="log-clear">ล้างสมุดบันทึก</button></div></div>`;
 }
 $('#log-body').onclick = e => {
@@ -1411,8 +1445,8 @@ $('#log-body').onclick = e => {
   const host = $('#logbox');
   if (b.dataset.sgf != null) copyText(logRows()[+b.dataset.sgf].sgf, b, host);
   else if (b.id === 'log-copy') {
-    const lines = logSummary().map(x => `${x.name}: ชนะ ${x.w} แพ้ ${x.l}${x.mc ? ` แต้มต่างเฉลี่ย ${x.m / x.mc >= 0 ? '+' : ''}${(x.m / x.mc).toFixed(1)}` : ''}`);
-    const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n}${r.handicap ? ' ต่อ ' + r.handicap + ' เม็ด' : ''} ${logRes(r)}${logAvg(r) == null ? '' : ' เสียเฉลี่ย ' + logAvg(r).toFixed(1)}${r.deep ? ' (ทบทวนแล้ว)' : ''}`);
+    const lines = logSummary().map(x => `${x.name}: ชนะ ${x.w} แพ้ ${x.l}${x.tw || x.tl ? ` (โหมดสอน ชนะ ${x.tw} แพ้ ${x.tl})` : ''}${x.mc ? ` แต้มต่างเฉลี่ย ${x.m / x.mc >= 0 ? '+' : ''}${(x.m / x.mc).toFixed(1)}` : ''}`);
+    const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n}${r.handicap ? ' ต่อ ' + r.handicap + ' เม็ด' : ''} ${logRes(r)}${isTeach(r) ? ' [โหมดสอน]' : ''}${logAvg(r) == null ? '' : ' เสียเฉลี่ย ' + logAvg(r).toFixed(1)}${r.deep ? ' (ทบทวนแล้ว)' : ''}`);
     copyText(['สรุปผลสำนักหมากล้อม', 'ผู้เล่น: ' + pn(), ...lines, '', 'เกมล่าสุด', ...games].join('\n'), b, host);
   } else if (b.id === 'log-clear') {
     b.outerHTML = '<span class="small">ล้างทั้งหมดและย้อนกลับไม่ได้</span> <button class="btn" id="log-clear-yes">ยืนยันล้าง</button><button class="btn" id="log-clear-no">ยกเลิก</button>';
@@ -1429,31 +1463,74 @@ function renderReview() {
   if (!S) { R.innerHTML = `<h2>จบเกม</h2><p>${esc(res.text)}</p><div class="btns"><button class="btn primary" data-act="again">เล่นอีกครั้ง</button><button class="btn" data-act="lobby">กลับห้องประลอง</button></div>`; return; }
   if (prac) { R.innerHTML = `<h2>จบการฝึก</h2><p><b>${esc(res.text)}</b></p><p class="small">โหมดฝึก ผลนี้ไม่ได้บันทึก</p><div class="btns"><button class="btn primary" data-act="p-again">ลองเดินใหม่จากจุดนี้อีกครั้ง</button><button class="btn" data-act="p-back">กลับไปดูบทเรียนจากเกม</button></div>`; return; }
   const n = G.n, lost = !res.won, idx = SENSEI.indexOf(S), prev = SENSEI[idx - 1], next = SENSEI[idx + 1] && SENSEI[idx + 1].eng !== 'server' ? SENSEI[idx + 1] : null, blocks = [], links = new Set();
+  let momentsHtml = '', phaseTxt = '';
   if (isKata()) {
     const hPass = G.moves.filter((m, k) => m < 0 && (k % 2 ? 2 : 1) === human).length, scored = rec.filter(t => t.loss != null).length, steady = !(lost && res.margin > n * n * 0.08) && scored >= 3 && hPass <= rec.length / 2;
     const bad = rec.filter(t => t.loss != null && t.loss >= 2).sort((a, b) => b.loss - a.loss).slice(0, lost ? 3 : 1);
-    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<div class="mk"><button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${kyuS() ? lossWord(t.loss) + ' <small>(เสียราว ' + Math.round(t.loss) + ' แต้ม)</small>' : 'เสียราว ' + Math.round(t.loss) + ' แต้ม'}${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button><button class="btn" data-pk="${hcN() + t.no - 1}" data-src="n">ลองเดินใหม่จากจุดนี้</button></div>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : (steady ? (kyuS() ? '<p>ไม่มีตาไหนพลาดชัด ตลอดเกมคุณเดินได้นิ่งมาก</p>' : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>') : (rec.length ? '<p>ไม่มีตาที่เสียแต้มชัดเจน แต่ผลแพ้ห่างหรือเดินน้อยเกินไป ลองเดินให้ครบกระดานและผ่านเมื่อไม่มีจุดที่น่าเดินจริง ๆ</p>' : '<p>เกมนี้คุณยังไม่ได้วางหมากเลย จึงยังประเมินฝีมือไม่ได้ ลองเดินให้ครบกระดานแล้วดูอีกครั้ง</p>')));
+    if (bad.length) momentsHtml = `<div class="rv">${bad.map(t => `<div class="mk"><button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${kyuS() ? lossWord(t.loss) + ' <small>(เสียราว ' + Math.round(t.loss) + ' แต้ม)</small>' : 'เสียราว ' + Math.round(t.loss) + ' แต้ม'}${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button><button class="btn" data-pk="${hcN() + t.no - 1}" data-src="n">ลองเดินใหม่จากจุดนี้</button></div>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>`;
+    else blocks.push(steady ? (kyuS() ? '<p>ไม่มีตาไหนพลาดชัด ตลอดเกมคุณเดินได้นิ่งมาก</p>' : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>') : (rec.length ? '<p>ไม่มีตาที่เสียแต้มชัดเจน แต่ผลแพ้ห่างหรือเดินน้อยเกินไป ลองเดินให้ครบกระดานและผ่านเมื่อไม่มีจุดที่น่าเดินจริง ๆ</p>' : '<p>เกมนี้คุณยังไม่ได้วางหมากเลย จึงยังประเมินฝีมือไม่ได้ ลองเดินให้ครบกระดานแล้วดูอีกครั้ง</p>'));
     const ph = [[], [], []], o1 = n * n / 7, o2 = n * n * 0.42;
     rec.forEach(t => { if (t.loss != null) ph[t.no <= o1 ? 0 : t.no <= o2 ? 1 : 2].push(t.loss); });
     let bi = -1, bv = 1.5; ph.forEach((a, k) => { if (a.length) { const m = a.reduce((x, y) => x + y, 0) / a.length; if (m > bv) { bv = m; bi = k; } } });
-    if (bi >= 0 && (lost || bv >= 3)) blocks.push(`<h3>ช่วงที่ควรฝึก</h3><p>${['ช่วงเปิดเกมเสียแต้มเฉลี่ยมากที่สุด ให้จับมุมก่อน แล้วค่อยขยายไปข้าง และอย่าเพิ่งเข้าไปสู้รบในช่วงต้น',
+    if (bi >= 0 && (lost || bv >= 3)) phaseTxt = ['ช่วงเปิดเกมเสียแต้มเฉลี่ยมากที่สุด ให้จับมุมก่อน แล้วค่อยขยายไปข้าง และอย่าเพิ่งเข้าไปสู้รบในช่วงต้น',
       'ช่วงกลางเกมเสียแต้มเฉลี่ยมากที่สุด ก่อนตัดหรือบุกเข้าไปในพื้นที่คู่แข่ง ให้นับลมหายใจและเช็กกลุ่มอ่อนของตัวเองก่อน',
-      'ช่วงท้ายเกมเสียแต้มเฉลี่ยมากที่สุด ให้เลือกจุดที่ใหญ่ที่สุดก่อน และตอบเฉพาะเมื่อคู่แข่งขู่จริง'][bi]}</p>`);
+      'ช่วงท้ายเกมเสียแต้มเฉลี่ยมากที่สุด ให้เลือกจุดที่ใหญ่ที่สุดก่อน และตอบเฉพาะเมื่อคู่แข่งขู่จริง'][bi];
   }
   const sa = rec.filter(t => t.facts && t.facts.selfAtari).length, ef = rec.filter(t => t.facts && t.facts.realEye && !t.facts.captured).length, lostStones = G.caps[3 - human];
   if (sa >= 2) { blocks.push(`<h3>เหลือลมหายใจเดียว</h3><p>คุณวางหมากจนเหลือลมหายใจเดียว ${sa} ครั้ง ก่อนวางทุกตาให้นับลมหายใจของกลุ่มที่จะได้ก่อนเสมอ</p>`); links.add('l4'); }
   if (lostStones >= n) { blocks.push(`<h3>หมากถูกกินมาก</h3><p>${S.name}กินหมากคุณไป ${lostStones} เม็ด กลุ่มที่มีสองตาจะไม่โดนกิน ลองฝึกเรื่องสองตาและการดูว่ากลุ่มเป็นหรือตาย</p>`); links.add('l9'); links.add('l10'); }
   if (ef >= 1) { blocks.push(`<h3>ถมตาของตัวเอง</h3><p>คุณถมตาของตัวเอง ${ef} ครั้ง ตาในกลุ่มคือสิ่งที่ทำให้กลุ่มรอด อย่าถมถ้าไม่จำเป็น</p>`); links.add('l9'); }
+  if (!momentsHtml) {
+    const why = t => t.facts.selfAtari ? 'วางจนเหลือลมหายใจเดียว' : t.facts.ownAtari.length ? 'ปล่อยกลุ่มตัวเองให้โดนอาตาริ' : 'ถมตาของตัวเอง';
+    const ms = rec.filter(t => t.facts && (t.facts.selfAtari || t.facts.ownAtari.length || (t.facts.realEye && !t.facts.captured))).slice(0, 3);
+    if (ms.length) momentsHtml = `<div class="rv">${ms.map(t => `<div class="mk"><button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${why(t)}</button></div>`).join('')}</div><p class="small">แตะเพื่อดูตำแหน่งบนกระดาน</p>`;
+  }
   const thr = n * n * 0.08; let close;
   if (lost) close = res.margin > thr
     ? (prev ? `ครั้งนี้แพ้ห่างพอสมควร ลองเล่นกับ${prev.name} (${prev.rank}) สักสองสามกระดานก่อน แล้วกลับมาท้า${S.name}ใหม่` : 'ครั้งนี้แพ้ห่างพอสมควร ลองทบทวนบทเรียนแล้วเล่นอีกครั้ง')
     : `แพ้ไปนิดเดียว เกมนี้สูสีมาก ประลองอีกครั้งได้เลย อีกหนึ่งหรือสองตาที่ดีขึ้นก็พลิกผลได้`;
-  else { close = `ยินดีด้วย คุณชนะ${S.name}`; if (evenWins(S.id) >= 2 && next) close += ` ชนะมาแล้ว ${evenWins(S.id)} ครั้ง ลองท้า${next.name} (${next.rank}) ต่อได้`; else if (degraded) close += ' แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ จึงไม่นับเป็นสถิติ'; }
+  else { close = `ยินดีด้วย คุณชนะ${S.name}`; if (degraded) close += ' แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ จึงไม่นับเป็นสถิติ'; }
   const sug = S.eng === 'server' ? suggestHc(S.id, n) : 0, again = sug || (S.eng === 'server' ? 0 : HC);
   if (sug) { close += ` ลองให้ต่อ ${sug} เม็ดดู เกมจะสูสีขึ้น`; selHc = sug; }
-  R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b></p><div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>${deepBoxHtml()}
-    <div class="btns"><button class="btn primary" data-act="again" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+  const sum = summaryHtml({ lost, res, phaseTxt, sa, ef, lostStones, links, momentsHtml, idx });
+  R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b> ${modeTag(gmode)}</p>${sum}<div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>${deepBoxHtml()}
+    <div class="btns"><button class="btn primary" data-act="again" data-md="${gmode}" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-md="${gmode}" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
   deepBoxRefresh();
+}
+// ---------- สรุปหลังจบเกม ----------
+// เส้นแสดงนำ/ตามจากมุมมองของผู้เล่น (บวก = นำ) ใช้ข้อมูลวิเคราะห์รายตาถ้ามี
+function leadGraph() {
+  const sg = human === 1 ? 1 : -1, pts = [];
+  rec.forEach(t => { if (t.lead0 != null && t.lead1 != null) { if (!pts.length) pts.push(t.lead0 * sg); pts.push(t.lead1 * sg); } });
+  if (pts.length < 3 || pts.some(v => !isFinite(v))) return '';
+  const W = 300, H = 84, m = Math.max(5, ...pts.map(Math.abs)), X = k => 6 + k * (W - 12) / (pts.length - 1), Y = v => H / 2 - v / m * (H / 2 - 6);
+  const d = pts.map((v, k) => (k ? 'L' : 'M') + X(k).toFixed(1) + ' ' + Y(v).toFixed(1)).join('');
+  const end = pts[pts.length - 1], mx = Math.max(...pts), mn = Math.min(...pts);
+  return `<div class="sgraph"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟแต้มนำ เริ่มที่ ${pts[0].toFixed(1)} สูงสุด ${mx.toFixed(1)} ต่ำสุด ${mn.toFixed(1)} จบที่ ${end.toFixed(1)} แต้ม บวกคือคุณนำ"><path d="M6 ${H / 2}H${W - 6}" stroke="var(--line)" stroke-dasharray="3 3" fill="none"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(pts.length - 1).toFixed(1)}" cy="${Y(end).toFixed(1)}" r="3.4" fill="var(--accent)"/></svg><p class="small">แต้มนำตลอดเกม (ประเมินโดยเซนเซ) ด้านบนเส้นประคือคุณนำ ด้านล่างคือตาม</p></div>`;
+}
+function summaryHtml(o) {
+  const { lost, res, phaseTxt, sa, ef, lostStones, links, momentsHtml, idx } = o, n = G.n, nx = SENSEI[idx + 1], pv = SENSEI[idx - 1];
+  let pt, lk = null;
+  if (phaseTxt) pt = phaseTxt;
+  else if (sa >= 1) { pt = `ฝึกนับลมหายใจก่อนวาง คุณวางจนเหลือลมหายใจเดียว ${sa} ครั้ง`; lk = 'l4'; }
+  else if (lostStones >= n) { pt = 'ฝึกทำให้กลุ่มมีสองตา เพื่อไม่ให้หมากถูกกินเป็นกลุ่ม'; lk = 'l9'; }
+  else if (ef >= 1) { pt = 'อย่าถมตาของตัวเอง ตาในกลุ่มคือสิ่งที่ทำให้กลุ่มรอด'; lk = 'l9'; }
+  else pt = lost ? 'ฝึกนับแต้มและเลือกจุดที่ใหญ่ที่สุดก่อนเดินทุกตา' : 'เกมนี้ไม่มีจุดอ่อนเด่นชัด ลองกระดานใหญ่ขึ้นหรือคู่ประลองที่แก่กว่าเพื่อฝึกให้หนักขึ้น';
+  const lb = lk && LESSONS.find(l => l.id === lk);
+  let adv, nb = '';
+  if (!lost) {
+    if (degraded) adv = `ชนะแล้ว แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ ลองเล่นกับ${S.name}อีกครั้งเมื่อเอนจินพร้อม`;
+    else if (nx && !(nx.eng === 'server' && !Srv.online)) { adv = `ถึงเวลาท้า${nx.name} (${nx.rank}) แล้ว`; nb = `<button class="btn" data-nx="${nx.id}" data-md="${gmode}">ไปเลือก${esc(nx.name)}</button>`; }
+    else if (nx) adv = `คู่ถัดไปคือ${nx.name} ใช้เครื่องของสำนักซึ่งตอนนี้ออฟไลน์ ลองเล่นกระดานใหญ่ขึ้นกับ${S.name}ไปก่อน`;
+    else adv = 'คุณชนะคู่ประลองระดับสูงสุดแล้ว ลองให้หมากต่อน้อยลงหรือเล่นกระดานใหญ่ขึ้น';
+    if (gmode === 'teach') adv += ' ชัยชนะในโหมดสอนนับแยก ลองโหมดประลองจริงเพื่อให้นับเป็น \u2018ชนะแล้ว\u2019';
+  } else if (res.margin > n * n * 0.08 && pv) { adv = `ลองเล่นกับ${pv.name} (${pv.rank}) สักสองสามกระดานก่อน แล้วกลับมาท้า${S.name}ใหม่`; nb = `<button class="btn" data-nx="${pv.id}" data-md="${gmode}">ไปเลือก${esc(pv.name)}</button>`; }
+  else adv = `เล่นกับ${S.name}อีกครั้ง เกมสูสีพอที่จะพลิกได้`;
+  return `<section class="sumbox" aria-label="สรุปเกม">
+    ${leadGraph()}
+    ${momentsHtml ? `<h3>ช่วงสำคัญของเกม</h3>${momentsHtml}` : ''}
+    <h3>สิ่งที่ควรฝึกก่อน</h3><p>${esc(pt)}</p>${lb ? `<div class="btns"><button class="btn" data-lesson="${lb.id}">เปิดบทเรียน ${esc(lb.title)}</button></div>` : ''}
+    <h3>คู่ประลองถัดไป</h3><p>${esc(adv)}</p>${nb ? `<div class="btns">${nb}</div>` : ''}</section>`;
 }
 // ข้อเสนอหมากต่อสำหรับเครื่องของสำนัก: แพ้เกมเท่ากัน 2 กระดานติด เริ่มที่ 4 แพ้ซ้ำ +2 ชนะ -1
 function suggestHc(sid, n) {
@@ -1471,7 +1548,8 @@ $('#review').onclick = e => {
   else if (b.id === 'rv-back') { review = null; b.remove(); renderGame(); }
   else if (b.dataset.lesson) openLesson(b.dataset.lesson);
   else if (b.dataset.act === 'sgf') copyText(lastSgf, b, $('#review'));
-  else if (b.dataset.act === 'again') startGame(S, G.n, human, null, { hc: +b.dataset.hc || 0 });
+  else if (b.dataset.act === 'again') startGame(S, G.n, human, null, { hc: +b.dataset.hc || 0, mode: b.dataset.md || gmode });
+  else if (b.dataset.nx) { sel = b.dataset.nx; selSize = bySid(sel).n; if (b.dataset.md) selMode = b.dataset.md; toLobby(); }
   else if (b.dataset.pk) startPractice(+b.dataset.pk, b.dataset.src);
   else if (b.dataset.act === 'p-back' || b.dataset.act === 'p-again') b.dataset.act === 'p-back' ? pracBack() : startPractice(-1);
   else if (b.dataset.act === 'deep') deepStart();
@@ -1499,30 +1577,45 @@ function showAsk(resignOnly) {
 function closeAsk() { $('#leave-ask').hidden = true; const f = document.getElementById(askFrom); if (f && !f.disabled) f.focus(); else $('#g-back').focus(); }
 $('#ghead').addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#leave-ask').hidden) { e.preventDefault(); closeAsk(); } });
 
-$('#b-pass').onclick = () => { if (busy) return; G.pass(); fresh = -1; hintIdx = -1; gfb(`${cname(3 - G.turn)}ผ่าน`); afterMove(); };
+$('#b-pass').onclick = () => { if (busy) return; G.pass(); fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; gfb(`${cname(3 - G.turn)}ผ่าน`); afterMove(); };
 $('#b-undo').onclick = () => {
-  token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true;
+  if (gmode === 'real') return;
+  token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true; hintStage = 0; hintPt = -1; $('#tutor-act').hidden = true;
   G.undo(); if (S && G.turn !== human && G.moves.length > undoBase()) G.undo();
   if (prac) { prac.moved = false; prac.lock = false; }
   retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= mno()); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
   tutor('ถอยกลับมาแล้ว ลองเดินใหม่ได้เลย'); renderGame(); startPre(); if (botToMove()) botTurn();
 };
 $('#p-back').onclick = () => pracBack();
+$('#tutor-redo').onclick = () => { if (!redoNo || prac || gmode !== 'teach') return; const no = redoNo; redoNo = 0; $('#tutor-act').hidden = true; startPractice(hcN() + no - 1, 'n'); };
 $('#b-retry').onclick = () => {
   if (!retry) return; retry = false; $('#gnote').hidden = true;
   if (over && over.type === 'score') endScoring(); else if (botToMove()) botTurn();
 };
 $('#b-resign').onclick = () => { if (over || busy || review) return; showAsk(true); };
 $('#b-final').onclick = () => { if (over && over.type === 'score' && !over.pending) finish(); };
+// กรอบบริเวณคำใบ้ขั้นแรก: 5x5 จุด เลื่อนให้จุดจริงไม่อยู่กลางกรอบเสมอ
+function hintArea(p) {
+  const n = G.n, x = p % n, y = (p / n) | 0, ox = (p % 3) - 1, oy = (((p / 3) | 0) % 3) - 1;
+  const cl = (v, lo) => Math.max(0, Math.min(n - 1 - 4, v));
+  const x0 = cl(x - 2 + ox), y0 = cl(y - 2 + oy);
+  return { x0, y0, x1: Math.min(n - 1, x0 + 4), y1: Math.min(n - 1, y0 + 4) };
+}
 $('#b-hint').onclick = async () => {
-  if (busy || over || G.turn !== human || !isKata()) return;
-  const my = token, at = G.moves.length;
-  if (!pre || pre.at !== at) startPre();
-  gfb('เซนเซกำลังดูให้'); const p = await pre.p;
-  if (my !== token || over || G.moves.length !== at) return;
-  if (!p) return gfb('ขอคำใบ้ไม่สำเร็จในตอนนี้ ลองใหม่อีกครั้ง');
-  if (p.best < 0) return gfb('เซนเซเห็นว่าผ่านได้แล้ว');
-  hintIdx = p.best; gfb(`เซนเซแนะจุด ${G.name(p.best)} ดูวงประสีน้ำเงินบนกระดาน`); renderGame();
+  if (busy || over || G.turn !== human || gmode !== 'teach' || hintBusy) return;
+  if (hintStage === 1) { hintStage = 2; hintIdx = hintPt; hintPt = -1; gfb(`จุดที่แนะนำคือ ${G.name(hintIdx)} ดูวงประสีน้ำเงินบนกระดาน`); return renderGame(); }
+  const my = token, at = G.moves.length; let best = -2;
+  if (isKata()) {
+    if (!pre || pre.at !== at) startPre();
+    hintBusy = true; gfb('เซนเซกำลังดูให้'); renderGame();
+    const p = await pre.p; hintBusy = false;
+    if (my !== token || over || G.moves.length !== at) return;
+    if (p) best = p.best;
+  }
+  if (best === -2) { try { best = aiMove(G, 0); } catch (e) { best = -2; } }
+  if (best === -2) { gfb('ขอคำใบ้ไม่สำเร็จในตอนนี้ ลองใหม่อีกครั้ง'); return renderGame(); }
+  if (best < 0) { gfb('ตอนนี้ผ่านได้แล้ว ไม่มีจุดที่ต้องเดินเพิ่ม'); return renderGame(); }
+  hintPt = best; hintStage = 1; hintIdx = -1; gfb('ดูกรอบประสีน้ำเงิน จุดที่น่าเดินอยู่ในบริเวณนี้ กดอีกครั้งเพื่อดูจุดที่แน่นอน'); renderGame();
 };
 
 // ---------- คลังเซียน ----------
@@ -1711,7 +1804,7 @@ function startPractice(k, src) {
     if (src === 'd') { const d = deep; if (!d || d.state !== 'done') return; info = { played: d.mv[k], best: d.best[k] == null ? -1 : d.best[k], loss: Math.max(0, (d.lead[k] - d.lead[k + 1]) * d.sign) }; }
     else { const t = rec.find(x => x.no === k - hcN() + 1); if (!t) return; info = { played: t.idx, best: t.best, loss: t.loss }; }
     p = { moves: G.moves.slice(0, k), hc: HC, komi: G.komi, ...info };
-    pracSaved = { G, S, human, over, dead, rec, HC, degraded, kataOK, lastSgf, lastRec, deep, deepShown };
+    pracSaved = { gmode, G, S, human, over, dead, rec, HC, degraded, kataOK, lastSgf, lastRec, deep, deepShown };
   }
   p.moved = false; p.lock = false;
   startGame(S, G.n, human, null, { prac: p });
@@ -1719,12 +1812,13 @@ function startPractice(k, src) {
 function pracBack() {
   const sv = pracSaved; if (!sv) return toLobby();
   token++; prac = null; pracSaved = null; $('#pbanner').hidden = true;
-  G = sv.G; S = sv.S; human = sv.human; over = sv.over; dead = sv.dead; rec = sv.rec; HC = sv.HC; degraded = sv.degraded; kataOK = sv.kataOK; lastSgf = sv.lastSgf; lastRec = sv.lastRec; deep = sv.deep; deepShown = sv.deepShown;
-  busy = false; retry = false; review = null; pre = null; fresh = -1; hintIdx = -1; $('#gnote').hidden = true; gfb('');
+  gmode = sv.gmode || 'teach'; $('.tutor').hidden = gmode === 'real'; G = sv.G; S = sv.S; human = sv.human; over = sv.over; dead = sv.dead; rec = sv.rec; HC = sv.HC; degraded = sv.degraded; kataOK = sv.kataOK; lastSgf = sv.lastSgf; lastRec = sv.lastRec; deep = sv.deep; deepShown = sv.deepShown;
+  busy = false; retry = false; review = null; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; $('#tutor-act').hidden = true; $('#gnote').hidden = true; gfb('');
   tutor('กลับมาที่บทเรียนจากเกมจริงแล้ว');
   renderGame();
   if (deepShown && deep && deep.state === 'done') { renderDeep(); deepGo(deep.cur, false); } else { if (deep && deep.state !== 'done') deepShown = false; renderReview(); }
-  $('#review').scrollIntoView({ block: 'nearest' });
+  if (over && over.final) $('#review').scrollIntoView({ block: 'nearest' });
+  else if (!over) { if (botToMove()) botTurn(); else startPre(); }
 }
 // ติวเตอร์ตอบตาแรกของโหมดฝึก: ดีกว่าตาเดิมในเกมจริงหรือไม่
 async function pracJudge(i, gb, ga, my) {
@@ -1782,6 +1876,7 @@ function showWelcome() {
     store.set('go-profile', profile); justJoined = true;
     $('.wrap').inert = false; w.remove(); renderChip(); showPath();
     const ft = $('#pchip') || $('[role=tab]') || $('h1'); if (ft) { if (!ft.matches('button,a,[tabindex]')) ft.tabIndex = -1; ft.focus(); }
+    setTimeout(() => openSkill(true), 0);
   };
   form.onsubmit = e => { e.preventDefault(); close(false); };
   $('.animals', w).onclick = pickAnimal;
@@ -1821,7 +1916,7 @@ function showPath() {
   const tip = TIPS[dayNo() % TIPS.length], ts = bySid(tip[0]), pk = dayNo() % PUZZLES.length, pz = PUZZLES[pk];
   const stages = STAGES.filter(s => LESSONS.some(l => l.stage === s.n));
   $('#home').innerHTML = `<div class="h-greet"><h1>สวัสดี ${esc(pn())}</h1>${justJoined ? `<div class="tipbox">${avatar(bySid('s2'), 48)}<p class="bubble">ยินดีที่ได้รู้จัก ${esc(pn())} เริ่มจากบทแรกได้เลย</p></div>` : ''}</div>
-    <div class="rs-slot"></div>
+    <div class="rs-slot"></div>${skBanner()}
     <div class="h-grid"><div class="h-col"><div class="hero">${boardDeco()}${hero}</div>${tiles()}${top ? `<p class="small">ชนะถึง: ${esc(top.name)}</p>` : ''}</div>
     <div class="h-col"><section class="hsec"><h2>เคล็ดลับวันนี้</h2><div class="tipbox">${avatar(ts, 48)}<p class="bubble">${esc(tip[1])}</p></div></section>
     <section class="hsec"><h2>โจทย์ประจำวัน</h2><div class="daily"><div class="board static thumb" id="daily-b"></div><div class="col"><b>${esc(pz.title)}</b><span class="small">ระดับ ${esc(pz.level)}${done[pz.id] ? ' · ผ่านแล้ว' : ''}</span><div><button class="btn" data-daily="${pk}">ลองโจทย์นี้</button></div></div></div></section>
@@ -1902,6 +1997,7 @@ function renderProfile() {
   const top = playerRank();
   $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
     ${tiles()}
+    ${skProfileBlock()}
     <section class="hsec"><h2>ผลกับคู่ประลอง</h2><ul class="recs">${SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 }; return `<li>${avatar(s, 32)}<span>${esc(s.name)}</span><span>ชนะ ${r.w} แพ้ ${r.l}</span></li>`; }).join('')}</ul></section>
     <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div>
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(profile ? profile.animal : ANIMALS[0].kind)}</div>
@@ -1914,7 +2010,7 @@ $('#me-top').addEventListener('click', pickAnimal);
 $('#me-top').addEventListener('submit', e => {
   e.preventDefault();
   const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
-  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now() };
+  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill };
   store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
   $('#me-msg').textContent = 'บันทึกแล้ว';
 });
@@ -1939,7 +2035,7 @@ function parseCode(text) {
     lg.push({ handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
-  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; }
+  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
   return { profile: pr, done: dn, rec: rc, log: lg };
 }
 let pendingRestore = null;
@@ -1960,6 +2056,109 @@ $('#backup').addEventListener('click', e => {
     msg.textContent = 'กู้คืนข้อมูลแล้ว'; msg.className = 'small good-t';
   }
 });
+
+// ---------- แบบวัดความรู้ครั้งแรก (เริ่มตรงนี้ดี) ----------
+const SKRUN = 'go-skill-run';
+const SK_Q = ['ไม่เคยเลย', 'รู้กติกานิดหน่อย', 'เล่นเป็นประจำ', 'เล่นแข่งขัน'];
+const SK_QS = ['ยังไม่เคยจับหมากสักเม็ด', 'พอรู้ว่าล้อมแล้วกิน', 'ไล่ไล่เล่นกับเพื่อนอยู่บ่อย ๆ', 'ลงสนามแข่งมาแล้ว'];
+let sk = store.get(SKRUN, null), skEl = null, skMissed = false, skObs = null;
+const skValid = o => o && typeof o === 'object' && ['q1', 'pz', 'out'].includes(o.step);
+if (!skValid(sk)) sk = null;
+const skSave = () => { if (sk) store.set(SKRUN, sk); else store.del(SKRUN); };
+const skPicks = () => { const L = PUZZLES.length, m = Math.min(5, L); return [...new Set(Array.from({ length: m }, (_, i) => Math.round(i * (L - 1) / Math.max(1, m - 1))))].map(i => PUZZLES[i].id); };
+function skRecommend(self, score) {
+  let k = score <= 0 || (score === 1 && self <= 1) ? 1 : score <= 1 ? 2 : score === 2 ? 3 : score === 3 ? 4 : score === 4 ? 5 : (self >= 3 ? 6 : 5);
+  k = Math.min(k, self <= 1 ? 3 : self === 2 ? 5 : 6);
+  const maxStage = Math.max(...LESSONS.map(l => l.stage)), want = Math.min(maxStage, score <= 1 ? 1 : 2);
+  const les = LESSONS.find(l => l.stage >= want && !done[l.id]) || LESSONS.find(l => !done[l.id]) || LESSONS[LESSONS.length - 1];
+  return { sid: 's' + k, lesson: les.id };
+}
+function skClose(keep) {
+  if (!skEl) return;
+  if (skObs) { skObs.disconnect(); skObs = null; }
+  skEl.remove(); skEl = null; $('.wrap').inert = false;
+  if (!keep) { sk = null; skSave(); }
+  showPath();
+  const ft = $('#pchip'); if (ft) ft.focus();
+}
+function openSkill(fresh) {
+  if (fresh || !sk) sk = { step: 'q1', self: -1, picks: skPicks(), pi: 0, res: [] };
+  skSave();
+  if (!skEl) {
+    skEl = document.createElement('div'); skEl.className = 'sheet-wrap'; skEl.id = 'skill';
+    skEl.innerHTML = '<div class="sheet sk-sheet" role="dialog" aria-modal="true" aria-labelledby="sk-h" tabindex="-1"></div>';
+    document.body.appendChild(skEl); $('.wrap').inert = true;
+    skEl.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); skClose(true); } });
+    skEl.addEventListener('click', e => { if (e.target.closest('.b-hint,.b-reset')) skMissed = true; });
+  }
+  skPaint();
+}
+function skPaint() {
+  const box = $('.sk-sheet', skEl), skip = '<button class="btn" type="button" data-sk="skip">ข้ามไปก่อน</button>';
+  if (skObs) { skObs.disconnect(); skObs = null; }
+  let html = '';
+  if (sk.step === 'q1') {
+    html = `<div class="tipbox">${avatar(bySid('s2'), 52)}<p class="bubble" id="sk-h">เจ้าถิ่นอยากรู้จักคุณก่อน เคยเล่นหมากล้อมไหม?</p></div>
+      <div class="sk-opts" role="group" aria-label="เคยเล่นหมากล้อมไหม">${SK_Q.map((q, i) => `<button class="btn sk-opt" type="button" data-sk="q" data-i="${i}"><b>${q}</b><small>${SK_QS[i]}</small></button>`).join('')}</div>
+      <p class="small">ตอบแบบไหนก็ได้ ไม่มีถูกผิด ไม่มีใครตัดเกรด</p><div class="btns">${skip}</div>`;
+  } else if (sk.step === 'pz') {
+    const p = PUZZLES.find(x => x.id === sk.picks[sk.pi]);
+    html = `<div class="sk-top"><h2 id="sk-h">โจทย์วอร์มอัพ ข้อ ${sk.pi + 1} จาก ${sk.picks.length}</h2><div class="sk-prog" aria-hidden="true">${sk.picks.map((_, i) => `<i class="${i < sk.pi ? 'on' : i === sk.pi ? 'cur' : ''}"></i>`).join('')}</div></div>
+      <p class="small">แตะจุดที่คิดว่าใช่ ถ้ากดคำใบ้หรือพลาด ข้อนี้จะไม่นับแต้ม ไม่เป็นไรนะ</p><div id="sk-pz"></div>
+      <div class="btns"><button class="btn" type="button" data-sk="pass">ไม่รู้ ข้ามข้อนี้</button>${skip}</div>`;
+    box.innerHTML = html; skMissed = false;
+    const root = $('#sk-pz', box);
+    pzPlayerOpen(root, p);
+    skObs = new MutationObserver(() => { const f = $('.fb', root); if (f && f.classList.contains('bad')) skMissed = true; });
+    skObs.observe(root, { subtree: true, attributes: true, attributeFilter: ['class'], childList: true });
+    skFocus(box, '.board'); return;
+  } else {
+    const r = sk.result, s = bySid(r.sid), les = LESSONS.find(l => l.id === r.lesson) || LESSONS[0], beginner = r.self === 0;
+    html = `<div class="tipbox">${avatar(s, 56)}<div class="col" style="gap:4px"><span class="eyebrow">ผลเบา ๆ ของ${esc(pn())}</span><h2 id="sk-h">เริ่มตรงนี้ดี</h2></div></div>
+      <div class="sk-rec"><div><span class="small">บทเรียนที่แนะนำ</span><b>${esc(les.title)}</b></div>${beginner ? '' : `<div><span class="small">คู่ซ้อม 9x9</span><b>${esc(s.name)}</b><span class="small">${esc(s.rank)}</span></div>`}</div>
+      <p class="small">${beginner ? 'เริ่มจากบทแรก ค่อย ๆ ไปทีละก้าว' : `ทำโจทย์ได้ ${r.score} จาก ${r.total} ข้อ`} นี่เป็นแค่จุดเริ่มต้นที่แนะนำ ไม่ใช่การจัดระดับหรืออันดับของคุณ เล่นไปเรียนไปแล้วเปลี่ยนใจได้ตลอด</p>
+      <div class="btns">${beginner ? '' : `<button class="btn primary" type="button" data-sk="play" data-sid="${s.id}">ลองเล่น 9x9 กับ${esc(s.name)}</button>`}<button class="btn${beginner ? ' primary' : ''}" type="button" data-sk="lesson" data-id="${les.id}">${beginner ? 'ไปบทที่ 1' : 'เรียน ' + esc(les.title)}</button><button class="btn" type="button" data-sk="done">ไว้ก่อน ดูหน้าแรก</button></div>`;
+  }
+  box.innerHTML = html; skFocus(box, 'button');
+}
+function pzPlayerOpen(root, p) { const pl = Player(root, 'puzzle', () => skAnswer(!skMissed)); pl.open(p); skMissed = false; }
+function skFocus(box, sel) { const t = $(sel, box); if (t) { if (!t.matches('button,[tabindex]')) t.tabIndex = -1; t.focus({ preventScroll: true }); } }
+function skAnswer(ok) {
+  sk.res[sk.pi] = ok ? 1 : 0; sk.pi++;
+  if (sk.pi >= sk.picks.length) skFinish(); else { skSave(); skPaint(); }
+}
+function skFinish() {
+  const total = sk.picks.length, score = sk.res.reduce((a, b) => a + b, 0), self = sk.self;
+  const rc = self === 0 ? { sid: 's1', lesson: LESSONS[0].id } : skRecommend(self, score);
+  sk.result = { self, score: self === 0 ? 0 : score, total: self === 0 ? 0 : total, sid: rc.sid, lesson: rc.lesson, t: Date.now() };
+  sk.step = 'out'; skSave(); skStore(sk.result); skPaint();
+}
+function skStore(r) { profile = Object.assign({}, profile || { name: 'นักหมาก', animal: ANIMALS[0].kind, created: Date.now() }, { skill: r }); store.set('go-profile', profile); }
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-sk]'); if (!b || !skEl || !skEl.contains(b)) return;
+  const a = b.dataset.sk;
+  if (a === 'skip') skClose(true);
+  else if (a === 'q') {
+    sk.self = +b.dataset.i;
+    if (sk.self === 0) skFinish(); else { sk.step = 'pz'; sk.pi = 0; sk.res = []; skSave(); skPaint(); }
+  } else if (a === 'pass') skAnswer(false);
+  else if (a === 'done') { sk = null; skSave(); skClose(); }
+  else if (a === 'lesson') { const id = b.dataset.id; sk = null; skSave(); skClose(); justJoined = false; openLesson(id); }
+  else if (a === 'play') { const s = bySid(b.dataset.sid); sk = null; skSave(); skClose(); showTab('play'); startGame(s, 9, 1, null, {}); }
+});
+function skBanner() {
+  if (!sk || skEl) return '';
+  return `<div class="resume-banner sk-banner"><p>${sk.step === 'q1' ? 'อยากให้เจ้าถิ่นแนะนำจุดเริ่มต้นไหม ใช้เวลาไม่ถึงสามนาที' : 'แบบวัดความรู้ที่ทำค้างไว้ ทำต่อได้เลย'}</p><div class="btns"><button class="btn primary" data-skb="go" type="button">${sk.step === 'q1' ? 'เริ่มเลย' : 'ทำต่อ'}</button><button class="btn" data-skb="drop" type="button">ไม่ต้องแล้ว</button></div></div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-skb]'); if (!b) return;
+  if (b.dataset.skb === 'go') openSkill(false); else { sk = null; skSave(); showPath(); }
+});
+function skProfileBlock() {
+  const r = profile && profile.skill, s = r && bySid(r.sid);
+  return `<section class="hsec" id="sk-prof"><h2>แบบวัดความรู้</h2>${s ? `<p class="small">จุดเริ่มต้นที่แนะนำ: ${r.self === 0 ? 'บทที่ 1' : 'เล่น 9x9 กับ' + esc(s.name)} (ไม่ใช่ระดับของคุณ)</p>` : '<p class="small">ยังไม่เคยทำ</p>'}<div class="btns"><button class="btn" type="button" data-skb="redo">ทำแบบวัดความรู้ใหม่</button></div></section>`;
+}
+document.addEventListener('click', e => { const b = e.target.closest('[data-skb="redo"]'); if (b) openSkill(true); });
 
 // ---------- เริ่มต้น ----------
 renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); showTab(location.hash.slice(1));
