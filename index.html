@@ -1016,7 +1016,7 @@ function renderExplain() {
   $('#explain').innerHTML = `<p>ระดับนับเป็นคิวและดั้ง คิวนับถอยหลังจาก 30 ลงไปถึง 1 แล้วจึงเป็นดั้งที่นับขึ้น สมัครเล่นไปถึงราว 7 ดั้ง ส่วนอาชีพมี 1 ถึง 9 ดั้งของตัวเอง</p>
     <div class="ladder">${LADDER.map(([a, b, c]) => `<div style="background:${c};color:${lum(c) > 150 ? '#16211D' : '#fff'}"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
     <p>สายสีในแอปเป็นการเปรียบเทียบแบบศิลปะต่อสู้ เพื่อให้จำง่าย ไม่ใช่ระบบสายของหมากล้อมจริง</p>
-    <p>ระดับของคู่ประลองวัดจากการแข่งกับ KataGo รุ่นจำลองฝีมือมนุษย์หลายสิบกระดานต่อตัว จึงเป็นค่าประมาณ ยังไม่ได้ยืนยันกับผู้เล่นจริง ครูแพร (3 ดั้ง) กำลังจะช่วยทดสอบ ถ้าคุณรู้สึกว่าตัวไหนเก่งหรืออ่อนกว่าป้าย บอกเราได้เลย</p>`;
+    <p>ระดับของคู่ประลองวัดจากการแข่งกับ KataGo รุ่นจำลองฝีมือมนุษย์หลายสิบกระดานต่อตัว จึงเป็นค่าประมาณ ยังไม่ได้ยืนยันกับผู้เล่นจริง ถ้าคุณรู้สึกว่าตัวไหนเก่งหรืออ่อนกว่าป้าย บอกเราได้เลย</p>`;
 }
 // ---------- ลานสำนัก (ฉากประลอง) ----------
 const ZONES = [
@@ -2203,7 +2203,7 @@ function skProfileBlock() {
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-skb="redo"]'); if (b) openSkill(true); });
 
-// ---------- โจทย์ครูแพร (ไม่มีเซิร์ฟเวอร์: โจทย์อยู่ในลิงก์) ----------
+// ---------- โจทย์จากครู (ไม่มีเซิร์ฟเวอร์: โจทย์อยู่ในลิงก์) ----------
 const TKEY = 'go-teacher-puzzles', T_MAX_HASH = 3000, T_MAX_JSON = 2400;
 const tTxt = (v, m) => typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f-\u009f‎‏‪-‮<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, m) : '';
 const tB64e = o => b64(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -2247,9 +2247,9 @@ let tNote = '';
 function tThumb(it) { const g = new Int8Array(it.p.n * it.p.n); it.p.b.forEach(i => { g[i] = 1; }); it.p.w.forEach(i => { g[i] = 2; }); return { n: it.p.n, grid: g }; }
 function teacherCard() {
   const l = tList(), note = tNote ? `<p class="small t-note" role="status">${esc(tNote)}</p>` : '<p class="small t-note" role="status"></p>';
-  if (!l.length) return `<section class="hsec" id="t-card"><h2>โจทย์ครูแพร</h2>${note}<p class="small">ยังไม่มีโจทย์จากครู เมื่อครูแพรส่งลิงก์มา เปิดลิงก์นั้นแล้วโจทย์จะมาอยู่ตรงนี้</p></section>`;
+  if (!l.length) return `<section class="hsec" id="t-card"><h2>โจทย์จากครู</h2>${note}<p class="small">ยังไม่มีโจทย์จากครู เมื่อครูส่งลิงก์มา เปิดลิงก์นั้นแล้วโจทย์จะมาอยู่ตรงนี้</p></section>`;
   const [f, ...rest] = l, dn = it => done[it.id] ? ' · ผ่านแล้ว' : ' · ยังไม่ได้ลอง';
-  return `<section class="hsec" id="t-card"><h2>โจทย์ครูแพร</h2>${note}<div class="daily"><div class="board static thumb" id="t-thumb"></div><div class="col"><span class="eyebrow">โจทย์จากครู</span><b>${esc(f.p.t)}</b><span class="small">${f.p.n} x ${f.p.n}${dn(f)}</span><div><button class="btn primary" data-tp="${f.id}">${done[f.id] ? 'ลองอีกรอบ' : 'ลองเลย'}</button></div></div></div>
+  return `<section class="hsec" id="t-card"><h2>โจทย์จากครู</h2>${note}<div class="daily"><div class="board static thumb" id="t-thumb"></div><div class="col"><span class="eyebrow">โจทย์จากครู</span><b>${esc(f.p.t)}</b><span class="small">${f.p.n} x ${f.p.n}${dn(f)}</span><div><button class="btn primary" data-tp="${f.id}">${done[f.id] ? 'ลองอีกรอบ' : 'ลองเลย'}</button></div></div></div>
     ${rest.length ? `<details class="t-more"><summary>โจทย์ก่อนหน้า (${rest.length})</summary><div class="chips">${rest.map(it => `<button class="chip${done[it.id] ? ' done' : ''}" data-tp="${it.id}"><span>${esc(it.p.t)}</span></button>`).join('')}</div></details>` : ''}</section>`;
 }
 function paintTeacher() { const l = tList(), el = $('#t-thumb'); if (el && l[0]) drawBoard(el, tThumb(l[0])); }
@@ -2322,7 +2322,7 @@ function ttInit() {
       TT.link = link; TT.p = r.p; $('#tt-link').value = link; $('#tt-out').hidden = false; ttMsg('สร้างลิงก์แล้ว โจทย์ถูกต้องตามกติกา');
     }
     else if (b.id === 'tt-copy') copyText(TT.link, b, $('#tt-out'));
-    else if (b.id === 'tt-line') shareOut(`ครูแพรตั้งโจทย์หมากล้อมมาให้แล้ว: "${TT.p.t}"\nกดลิงก์เพื่อลองแก้โจทย์ได้เลย\n${TT.link}`, b, $('#tt-out'));
+    else if (b.id === 'tt-line') shareOut(`ครูตั้งโจทย์หมากล้อมมาให้แล้ว: "${TT.p.t}"\nกดลิงก์เพื่อลองแก้โจทย์ได้เลย\n${TT.link}`, b, $('#tt-out'));
     else if (b.id === 'tt-try' && TT.p) { const id = tSave(TT.p); showPath(); openTeacher(id); }
   });
 }
