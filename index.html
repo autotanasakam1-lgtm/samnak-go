@@ -149,6 +149,19 @@ table.tally{width:100%;border-collapse:collapse;font-variant-numeric:tabular-num
 .review .rv{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .review .rv .btn{text-align:left;height:auto}
 .review h3{margin-top:4px}
+.seg button:disabled{opacity:.45;cursor:not-allowed}
+#hc-seg button{min-width:44px}
+.pbanner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;border-color:var(--accent);margin-bottom:12px}
+.review .mk{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;max-width:100%}
+.review .mk .btn{flex:1 1 200px}
+.deepbox{display:flex;flex-direction:column;align-items:flex-start;gap:6px;border-top:1px solid var(--line);padding-top:12px;margin:12px 0}
+.prog{height:14px;border-radius:7px;background:var(--wash);border:1px solid var(--line);overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.chartbox{border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden;max-width:100%;cursor:pointer;touch-action:manipulation}
+.chartbox svg{display:block;max-width:100%;height:auto}
+.dnav{display:flex;gap:8px;flex-wrap:wrap}
+.plist{margin:0;padding-left:1.2em}
+.rvd{color:var(--good);margin-left:4px}
 
 .masters{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
 .mlist{display:flex;flex-direction:column;gap:6px}
@@ -363,6 +376,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
     </details>
   </div>
   <div id="game" hidden>
+    <div class="panel pbanner" id="pbanner" hidden><b>โหมดฝึก: ผลไม่บันทึก</b><button class="btn" id="p-back" type="button">กลับไปดูบทเรียนจากเกม</button></div>
     <div class="stage game">
       <div class="panel ghead" id="ghead"></div>
       <div class="board" id="play-board"></div>
@@ -723,7 +737,7 @@ const Srv = {
       .then(ok => { clearTimeout(to); this.online = ok; this.checked = true; this.at = Date.now(); this.p = null; return ok; });
     return this.p;
   },
-  analyze(g, visits = 60) {
+  analyze(g, visits = 60, par = false) {
     const n = g.n, N = n * n, names = g.moves.map(m => m < 0 ? 'pass' : g.name(m));
     const run = () => {
       if (!this.url) return Promise.reject(new Error('offline'));
@@ -736,6 +750,7 @@ const Srv = {
           return { lead: j.lead, best, policy: null, ownership: Array.isArray(j.ownership) && j.ownership.length === N ? j.ownership : null };
         }).finally(() => clearTimeout(to));
     };
+    if (par) return run();
     const p = this.chain.then(run, run); this.chain = p.catch(() => { }); return p;
   },
 };
@@ -863,7 +878,8 @@ function Player(root, kind, onFinish) {
 // ---------- สถิติและระดับของผู้เล่น ----------
 let recs = store.get('go-rec', {});
 const wins = id => (recs[id] && recs[id].w) || 0;
-const playerRank = () => { let r = null; SENSEI.forEach(s => { if (wins(s.id) >= 1) r = s; }); return r; };
+const evenWins = id => { const r = recs[id]; return !r ? 0 : r.we == null ? (r.w || 0) : r.we; };
+const playerRank = () => { let r = null; SENSEI.forEach(s => { if (evenWins(s.id) >= 1) r = s; }); return r; };
 const recId = () => { const s = SENSEI.find(s => s.eng !== 'server' && wins(s.id) < 2); return s ? s.id : null; };
 const beltCss = s => s.bc2 ? `linear-gradient(90deg,${s.bc} 0 62%,${s.bc2} 62%)` : s.bc;
 const belt = s => `<span class="belt"><i style="background:${beltCss(s)}"></i>${esc(s.belt)}</span>`;
@@ -919,7 +935,8 @@ function avatar(s, px) {
 }
 
 // ---------- ห้องประลอง ----------
-let sel = null, selSize = 9, selCol = 1, friendSize = 9;
+let sel = null, selSize = 9, selCol = 1, selHc = 0, friendSize = 9;
+const hcMax = n => n === 19 ? 9 : n === 7 ? 0 : 5;
 const bySid = id => SENSEI.find(s => s.id === id);
 const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
 const sizeBtns = (list, cur, attr) => list.map(n => `<button data-${attr}="${n}" aria-pressed="${n === cur}">${n} x ${n}${n === 7 ? ' (สั้นมาก)' : ''}</button>`).join('');
@@ -942,11 +959,14 @@ function renderRoster(rid) {
   paintScene(rid);
 }
 function renderDetail() {
-  const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online;
+  const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online, hm = hcMax(selSize);
+  if (selHc > hm) selHc = hm;
+  const hcList = [0]; for (let k = 2; k <= hm; k++) hcList.push(k);
+  const hcSeg = hm ? `<div><p class="lab">หมากต่อ</p><div class="seg" id="hc-seg" role="group" aria-label="หมากต่อ">${hcList.map(k => `<button data-hc="${k}" aria-pressed="${k === selHc}"${k ? ` aria-label="ต่อ ${k} เม็ด"` : ''}>${k || 'ไม่ต่อ'}</button>`).join('')}</div><p class="small">ฝ่ายที่อ่อนกว่าวางหมากดำไว้ก่อนเพื่อให้เกมสูสี</p></div>` : '';
   $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(approx(s))}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
     <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
-    <div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${selCol === 1}">ดำ เดินก่อน</button><button data-col="2" aria-pressed="${selCol === 2}">ขาว</button></div></div>
+    ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ โคมิ 0.5</p>' : ''}</div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
 }
 function renderExplain() {
@@ -1091,20 +1111,36 @@ $('#roster').onclick = e => {
 };
 $('#detail').onclick = e => {
   const t = e.target.closest('button'); if (!t) return;
-  if (t.dataset.sz) { selSize = +t.dataset.sz; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); }
+  if (t.disabled) return;
+  if (t.dataset.sz || t.dataset.hc) {
+    if (t.dataset.sz) selSize = +t.dataset.sz; else selHc = +t.dataset.hc;
+    const a = t.dataset.sz ? 'sz' : 'hc', v = t.dataset[a]; renderDetail(); const nb = $(`#detail [data-${a}="${v}"]`); if (nb) nb.focus();
+  }
   else if (t.dataset.col) { selCol = +t.dataset.col; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); }
-  else if (t.id === 'start') { const s = bySid(sel); if (s.eng === 'server' && !Srv.online) return; startGame(s, selSize, selCol); }
+  else if (t.id === 'start') { const s = bySid(sel); if (s.eng === 'server' && !Srv.online) return; startGame(s, selSize, selCol, null, { hc: selHc }); }
 };
 $('#friend-size').onclick = e => { const t = e.target.closest('button'); if (!t) return; friendSize = +t.dataset.fs; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); };
-$('#friend-start').onclick = () => startGame(null, friendSize, 1);
+$('#friend-start').onclick = () => startGame(null, friendSize, 1, null, {});
 
 // ---------- หน้าเกม ----------
 const GB = $('#play-board');
-let G, S = null, human = 1, token = 0, over = null, dead = new Set(), busy = false, rec = [], pre = null, fresh = -1, hintIdx = -1, review = null, degraded = false, kataOK = false, tutorMsg = '', retry = false, lastSgf = '';
+let G, S = null, human = 1, token = 0, over = null, dead = new Set(), busy = false, rec = [], pre = null, fresh = -1, hintIdx = -1, review = null, degraded = false, kataOK = false, tutorMsg = '', retry = false, lastSgf = '', HC = 0, prac = null, pracSaved = null, lastRec = null;
+const hcN = () => HC ? 2 * HC - 1 : 0, mno = () => G.moves.length - hcN(), undoBase = () => prac ? prac.moves.length : hcN();
+function hcPoints(n, hc) {
+  const e = n === 9 ? 2 : 3, lo = e, hi = n - 1 - e, mid = n >> 1, P = (x, y) => y * n + x;
+  const cor = [P(hi, lo), P(lo, hi), P(hi, hi), P(lo, lo)], L = P(lo, mid), Rr = P(hi, mid), T = P(mid, lo), B = P(mid, hi), Cc = P(mid, mid);
+  if (hc <= 4) return cor.slice(0, hc);
+  return [5, 7, 9].includes(hc) ? cor.concat(hc === 5 ? [Cc] : hc === 7 ? [L, Rr, Cc] : [L, Rr, T, B, Cc]) : cor.concat(hc === 6 ? [L, Rr] : [L, Rr, T, B]);
+}
+function setupHandicap(g, hc) {
+  const pts = hcPoints(g.n, hc);
+  pts.forEach((p, k) => { g.play(p); if (k < pts.length - 1) g.pass(); });
+  g.passes = 0; g.ko = -1;
+}
 const cname = c => c === 1 ? 'ดำ' : 'ขาว';
 const delay = ms => new Promise(r => setTimeout(r, ms));
 const gfb = t => { $('#play-fb').textContent = t; };
-const tutor = t => { $('#tutor-text').textContent = t; };
+const tutor = t => { if (prac && prac.lock) return; $('#tutor-text').textContent = t; };
 const usesAI = s => !!s && (s.eng === 'kata' || s.eng === 'server');
 const isKata = () => usesAI(S) && kataOK && !degraded;
 const engine = () => S.eng === 'server' ? Srv : Kata;
@@ -1116,17 +1152,24 @@ function srvDrop() {
 }
 const botToMove = () => !!S && G.turn !== human;
 
-async function startGame(s, n, col, res) {
+async function startGame(s, n, col, res, opt = {}) {
   const my = ++token;
-  S = s; human = s ? col : 1; G = new Go(n, res ? res.komi : n === 19 ? 7.5 : 6.5);
+  if (deep) deep.run++;
+  prac = opt.prac || null;
+  if (!prac) { pracSaved = null; deep = null; lastRec = null; }
+  HC = s ? (res ? res.hc : prac ? prac.hc : opt.hc) || 0 : 0;
+  S = s; human = s ? (HC ? 1 : col) : 1; G = new Go(n, res ? res.komi : prac ? prac.komi : HC ? 0.5 : n === 19 ? 7.5 : 6.5);
   over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; review = null; degraded = false; kataOK = false; retry = false;
-  if (res) replayInto(res); else clearGame();
+  if (res) replayInto(res);
+  else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
+  else { if (HC) setupHandicap(G, HC); clearGame(); }
+  $('#pbanner').hidden = !prac;
   GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
   $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
-  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})</span></div>`
+  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})${HC ? ' · ต่อ ' + HC + ' เม็ด' : ''}</span></div>`
     : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
     + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
-  tutor(res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
+  tutor(prac ? 'ลองเดินใหม่จากตำแหน่งนี้ แล้วติวเตอร์จะบอกว่าดีกว่าตาเดิมในเกมจริงหรือไม่' : res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
     : n <= 9 ? 'เริ่มได้เลย ลองเปิดใกล้จุดกลางหรือจุดดาว แล้วดูลมหายใจของหมากทุกตา' : 'เริ่มได้เลย ช่วงเปิดเกมให้จับมุมก่อน แล้วขยายไปข้าง เส้นที่ 3 และ 4 คุ้มที่สุด');
   gfb('');
   if (S && S.eng === 'server') {
@@ -1144,20 +1187,20 @@ async function startGame(s, n, col, res) {
   }
   renderGame();
   if (res && G.passes >= 2) return endScoring();
-  if (botToMove()) botTurn(); else if (res) startPre();
+  if (botToMove()) botTurn(); else if (res || prac) startPre();
 }
-function gameTitle() { return !over ? `ตาที่ ${G.moves.length + 1} · ${cname(G.turn)}เดิน${S ? (G.turn === human ? ' (คุณ)' : '') : ''}` : ''; }
+function gameTitle() { return !over ? `ตาที่ ${mno() + 1} · ${cname(G.turn)}เดิน${S ? (G.turn === human ? ' (คุณ)' : '') : ''}` : ''; }
 function renderGame() {
   const sc = over && over.type === 'score' && !over.pending ? G.score(dead) : null;
   if (review) {
-    const rings = [{ i: review.idx, color: '#dc2626' }]; if (review.best >= 0 && review.best !== review.idx) rings.push({ i: review.best, color: '#2563eb' });
+    const rings = review.idx >= 0 ? [{ i: review.idx, color: '#dc2626' }] : []; if (review.best >= 0 && review.best !== review.idx) rings.push({ i: review.best, color: '#2563eb' });
     drawBoard(GB, { n: G.n, grid: review.before, rings });
   } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], terr: sc && sc.terr, dead: sc ? dead : null });
   const myTurn = !over && !busy && !review && (!S || G.turn === human), canTap = myTurn || (!!over && over.type === 'score' && !over.pending && !over.final && !review);
   GB.classList.toggle('static', !canTap);
   $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · โคมิ ${G.komi}`;
   const t = $('#turn');
-  if (review) t.textContent = `กำลังดูตำแหน่งก่อนตาที่ ${review.no}`;
+  if (review) t.textContent = review.label || `กำลังดูตำแหน่งก่อนตาที่ ${review.no}`;
   else if (over && over.res) t.textContent = 'จบเกม ' + over.res.text;
   else if (over && over.type === 'score') { const d = sc ? sc.b - sc.w : 0; t.textContent = over.pending ? 'กำลังนับพื้นที่' : `ผลนับเบื้องต้น ${d > 0 ? 'ดำ' : 'ขาว'}ชนะ ${Math.abs(d)} แต้ม`; }
   else if (busy && S) t.textContent = `${S.name}กำลังคิด`;
@@ -1167,7 +1210,7 @@ function renderGame() {
     : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>โคมิให้ขาว</td><td>${G.komi}</td></tr>`;
   const fin = !!over && !!over.final;
   $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
-  $('#b-undo').disabled = !G.hist.length || busy || fin;
+  $('#b-undo').disabled = G.moves.length <= undoBase() || busy || fin;
   const hb = $('#b-hint'); hb.hidden = !(usesAI(S) && !degraded); $('#b-retry').hidden = !retry; hb.disabled = !myTurn || !kataOK;
   const fb = $('#b-final'); fb.hidden = !(over && over.type === 'score' && !over.final); fb.disabled = !!(over && over.pending);
   GB._redraw = renderGame;
@@ -1224,7 +1267,7 @@ async function botTurn() {
   const my = token; busy = true; renderGame();
   let a = null;
   if (isKata()) {
-    const last = rec[rec.length - 1], pend = last && last.loss == null && last.no === G.moves.length ? last : null;
+    const last = rec[rec.length - 1], pend = last && last.loss == null && last.no === mno() ? last : null;
     if (pend) tutor('เซนเซกำลังคิด...');
     try { a = await engine().analyze(G, S.visits || 16); } catch (e) { a = null; if (S.eng === 'server') { if (my !== token) return; busy = false; return srvDrop(); } degraded = true; }
     if (my !== token) return;
@@ -1255,9 +1298,11 @@ function humanPlay(i) {
     return;
   }
   if (busy || (S && G.turn !== human)) return;
-  const f = moveFacts(G, i), before = G.grid.slice(), no = G.moves.length + 1, preP = pre && pre.at === G.moves.length ? pre.p : null;
+  const f = moveFacts(G, i), before = G.grid.slice(), no = mno() + 1, preP = pre && pre.at === G.moves.length ? pre.p : null;
+  const gb = prac && !prac.moved ? G.clone() : null;
   const r = G.play(i);
   if (!r.ok) { gfb(WHY[r.reason]); return; }
+  if (prac) { if (gb) { prac.moved = true; prac.lock = true; pracJudge(i, gb, G.clone(), token); } else prac.lock = false; }
   fresh = i; hintIdx = -1; gfb('');
   if (S) rec.push({ no, idx: i, before, facts: f, preP, loss: null, best: -1 });
   if (S && !isKata()) tutorSay(f, G.name(i));
@@ -1289,10 +1334,10 @@ function finish() {
     const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
-  o.res = { won, margin, text }; clearGame();
-  if (S) {
+  o.res = { won, margin, text }; if (!prac) clearGame();
+  if (S && !prac) {
     const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 };
-    if (won) { if (!degraded) r.w++; } else r.l++;
+    if (won) { if (!degraded) { const e = r.we == null ? r.w : r.we; r.w++; r.we = e + (HC ? 0 : 1); } } else r.l++;
     store.set('go-rec', recs);
     lastSgf = logGame(o, won, margin);
   }
@@ -1304,7 +1349,7 @@ function finish() {
 let matchLog = store.get('go-log', []);
 function buildSgf(re) {
   const L = 'abcdefghijklmnopqrstuvwxyz', n = G.n, me = pn().replace(/[\]\\]/g, '\\$&');
-  let t = `(;GM[1]FF[4]CA[UTF-8]SZ[${n}]KM[${G.komi}]RU[Chinese]PB[${human === 1 ? me : S.name}]PW[${human === 2 ? me : S.name}]DT[${new Date().toISOString().slice(0, 10)}]RE[${re}]`;
+  let t = `(;GM[1]FF[4]CA[UTF-8]SZ[${n}]KM[${G.komi}]${HC ? `HA[${HC}]` : ''}RU[Chinese]PB[${human === 1 ? me : S.name}]PW[${human === 2 ? me : S.name}]DT[${new Date().toISOString().slice(0, 10)}]RE[${re}]`;
   G.moves.forEach((m, k) => { t += `;${k % 2 ? 'W' : 'B'}[${m < 0 ? '' : L[m % n] + L[(m / n) | 0]}]`; });
   return t + ')';
 }
@@ -1314,9 +1359,9 @@ function logGame(o, won, margin) {
   else { const d = G.score(dead); re = d.b > d.w ? `B+${margin}` : `W+${margin}`; }
   const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
   const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
-    margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length,
+    margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC,
     avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
-  matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog);
+  matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
   return sgf;
 }
 function manualCopy(text, host) {
@@ -1329,7 +1374,8 @@ function copyText(text, btn, host) {
   let p; try { p = navigator.clipboard.writeText(text); } catch (e) { return fail(); }
   p.then(() => { btn.textContent = 'คัดลอกแล้ว'; setTimeout(() => { btn.textContent = label; }, 1600); }, fail);
 }
-const logRes = r => r.resign ? 'ยอมแพ้' : r.result === 'W' ? `ชนะ ${r.margin}` : `แพ้ ${r.margin}`;
+const logRes = r => r.resign ? 'ยอมแพ้' : r.result === 'W' ? `ชนะ${r.handicap ? ' (ต่อ ' + r.handicap + ')' : ' ' + r.margin}${r.handicap ? ' ' + r.margin : ''}` : `แพ้ ${r.margin}`;
+const logAvg = r => r.deep ? r.deep.avg : r.avgLoss;
 const logRows = () => matchLog.slice().reverse();
 function logSummary() {
   const by = {}; matchLog.forEach(r => { const b = by[r.sid] = by[r.sid] || { name: r.sname, w: 0, l: 0, m: 0, mc: 0 }; r.result === 'W' ? b.w++ : b.l++; if (r.margin != null) { b.m += r.result === 'W' ? r.margin : -r.margin; b.mc++; } });
@@ -1341,7 +1387,7 @@ function renderLog() {
   const rows = logRows().slice(0, 20);
   box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}</p>`).join('')}</div>
     <div class="logscroll"><table class="logt"><thead><tr><th>วันที่</th><th>คู่ประลอง</th><th>กระดาน</th><th>ผล</th><th>แต้มเสียเฉลี่ยต่อตา</th><th></th></tr></thead><tbody>${rows.map((r, k) =>
-      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}</td><td>${esc(logRes(r))}</td><td>${r.avgLoss == null ? '-' : r.avgLoss.toFixed(1)}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
+      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
     <div class="btns"><button class="btn" id="log-copy">คัดลอกสรุปผล</button><button class="btn" id="log-clear">ล้างสมุดบันทึก</button></div></div>`;
 }
 $('#log-body').onclick = e => {
@@ -1350,7 +1396,7 @@ $('#log-body').onclick = e => {
   if (b.dataset.sgf != null) copyText(logRows()[+b.dataset.sgf].sgf, b, host);
   else if (b.id === 'log-copy') {
     const lines = logSummary().map(x => `${x.name}: ชนะ ${x.w} แพ้ ${x.l}${x.mc ? ` แต้มต่างเฉลี่ย ${x.m / x.mc >= 0 ? '+' : ''}${(x.m / x.mc).toFixed(1)}` : ''}`);
-    const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n} ${logRes(r)}${r.avgLoss == null ? '' : ' เสียเฉลี่ย ' + r.avgLoss.toFixed(1)}`);
+    const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n}${r.handicap ? ' ต่อ ' + r.handicap + ' เม็ด' : ''} ${logRes(r)}${logAvg(r) == null ? '' : ' เสียเฉลี่ย ' + logAvg(r).toFixed(1)}${r.deep ? ' (ทบทวนแล้ว)' : ''}`);
     copyText(['สรุปผลสำนักหมากล้อม', 'ผู้เล่น: ' + pn(), ...lines, '', 'เกมล่าสุด', ...games].join('\n'), b, host);
   } else if (b.id === 'log-clear') {
     b.outerHTML = '<span class="small">ล้างทั้งหมดและย้อนกลับไม่ได้</span> <button class="btn" id="log-clear-yes">ยืนยันล้าง</button><button class="btn" id="log-clear-no">ยกเลิก</button>';
@@ -1365,10 +1411,11 @@ function renderReview() {
   R.hidden = false;
   const res = over.res;
   if (!S) { R.innerHTML = `<h2>จบเกม</h2><p>${esc(res.text)}</p><div class="btns"><button class="btn primary" data-act="again">เล่นอีกครั้ง</button><button class="btn" data-act="lobby">กลับห้องประลอง</button></div>`; return; }
+  if (prac) { R.innerHTML = `<h2>จบการฝึก</h2><p><b>${esc(res.text)}</b></p><p class="small">โหมดฝึก ผลนี้ไม่ได้บันทึก</p><div class="btns"><button class="btn primary" data-act="p-again">ลองเดินใหม่จากจุดนี้อีกครั้ง</button><button class="btn" data-act="p-back">กลับไปดูบทเรียนจากเกม</button></div>`; return; }
   const n = G.n, lost = !res.won, idx = SENSEI.indexOf(S), prev = SENSEI[idx - 1], next = SENSEI[idx + 1] && SENSEI[idx + 1].eng !== 'server' ? SENSEI[idx + 1] : null, blocks = [], links = new Set();
   if (isKata()) {
     const bad = rec.filter(t => t.loss != null && t.loss >= 2).sort((a, b) => b.loss - a.loss).slice(0, lost ? 3 : 1);
-    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${kyuS() ? lossWord(t.loss) + ' <small>(เสียราว ' + Math.round(t.loss) + ' แต้ม)</small>' : 'เสียราว ' + Math.round(t.loss) + ' แต้ม'}${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : (kyuS() ? '<p>ไม่มีตาไหนพลาดชัด ตลอดเกมคุณเดินได้นิ่งมาก</p>' : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>'));
+    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<div class="mk"><button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${kyuS() ? lossWord(t.loss) + ' <small>(เสียราว ' + Math.round(t.loss) + ' แต้ม)</small>' : 'เสียราว ' + Math.round(t.loss) + ' แต้ม'}${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button><button class="btn" data-pk="${hcN() + t.no - 1}" data-src="n">ลองเดินใหม่จากจุดนี้</button></div>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : (kyuS() ? '<p>ไม่มีตาไหนพลาดชัด ตลอดเกมคุณเดินได้นิ่งมาก</p>' : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>'));
     const ph = [[], [], []], o1 = n * n / 7, o2 = n * n * 0.42;
     rec.forEach(t => { if (t.loss != null) ph[t.no <= o1 ? 0 : t.no <= o2 ? 1 : 2].push(t.loss); });
     let bi = -1, bv = 1.5; ph.forEach((a, k) => { if (a.length) { const m = a.reduce((x, y) => x + y, 0) / a.length; if (m > bv) { bv = m; bi = k; } } });
@@ -1384,9 +1431,22 @@ function renderReview() {
   if (lost) close = res.margin > thr
     ? (prev ? `ครั้งนี้แพ้ห่างพอสมควร ลองเล่นกับ${prev.name} (${prev.rank}) สักสองสามกระดานก่อน แล้วกลับมาท้า${S.name}ใหม่` : 'ครั้งนี้แพ้ห่างพอสมควร ลองทบทวนบทเรียนแล้วเล่นอีกครั้ง')
     : `แพ้ไปนิดเดียว เกมนี้สูสีมาก ประลองอีกครั้งได้เลย อีกหนึ่งหรือสองตาที่ดีขึ้นก็พลิกผลได้`;
-  else { close = `ยินดีด้วย คุณชนะ${S.name}`; if (wins(S.id) >= 2 && next) close += ` ชนะมาแล้ว ${wins(S.id)} ครั้ง ลองท้า${next.name} (${next.rank}) ต่อได้`; else if (degraded) close += ' แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ จึงไม่นับเป็นสถิติ'; }
-  R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b></p><div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>
-    <div class="btns"><button class="btn primary" data-act="again">ประลองอีกครั้ง</button><button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+  else { close = `ยินดีด้วย คุณชนะ${S.name}`; if (evenWins(S.id) >= 2 && next) close += ` ชนะมาแล้ว ${evenWins(S.id)} ครั้ง ลองท้า${next.name} (${next.rank}) ต่อได้`; else if (degraded) close += ' แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ จึงไม่นับเป็นสถิติ'; }
+  const sug = S.eng === 'server' ? suggestHc(S.id, n) : 0, again = sug || (S.eng === 'server' ? 0 : HC);
+  if (sug) { close += ` ลองให้ต่อ ${sug} เม็ดดู เกมจะสูสีขึ้น`; selHc = sug; }
+  R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b></p><div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>${deepBoxHtml()}
+    <div class="btns"><button class="btn primary" data-act="again" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+  deepBoxRefresh();
+}
+// ข้อเสนอหมากต่อสำหรับเครื่องของสำนัก: แพ้เกมเท่ากัน 2 กระดานติด เริ่มที่ 4 แพ้ซ้ำ +2 ชนะ -1
+function suggestHc(sid, n) {
+  let sug = 0, lr = 0;
+  for (const r of matchLog.filter(x => x.sid === sid)) {
+    const h = r.handicap || 0, lost = r.result !== 'W';
+    if (h) { lr = 0; sug = lost ? h + 2 : h - 1 >= 2 ? h - 1 : 0; }
+    else if (!lost) { lr = 0; sug = 0; } else { lr++; if (lr >= 2 && !sug) sug = 4; }
+  }
+  return Math.min(sug, hcMax(n));
 }
 $('#review').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1394,13 +1454,21 @@ $('#review').onclick = e => {
   else if (b.id === 'rv-back') { review = null; b.remove(); renderGame(); }
   else if (b.dataset.lesson) openLesson(b.dataset.lesson);
   else if (b.dataset.act === 'sgf') copyText(lastSgf, b, $('#review'));
-  else if (b.dataset.act === 'again') startGame(S, G.n, human);
+  else if (b.dataset.act === 'again') startGame(S, G.n, human, null, { hc: +b.dataset.hc || 0 });
+  else if (b.dataset.pk) startPractice(+b.dataset.pk, b.dataset.src);
+  else if (b.dataset.act === 'p-back' || b.dataset.act === 'p-again') b.dataset.act === 'p-back' ? pracBack() : startPractice(-1);
+  else if (b.dataset.act === 'deep') deepStart();
+  else if (b.dataset.act === 'deep-cancel') deepCancel();
+  else if (b.dataset.act === 'deep-close') deepClose();
+  else if (b.dataset.act === 'deep-show') { deepShown = true; renderDeep(); }
+  else if (b.dataset.dg != null) deepGo(+b.dataset.dg, true);
+  else if (b.dataset.dstep) deepStep(+b.dataset.dstep);
   else if (b.dataset.act === 'lobby') toLobby();
 };
-function toLobby() { token++; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
+function toLobby() { token++; if (deep) deep.run++; deep = null; deepShown = false; prac = null; pracSaved = null; $('#pbanner').hidden = true; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
 $('#ghead').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.id === 'g-back') { if ((over && over.final) || !G.moves.length) return toLobby(); $('#leave-ask').hidden = false; $('#ask-later').focus(); }
+  if (b.id === 'g-back') { if ((over && over.final) || prac || G.moves.length <= hcN()) return toLobby(); $('#leave-ask').hidden = false; $('#ask-later').focus(); }
   else if (b.id === 'ask-later') { saveGame(); toLobby(); }
   else if (b.id === 'ask-resign') { $('#leave-ask').hidden = true; if (!over || !over.final) { over = { type: 'resign', loser: S ? human : G.turn }; finish(); } }
   else if (b.id === 'ask-cancel') { $('#leave-ask').hidden = true; $('#g-back').focus(); }
@@ -1409,10 +1477,12 @@ $('#ghead').onclick = e => {
 $('#b-pass').onclick = () => { if (busy) return; G.pass(); fresh = -1; hintIdx = -1; gfb(`${cname(3 - G.turn)}ผ่าน`); afterMove(); };
 $('#b-undo').onclick = () => {
   token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true;
-  G.undo(); if (S && G.turn !== human && G.hist.length) G.undo();
-  retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= G.moves.length); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
+  G.undo(); if (S && G.turn !== human && G.moves.length > undoBase()) G.undo();
+  if (prac) { prac.moved = false; prac.lock = false; }
+  retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= mno()); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
   tutor('ถอยกลับมาแล้ว ลองเดินใหม่ได้เลย'); renderGame(); startPre(); if (botToMove()) botTurn();
 };
+$('#p-back').onclick = () => pracBack();
 $('#b-retry').onclick = () => {
   if (!retry) return; retry = false; $('#gnote').hidden = true;
   if (over && over.type === 'score') endScoring(); else if (botToMove()) botTurn();
@@ -1454,6 +1524,205 @@ function showTab(t) {
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };
 window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
 try { if (location.protocol === 'https:' && window.top === window.self && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { }
+// ---------- ทบทวนทั้งเกมด้วยรุ่นใหญ่ และโหมดฝึกเดินใหม่ ----------
+let deep = null, deepShown = false;
+const nmPt = x => x == null || x < 0 ? 'ผ่าน' : G.name(x);
+const PHASE_NAMES = ['ช่วงเปิดเกม', 'ช่วงกลางเกม', 'ช่วงท้ายเกม'];
+const leadText = v => v > 0.05 ? `คุณนำ ${v.toFixed(1)} แต้ม` : v < -0.05 ? `คุณตาม ${(-v).toFixed(1)} แต้ม` : 'เสมอกัน';
+
+function deepBoxHtml() {
+  if (!S || prac || G.moves.length <= hcN()) return '';
+  if (deep && deep.state === 'done') return '<div class="deepbox" id="deepbox"><button class="btn primary" data-act="deep-show">ดูผลทบทวนทั้งเกม</button><p class="small">ทบทวนด้วยรุ่นใหญ่ไว้แล้ว</p></div>';
+  const on = Srv.online;
+  return `<div class="deepbox" id="deepbox"><button class="btn primary" data-act="deep"${on ? '' : ' disabled'}>ทบทวนทั้งเกมด้วยรุ่นใหญ่</button><p class="small">${on ? 'ใช้เครื่องของสำนัก แม่นกว่าการประเมินระหว่างเกม' : 'เครื่องของสำนักปิดอยู่'}</p></div>`;
+}
+function deepBoxRefresh() {
+  Srv.check().then(() => { const b = $('#deepbox'); if (b && !deepShown) b.outerHTML = deepBoxHtml(); });
+}
+
+function initDeep() {
+  const n = G.n, g = new Go(n, G.komi), mv = G.moves.slice(), grids = [g.grid.slice()], name = G.name.bind(G), komi = G.komi;
+  mv.forEach(m => { m < 0 ? g.pass() : g.play(m); grids.push(g.grid.slice()); });
+  const k0 = hcN();
+  return { mv, k0, M: mv.length, grids, lead: {}, best: {}, done: 0, total: mv.length - k0 + 1, run: 0, state: 'idle', human, sign: human === 1 ? 1 : -1, cur: mv.length, n,
+    at: k => ({ n, komi, moves: mv.slice(0, k), name }) };
+}
+function deepStart() {
+  if (!S || prac || (deep && deep.state === 'run')) return;
+  if (!deep) deep = initDeep();
+  deepShown = true; deepRun();
+}
+async function deepRun() {
+  const d = deep, my = ++d.run; d.state = 'run'; renderDeep();
+  const todo = []; for (let k = d.k0; k <= d.M; k++) if (d.lead[k] == null) todo.push(k);
+  d.done = d.total - todo.length; deepProgress();
+  let nx = 0, bad = false;
+  const worker = async () => {
+    while (!bad && d.run === my && nx < todo.length) {
+      const k = todo[nx++];
+      try {
+        const a = await Srv.analyze(d.at(k), 150, true);
+        if (d.run !== my) return;
+        if (typeof a.lead !== 'number' || !isFinite(a.lead)) throw new Error('bad lead');
+        d.lead[k] = a.lead; d.best[k] = a.best; d.done++; deepProgress();
+      } catch (e) { if (d.run === my) bad = true; return; }
+    }
+  };
+  await Promise.all([worker(), worker(), worker()]);
+  if (d.run !== my || deep !== d) return;
+  if (bad || todo.some(k => d.lead[k] == null)) { d.state = 'fail'; renderDeep(); return; }
+  deepFinish(d);
+}
+function deepCancel() { if (!deep) return; deep.run++; deep.state = 'idle'; deepShown = false; renderReview(); }
+function deepClose() { deepShown = false; review = null; renderGame(); renderReview(); }
+function deepProgress() {
+  const d = deep, el = $('#dprog'); if (!el || !d) return;
+  el.setAttribute('aria-valuenow', d.done); $('i', el).style.width = (d.done / d.total * 100).toFixed(1) + '%';
+  const t = $('#dprog-t'); if (t) t.textContent = `วิเคราะห์แล้ว ${d.done} จาก ${d.total} ตำแหน่ง`;
+}
+function deepFinish(d) {
+  d.items = []; const ph = [[], [], []], o1 = d.n * d.n / 7, o2 = d.n * d.n * 0.42;
+  for (let k = d.k0; k < d.M; k++) {
+    if ((k % 2 === 0 ? 1 : 2) !== d.human) continue;
+    const loss = Math.max(0, (d.lead[k] - d.lead[k + 1]) * d.sign), no = k - d.k0 + 1;
+    d.items.push({ k, no, loss }); ph[no <= o1 ? 0 : no <= o2 ? 1 : 2].push(loss);
+  }
+  const sum = a => a.reduce((x, y) => x + y, 0);
+  d.avg = d.items.length ? sum(d.items.map(t => t.loss)) / d.items.length : 0;
+  d.big = d.items.filter(t => t.loss >= 5).length;
+  d.ph = ph.map(a => ({ c: a.length, avg: a.length ? sum(a) / a.length : 0 }));
+  let bi = -1, bv = 0; d.ph.forEach((p, i) => { if (p.c && p.avg > bv) { bv = p.avg; bi = i; } });
+  d.weak = bi; d.top = d.items.filter(t => t.loss >= 1).sort((a, b) => b.loss - a.loss).slice(0, 5);
+  d.state = 'done';
+  if (lastRec) { lastRec.deep = { avg: Math.round(d.avg * 100) / 100, big: d.big, weak: bi }; store.set('go-log', matchLog); }
+  d.cur = d.M; review = null; renderGame(); renderDeep();
+}
+
+function renderDeep() {
+  const R = $('#review'), d = deep; if (!d) return;
+  R.hidden = false;
+  if (d.state === 'run') {
+    R.innerHTML = `<h2>ทบทวนทั้งเกมด้วยรุ่นใหญ่</h2><p class="small">ใช้เครื่องของสำนักวิเคราะห์ทุกตำแหน่งของเกมนี้ อาจใช้เวลาสักครู่</p><div class="prog" id="dprog" role="progressbar" aria-label="ความคืบหน้าการทบทวน" aria-valuemin="0" aria-valuemax="${d.total}" aria-valuenow="${d.done}"><i></i></div><p id="dprog-t" class="small" aria-live="off"></p><div class="btns"><button class="btn" data-act="deep-cancel">ยกเลิก</button></div>`;
+    return deepProgress();
+  }
+  if (d.state === 'fail') {
+    R.innerHTML = `<h2>ทบทวนทั้งเกมด้วยรุ่นใหญ่</h2><p class="warn">การเชื่อมต่อกับเครื่องของสำนักหลุด ทบทวนได้แล้ว ${d.done} จาก ${d.total} ตำแหน่ง ผลที่ได้เก็บไว้แล้ว กดลองต่อเพื่อวิเคราะห์ส่วนที่เหลือ</p><div class="btns"><button class="btn primary" data-act="deep">ลองต่อ</button><button class="btn" data-act="deep-close">กลับไปดูบทเรียนแบบย่อ</button></div>`;
+    return;
+  }
+  const again = S.eng === 'server' ? suggestHc(S.id, G.n) : HC;
+  R.innerHTML = `<h2>ทบทวนทั้งเกมด้วยรุ่นใหญ่</h2><p><b>${esc(over.res.text)}</b></p>
+    <div class="tips"><p>เสียเฉลี่ย <b>${d.avg.toFixed(1)}</b> แต้มต่อตา · ตาที่เสียตั้งแต่ 5 แต้มขึ้นไป <b>${d.big}</b> ตา${d.weak >= 0 ? ` · อ่อนสุดที่${PHASE_NAMES[d.weak]}` : ''}</p>
+    <h3>แต้มนำตลอดเกม</h3><p class="small">แกนตั้งคือแต้มนำของคุณ ค่าบวกคือคุณนำ แกนนอนคือลำดับตา แตะที่กราฟเพื่อดูตำแหน่งนั้นบนกระดาน</p>
+    <div class="chartbox" id="dv-chart" tabindex="0" role="group" aria-label="กราฟแต้มนำของคุณตลอดเกม แตะเพื่อข้ามไปยังตานั้น หรือใช้ปุ่มลูกศรซ้ายขวา"></div>
+    <div class="dnav"><button class="btn" id="dv-prev" data-dstep="-1">ตาก่อนหน้า</button><button class="btn" id="dv-next" data-dstep="1">ตาถัดไป</button></div>
+    <p id="dv-info" aria-live="polite"></p>
+    <h3>ตาที่เสียแต้มมากที่สุด</h3>${d.top.length ? `<div class="rv">${d.top.map(t => `<div class="mk"><button class="btn" data-dg="${t.k}">ตาที่ ${t.no} · ${nmPt(d.mv[t.k])} · เสีย ${t.loss.toFixed(1)} แต้ม${d.best[t.k] != null && d.best[t.k] !== d.mv[t.k] ? ' · ควรเดิน ' + nmPt(d.best[t.k]) : ''}</button><button class="btn" data-pk="${t.k}" data-src="d">ลองเดินใหม่จากจุดนี้</button></div>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่รุ่นใหญ่แนะ</p>` : '<p>ไม่มีตาไหนเสียเกิน 1 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>'}
+    <h3>เสียแต้มเฉลี่ยแต่ละช่วง</h3><ul class="plist">${d.ph.map((p, i) => `<li>${PHASE_NAMES[i]}: ${p.c ? `เสียเฉลี่ย ${p.avg.toFixed(1)} แต้มต่อตา (${p.c} ตา)` : 'ไม่มีตาในช่วงนี้'}${i === d.weak ? ' <b>อ่อนสุด</b>' : ''}</li>`).join('')}</ul>
+    <p>${d.weak >= 0 ? `ช่วงที่ควรฝึกมากที่สุดคือ${PHASE_NAMES[d.weak]}` : 'ไม่มีช่วงไหนเสียแต้มเด่นชัด'}</p></div>
+    <div class="btns"><button class="btn" data-act="deep-close">กลับไปดูบทเรียนแบบย่อ</button><button class="btn primary" data-act="again" data-hc="${again}">ประลองอีกครั้ง${again ? ` ต่อ ${again} เม็ด` : ''}</button><button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button></div>`;
+  const box = $('#dv-chart');
+  box.onclick = e => {
+    const svg = box.firstElementChild; if (!svg) return;
+    const r = svg.getBoundingClientRect(), W = d.cw || r.width, x = (e.clientX - r.left) / r.width * W;
+    deepGo(d.k0 + Math.round((x - 40) / (W - 50) * (d.M - d.k0)), false);
+  };
+  box.onkeydown = e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); deepStep(e.key === 'ArrowLeft' ? -1 : 1); } };
+  deepPaint();
+}
+function deepChart() {
+  const d = deep, box = $('#dv-chart'); if (!d || !box) return;
+  const W = Math.max(260, Math.round(box.clientWidth - 2)) , H = 210, l = 40, r = 10, t = 12, b = 28, pw = W - l - r, ph = H - t - b, cnt = Math.max(1, d.M - d.k0);
+  d.cw = W;
+  const ys = []; for (let k = d.k0; k <= d.M; k++) ys.push(d.lead[k] * d.sign);
+  const mx = Math.max(5, Math.ceil(Math.max(...ys.map(Math.abs)) / 5) * 5);
+  const X = i => l + i / cnt * pw, Y = v => t + (1 - (v + mx) / (2 * mx)) * ph, z = Y(0);
+  const pts = ys.map((v, i) => [X(i), Y(v)]), line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+  const area = line + `L${X(cnt).toFixed(1)} ${z.toFixed(1)}L${X(0).toFixed(1)} ${z.toFixed(1)}Z`;
+  const fmt = v => v > 0 ? '+' + v : String(v);
+  let g = `<defs><clipPath id="dc-up"><rect x="${l}" y="${t}" width="${pw}" height="${(z - t).toFixed(1)}"/></clipPath><clipPath id="dc-dn"><rect x="${l}" y="${z.toFixed(1)}" width="${pw}" height="${(t + ph - z).toFixed(1)}"/></clipPath></defs>`;
+  for (const v of [-mx, -mx / 2, 0, mx / 2, mx]) g += `<line x1="${l}" x2="${l + pw}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" style="stroke:var(--line)" stroke-width="${v === 0 ? 0 : 1}"/><text x="${l - 6}" y="${(Y(v) + 4).toFixed(1)}" text-anchor="end" font-size="11" style="fill:var(--muted)">${fmt(Math.round(v * 10) / 10)}</text>`;
+  const step = [5, 10, 20, 25, 50, 100, 200].find(s => cnt / s <= Math.max(2, pw / 56)) || 200;
+  for (let m = 0; m <= cnt; m += step) g += `<line x1="${X(m).toFixed(1)}" x2="${X(m).toFixed(1)}" y1="${t + ph}" y2="${t + ph + 4}" style="stroke:var(--muted)"/><text x="${X(m).toFixed(1)}" y="${t + ph + 17}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${m}</text>`;
+  g += `<path d="${area}" clip-path="url(#dc-up)" style="fill:var(--good)" opacity=".28"/><path d="${area}" clip-path="url(#dc-dn)" style="fill:var(--bad)" opacity=".28"/>`;
+  g += `<line x1="${l}" x2="${l + pw}" y1="${z.toFixed(1)}" y2="${z.toFixed(1)}" style="stroke:var(--ink)" stroke-width="1.2"/>`;
+  g += `<path class="dline" d="${line}" fill="none" style="stroke:var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>`;
+  const c = Math.min(cnt, Math.max(0, d.cur - d.k0)), cp = pts[c];
+  g += `<line class="dmark" x1="${cp[0].toFixed(1)}" x2="${cp[0].toFixed(1)}" y1="${t}" y2="${t + ph}" style="stroke:var(--accent)" stroke-width="1.6" stroke-dasharray="4 3"/><circle cx="${cp[0].toFixed(1)}" cy="${cp[1].toFixed(1)}" r="5" style="fill:var(--accent);stroke:var(--bg)" stroke-width="2"/>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="กราฟแต้มนำของคุณ ตาที่ 0 ถึง ${cnt} ค่าสูงสุด ${mx} แต้ม">${g}</svg>`;
+}
+function deepPaint() {
+  const d = deep; if (!d || d.state !== 'done') return;
+  deepChart();
+  const k = d.cur, v = d.lead[k] * d.sign, no = k - d.k0 + 1;
+  let s;
+  if (k >= d.M) s = `<b>ตำแหน่งสุดท้าย</b> หลังเดินครบ ${d.M - d.k0} ตา · ${leadText(v)}`;
+  else {
+    const mover = k % 2 === 0 ? 1 : 2, mine = mover === d.human, it = d.items.find(t => t.k === k);
+    s = `<b>ก่อนตาที่ ${no}</b> · ${cname(mover)}เดิน${mine ? ' (คุณ)' : ''} ${nmPt(d.mv[k])} · ${leadText(v)}`;
+    if (mine && it && it.loss >= 0.5) s += ` · ตานี้เสีย ${it.loss.toFixed(1)} แต้ม${d.best[k] != null && d.best[k] !== d.mv[k] ? ' ควรเดิน ' + nmPt(d.best[k]) : ''}`;
+  }
+  $('#dv-info').innerHTML = s;
+  $('#dv-prev').disabled = k <= d.k0; $('#dv-next').disabled = k >= d.M;
+}
+function deepGo(k, scroll) {
+  const d = deep; if (!d || d.state !== 'done') return;
+  k = Math.max(d.k0, Math.min(d.M, k)); d.cur = k;
+  const mover = k % 2 === 0 ? 1 : 2;
+  review = { before: d.grids[k], idx: k < d.M ? d.mv[k] : -1, best: k < d.M && mover === d.human && d.best[k] != null ? d.best[k] : -1, no: k - d.k0 + 1, label: k >= d.M ? 'ตำแหน่งสุดท้ายของเกม' : `กำลังดูตำแหน่งก่อนตาที่ ${k - d.k0 + 1}` };
+  renderGame(); deepPaint();
+  if (scroll) GB.scrollIntoView({ block: 'nearest' });
+}
+const deepStep = dlt => { if (deep) deepGo(deep.cur + dlt, false); };
+window.addEventListener('resize', () => { if (deep && deep.state === 'done' && deepShown && $('#dv-chart')) deepPaint(); });
+
+// ---------- โหมดฝึก ----------
+function startPractice(k, src) {
+  if (!S) return;
+  let p;
+  if (k < 0) { if (!prac) return; p = { ...prac }; }
+  else {
+    if (prac) return;
+    let info;
+    if (src === 'd') { const d = deep; if (!d || d.state !== 'done') return; info = { played: d.mv[k], best: d.best[k] == null ? -1 : d.best[k], loss: Math.max(0, (d.lead[k] - d.lead[k + 1]) * d.sign) }; }
+    else { const t = rec.find(x => x.no === k - hcN() + 1); if (!t) return; info = { played: t.idx, best: t.best, loss: t.loss }; }
+    p = { moves: G.moves.slice(0, k), hc: HC, komi: G.komi, ...info };
+    pracSaved = { G, S, human, over, dead, rec, HC, degraded, kataOK, lastSgf, lastRec, deep, deepShown };
+  }
+  p.moved = false; p.lock = false;
+  startGame(S, G.n, human, null, { prac: p });
+}
+function pracBack() {
+  const sv = pracSaved; if (!sv) return toLobby();
+  token++; prac = null; pracSaved = null; $('#pbanner').hidden = true;
+  G = sv.G; S = sv.S; human = sv.human; over = sv.over; dead = sv.dead; rec = sv.rec; HC = sv.HC; degraded = sv.degraded; kataOK = sv.kataOK; lastSgf = sv.lastSgf; lastRec = sv.lastRec; deep = sv.deep; deepShown = sv.deepShown;
+  busy = false; retry = false; review = null; pre = null; fresh = -1; hintIdx = -1; $('#gnote').hidden = true; gfb('');
+  tutor('กลับมาที่บทเรียนจากเกมจริงแล้ว');
+  renderGame();
+  if (deepShown && deep && deep.state === 'done') { renderDeep(); deepGo(deep.cur, false); } else { if (deep && deep.state !== 'done') deepShown = false; renderReview(); }
+  $('#review').scrollIntoView({ block: 'nearest' });
+}
+// ติวเตอร์ตอบตาแรกของโหมดฝึก: ดีกว่าตาเดิมในเกมจริงหรือไม่
+async function pracJudge(i, gb, ga, my) {
+  const p = prac, say = t => { if (my === token && prac === p) $('#tutor-text').textContent = t; };
+  const fallback = () => {
+    if (p.best >= 0 && i === p.best) return `ตรงกับจุดที่แนะนำคือ ${G.name(i)} ดีกว่าตาเดิมในเกมจริง`;
+    if (p.best >= 0) return `ไม่ใช่จุดที่แนะนำ (${G.name(p.best)}) ตอนนี้ยังบอกไม่ได้ว่าดีกว่าตาเดิมหรือไม่`;
+    return 'ไม่มีจุดแนะนำให้เทียบ ลองเล่นต่อแล้วดูผลที่ปลายทาง';
+  };
+  if (i === p.played) return say('ตานี้เป็นจุดเดียวกับที่คุณเดินในเกมจริง ลองหาจุดอื่นดู');
+  const eng = isKata() ? engine() : Srv.online ? Srv : null;
+  if (!eng) return say(fallback());
+  say('กำลังเทียบกับตาเดิมในเกมจริง...');
+  try {
+    const vis = eng === Srv ? 100 : 16, a0 = await eng.analyze(gb, vis), a1 = await eng.analyze(ga, vis);
+    const sg = human === 1 ? 1 : -1, loss = Math.max(0, (a0.lead - a1.lead) * sg);
+    if (p.loss == null) return say(`${i === p.best ? 'ตรงกับจุดที่แนะนำ' : 'ตานี้'}เสียราว ${loss.toFixed(1)} แต้ม${p.best >= 0 && i !== p.best ? ` จุดที่แนะนำคือ ${G.name(p.best)}` : ''}`);
+    const dl = p.loss - loss, tail = `ตานี้เสียราว ${loss.toFixed(1)} แต้ม ส่วนตาเดิมในเกมจริงเสียราว ${p.loss.toFixed(1)} แต้ม`;
+    if (dl >= 0.5) say('ดีกว่าตาเดิม ' + tail);
+    else if (dl <= -0.5) say('ยังสู้ตาเดิมไม่ได้ ' + tail + (p.best >= 0 && i !== p.best ? ` จุดที่ดีกว่าคือ ${G.name(p.best)}` : ''));
+    else say('ใกล้เคียงกับตาเดิม ' + tail);
+  } catch (e) { say(fallback()); }
+}
 // ---------- โปรไฟล์ในเครื่องนี้ ----------
 const ANIMALS = [
   { kind: 'dog', fur: '#D9A066', label: 'หมา' }, { kind: 'panda', fur: '#F4F4F0', label: 'แพนด้า' }, { kind: 'monkey', fur: '#8A5A3A', label: 'ลิง' },
@@ -1547,8 +1816,9 @@ $('#home').onclick = e => {
 // ---------- เกมค้าง ----------
 const GKEY = 'go-game';
 function saveGame() {
-  if (!G || !G.moves.length || (over && over.final)) return;
-  store.set(GKEY, { v: 1, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
+  if (!G || prac || (over && over.final)) return;
+  if (G.moves.length <= hcN()) return clearGame();
+  store.set(GKEY, { v: 1, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
 }
 const clearGame = () => store.del(GKEY);
 function readGame() {
@@ -1556,15 +1826,19 @@ function readGame() {
   const s = d.sid == null ? null : bySid(d.sid);
   if (d.sid != null && !s) return null;
   if (![7, 9, 13, 19].includes(d.n) || ![1, 2].includes(d.col) || !Array.isArray(d.moves) || !d.moves.length || d.moves.length > 1500 || typeof d.komi !== 'number') return null;
+  const hc = Number.isInteger(d.hc) && d.hc >= 2 && d.hc <= 9 && s && d.moves.length >= 2 * d.hc - 1 ? d.hc : 0, base = hc ? 2 * hc - 1 : 0;
+  if (d.hc && !hc) return null;
   const g = new Go(d.n, d.komi);
   for (const m of d.moves) { if (!Number.isInteger(m) || m < -1 || m >= d.n * d.n) return null; if (m < 0) g.pass(); else if (!g.play(m).ok) return null; }
-  return { s, n: d.n, col: d.col, komi: d.komi, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
+  return { s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
 }
 function replayInto(res) {
   const sv = new Map(res.rec.filter(t => t && typeof t === 'object').map(t => [t.no, t]));
+  const base = res.hc ? 2 * res.hc - 1 : 0;
   for (const m of res.moves) {
+    if (G.moves.length < base) { m < 0 ? G.pass() : G.play(m); if (G.moves.length === base) G.passes = 0; continue; }
     if (m < 0) { G.pass(); continue; }
-    const who = G.turn, before = G.grid.slice(), no = G.moves.length + 1, f = moveFacts(G, m);
+    const who = G.turn, before = G.grid.slice(), no = G.moves.length - base + 1, f = moveFacts(G, m);
     if (!G.play(m).ok) break;
     if (S && who === human) {
       const t = sv.get(no) || {}, loss = typeof t.loss === 'number' ? t.loss : null;
@@ -1578,7 +1852,7 @@ function paintResume() {
   const d = $('#game').hidden ? readGame() : null;
   document.querySelectorAll('.rs-slot').forEach(el => {
     if (!d) { el.innerHTML = ''; return; }
-    el.innerHTML = `<div class="resume-banner"><p>มีเกมค้างอยู่กับ <b>${d.s ? esc(d.s.name) : 'เพื่อน'}</b> ตาที่ ${d.moves.length + 1}</p><div class="btns"><button class="btn primary" data-rs="go">เล่นต่อ</button><button class="btn" data-rs="drop">ทิ้งเกมนี้</button></div></div>`;
+    el.innerHTML = `<div class="resume-banner"><p>มีเกมค้างอยู่กับ <b>${d.s ? esc(d.s.name) : 'เพื่อน'}</b> ตาที่ ${d.no}</p><div class="btns"><button class="btn primary" data-rs="go">เล่นต่อ</button><button class="btn" data-rs="drop">ทิ้งเกมนี้</button></div></div>`;
   });
 }
 document.addEventListener('click', e => {
@@ -1629,12 +1903,14 @@ function parseCode(text) {
   const ids = new Set([...LESSONS, ...PUZZLES].map(x => x.id)), dn = {}, rc = {}, lg = [];
   for (const k of Object.keys(o.done)) if (ids.has(k) && o.done[k]) dn[k] = 1;
   const cnt = v => Number.isInteger(v) && v >= 0 && v < 1e6;
-  for (const s of SENSEI) { const r = o.rec[s.id]; if (r) { if (!cnt(r.w) || !cnt(r.l)) return null; rc[s.id] = { w: r.w, l: r.l }; } }
+  for (const s of SENSEI) { const r = o.rec[s.id]; if (r) { if (!cnt(r.w) || !cnt(r.l) || (r.we != null && !cnt(r.we))) return null; rc[s.id] = r.we == null ? { w: r.w, l: r.l } : { w: r.w, l: r.l, we: r.we }; } }
   const str = (v, m) => typeof v === 'string' && v.length <= m;
   const numN = v => v == null || (typeof v === 'number' && isFinite(v));
   for (const r of o.log.slice(-200)) {
     if (!r || typeof r !== 'object' || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
-    lg.push({ t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
+    const hcv = Number.isInteger(r.handicap) && r.handicap >= 2 && r.handicap <= 9 ? r.handicap : 0;
+    const dp = r.deep && typeof r.deep === 'object' && numN(r.deep.avg) && r.deep.avg != null && cnt(r.deep.big) && Number.isInteger(r.deep.weak) && r.deep.weak >= -1 && r.deep.weak <= 2 ? { avg: r.deep.avg, big: r.deep.big, weak: r.deep.weak } : null;
+    lg.push({ handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
   if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; }
