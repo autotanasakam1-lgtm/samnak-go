@@ -1,6 +1,6 @@
 {
  "started": "2026-10-11T15:02:11.220Z",
- "updated": "2026-10-11T15:10:03.396Z",
+ "updated": "2026-10-11T15:13:57.497Z",
  "done": false,
  "gamesPerSensei": 14,
  "note": "anchor = KataGo Human SL (b18c384nbt-humanv0) sampled from humanPolicy T=0.85; 19x19 komi 7.5; staircase",
@@ -629,10 +629,17 @@
      "win": false,
      "lead": -71.6,
      "moves": 340
+    },
+    {
+     "r": "8k",
+     "black": false,
+     "win": false,
+     "lead": 6.9,
+     "moves": 420
     }
    ],
    "estimate": "6k",
-   "tailWins": "3/9"
+   "tailWins": "3/10"
   },
   "s7": {
    "name": "เซนเซแมวดำ",
@@ -728,10 +735,17 @@
      "win": false,
      "lead": -35.4,
      "moves": 140
+    },
+    {
+     "r": "5k",
+     "black": false,
+     "win": false,
+     "lead": 14.6,
+     "moves": 420
     }
    ],
    "estimate": "2k",
-   "tailWins": "2/9"
+   "tailWins": "2/10"
   },
   "s8": {
    "name": "อาจารย์กระเรียน",
@@ -806,10 +820,38 @@
      "win": true,
      "lead": -36.4,
      "moves": 260
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": true,
+     "lead": 21.4,
+     "moves": 347
+    },
+    {
+     "r": "9d",
+     "black": false,
+     "win": true,
+     "lead": -39.2,
+     "moves": 240
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": false,
+     "lead": -2.2,
+     "moves": 363
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": false,
+     "lead": 35.9,
+     "moves": 220
     }
    ],
    "estimate": "8d",
-   "tailWins": "3/6"
+   "tailWins": "5/10"
   },
   "s9": {
    "name": "ปรมาจารย์มังกร",
@@ -835,9 +877,73 @@
      "win": false,
      "lead": -57.9,
      "moves": 200
+    },
+    {
+     "r": "6d",
+     "black": false,
+     "win": true,
+     "lead": -61,
+     "moves": 260
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": true,
+     "lead": 51.1,
+     "moves": 180
+    },
+    {
+     "r": "9d",
+     "black": false,
+     "win": true,
+     "lead": -46.8,
+     "moves": 360
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": true,
+     "lead": 38.7,
+     "moves": 300
+    },
+    {
+     "r": "9d",
+     "black": false,
+     "win": false,
+     "lead": 40.4,
+     "moves": 140
+    },
+    {
+     "r": "8d",
+     "black": true,
+     "win": false,
+     "lead": -42,
+     "moves": 340
+    },
+    {
+     "r": "7d",
+     "black": false,
+     "win": false,
+     "lead": 56.8,
+     "moves": 100
+    },
+    {
+     "r": "6d",
+     "black": true,
+     "win": true,
+     "lead": 47.9,
+     "moves": 140
+    },
+    {
+     "r": "7d",
+     "black": false,
+     "win": true,
+     "lead": -44.1,
+     "moves": 120
     }
    ],
-   "estimate": null
+   "estimate": "8d",
+   "tailWins": "5/8"
   }
  },
  "errors": []
