@@ -292,7 +292,15 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
 .animals button[aria-pressed="true"]{border-color:var(--accent);background:var(--wash);box-shadow:0 0 0 2px var(--accent) inset}
 .home{display:flex;flex-direction:column;gap:20px}
 .h-greet{display:flex;flex-direction:column;gap:10px}
+.h-greet{flex-direction:row;align-items:center;gap:14px}
+.h-greet .col{min-width:0;gap:2px}
 .h-greet h1{margin:0;overflow-wrap:anywhere}
+.h-av{flex:none;width:72px;height:72px;border-radius:50%;background:var(--wash);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+@media (prefers-reduced-motion:no-preference){.h-av svg{animation:hbob 3.2s ease-in-out infinite}@keyframes hbob{50%{transform:translateY(-3px)}}.gtip{animation:hfade .3s ease-out}@keyframes hfade{from{opacity:.4}}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;list-style:none;margin:0;padding:0;color:var(--muted)}
+.legend li{display:flex;align-items:center;gap:6px}.legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.gtip{background:var(--wash);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.gtip p{margin:0;line-height:1.7;overflow-wrap:anywhere}
 .h-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
 @media (min-width:900px){.h-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}}
 .h-col{display:flex;flex-direction:column;gap:20px;min-width:0}
@@ -645,6 +653,31 @@ const PUZZLES = [
   { id: 'p5', level: '20 คิว', title: 'ทำให้รอด', steps: [{ t: 'point', rows: B(1, ['OOO', 'XXO', '.XO', '*XO', '.XO', 'XXO', 'OOO']), text: 'ดำเดิน ทำสองตาให้กลุ่มริมซ้าย', ok: 'ได้สองตา กลุ่มนี้ไม่ต้องห่วงอีกตลอดเกม', no: 'ช่องว่างสองช่องที่ติดกันนับเป็นตาเดียว' }] },
   { id: 'p6', level: '15 คิว', title: 'เลือกด้านบันได', steps: [{ t: 'point', check: 'atari', rows: B(4, ['...X', '..*OX', '....X']), text: 'ดำเดิน อาตาริด้านไหนจึงไล่ขาวเป็นบันไดได้', ok: 'ขาวต้องหนีลงล่างไปชนหมากดำ แล้วไล่ต่อเป็นบันไดไปถึงมุมซ้ายล่าง', no: 'ด้านนี้ขาวต่อออกไปได้สามลมหายใจ บันไดไม่เกิด' }] },
   { id: 'p7', level: '12 คิว', title: 'ดักด้วยตาข่าย', steps: [{ t: 'point', rows: B(3, ['...X.*', '...XO', '....XX']), text: 'ดำเดิน จับหมากขาวโดยไม่ต้องอาตาริ', ok: 'ทางออกทั้งสองด้านถูกคุมไว้แล้ว', no: 'ขาวยังมีทางออกอีกด้าน' }] },
+  { id: 'p8', level: '30 คิว', title: 'กินสองเม็ดติดกัน', steps: [{ t: 'point', check: 'capture', rows: B(3, ['..XX', '.XOO*', '..XX']), text: 'ดำเดิน กินหมากขาวสองเม็ดนี้ มีลมหายใจเหลือจุดเดียว', ok: 'หมากที่ติดกันนับเป็นกลุ่มเดียว ใช้ลมหายใจร่วมกัน ปิดจุดสุดท้ายก็กินได้ทั้งกลุ่ม', no: 'ยังไม่ใช่ นับลมหายใจที่เหลืออยู่ของหมากขาวก่อน' }] },
+  { id: 'p9', level: '29 คิว', title: 'กินหมากที่มุมกระดาน', steps: [{ t: 'point', check: 'capture', rows: B(0, ['OOX', 'OX', '*']), text: 'ดำเดิน กินหมากขาวสามเม็ดที่มุมนี้', ok: 'หมากที่มุมมีลมหายใจน้อยที่สุด จึงโดนล้อมกินได้ง่าย', no: 'ยังไม่ใช่ นับลมหายใจของหมากขาวดูอีกครั้ง' }] },
+  { id: 'p10', level: '27 คิว', title: 'ต่อหมากหนีอาตาริ', steps: [{ t: 'point', rows: B(3, ['...O', '..OX*X', '...O']), text: 'หมากดำเม็ดซ้ายโดนอาตาริ ดำเดิน ช่วยให้รอด', ok: 'ต่อกับหมากของตัวเองเป็นกลุ่มใหญ่ ลมหายใจเพิ่มจาก 1 เป็น 5', no: 'ถ้าไม่ต่อ ขาวจะกินหมากดำเม็ดซ้าย' }] },
+  { id: 'p11', level: '25 คิว', title: 'กินกลุ่มรูปตัวแอล', steps: [{ t: 'point', check: 'capture', rows: B(3, ['...XX', '..XOOX', '...XO*', '....X']), text: 'ดำเดิน กินหมากขาวสามเม็ดที่เรียงเป็นรูปตัวแอล', ok: 'ลมหายใจสุดท้ายของทั้งกลุ่มอยู่จุดเดียว ปิดจุดนั้นกินได้ทั้งสามเม็ด', no: 'ยังไม่ใช่ หาจุดที่เป็นลมหายใจสุดท้ายของกลุ่มขาว' }] },
+  { id: 'p12', level: '24 คิว', title: 'กินเพื่อให้รอด', steps: [{ t: 'point', rows: B(2, ['...OX', '..OXOX', '..O.*', '...O']), text: 'หมากดำเม็ดกลางโดนอาตาริ ถ้าขยายลงล่างจะยังไม่รอด ดูหมากขาวที่อยู่ข้าง ๆ', ok: 'กินขาวเม็ดข้างได้ จุดที่ว่างลงมากลายเป็นลมหายใจ หมากดำรอด', no: 'ยังไม่ใช่ ลองดูว่าขาวเม็ดไหนใกล้โดนกินเองแล้ว' }] },
+  { id: 'p13', level: '22 คิว', title: 'ไล่บันไดไปมุมซ้ายบน', steps: [{ t: 'seq', captures: 6, rows: B(2, ['....X', '...OX', '...X']), text: 'ขาวเหลือสองลมหายใจ อาตาริให้ถูกด้านแล้วไล่ต่อทีละตา ขาวจะหนีเป็นขั้นบันไดจนชนขอบ', seq: [{ at: [2,3], reply: [3,2] }, { at: [3,1], reply: [2,2] }, { at: [1,2], reply: [2,1] }, { at: [1,1], reply: [2,0] }, { at: [1,0], reply: [3,0] }, { at: [4,0] }], ok: 'กินได้ทั้งหกเม็ด ทุกครั้งที่ขาวหนีจะเหลือสองลมหายใจ ดำจึงอาตาริซ้ำจนถึงขอบ', no: 'ยังไม่ใช่ ทุกตาต้องอาตาริ และอาตาริด้านที่ขาวหนีไปติดหมากดำ' }] },
+  { id: 'p14', level: '20 คิว', title: 'ไล่บันไดไปมุมขวาล่าง', steps: [{ t: 'point', check: 'atari', rows: B(4, ['.....XX', '....XO', '.....*']), text: 'ดำเดิน อาตาริขาวเม็ดกลางด้านไหนจึงไล่เป็นบันไดได้ มองหมากดำที่รออยู่ด้านบนขวา', ok: 'ขาวต้องหนีไปทางขวา แล้วชนหมากดำที่รออยู่ ลมหายใจเหลือสองทุกตา ไล่ต่อไปถึงมุมขวาล่างได้', no: 'ด้านนี้ขาวหนีออกไปได้สามลมหายใจ บันไดไม่เกิด' }] },
+  { id: 'p15', level: '19 คิว', title: 'ทำให้รอด สามช่องตรง', steps: [{ t: 'point', rows: B(1, ['OO', 'XXO', '.XO', '*XO', '.XO', 'XXO', 'OO']), text: 'กลุ่มดำมีช่องว่างสามช่องเรียงกันริมกระดาน ดำเดิน ทำให้รอดด้วยสองตา', ok: 'วางจุดกลางแล้วเหลือสองช่องแยกกัน ขาวเข้าไปทางไหนก็ไม่ได้', no: 'ถ้าไม่ใช่จุดกลาง ขาวจะวางจุดกลางแล้วกลุ่มดำจะตาย' }] },
+  { id: 'p16', level: '18 คิว', title: 'ฆ่ากลุ่มสามช่องตรง', steps: [{ t: 'point', rows: B(1, ['XX', 'OOX', '.OX', '*OX', '.OX', 'OOX', 'XX']), text: 'กลุ่มขาวมีช่องว่างสามช่องเรียงกันริมกระดาน ดำเดิน ทำให้กลุ่มนี้ตาย', ok: 'วางจุดกลางของสามช่อง ขาวทำสองตาไม่ได้ ไม่ว่าจะตอบทางไหน', no: 'ขาวจะวางจุดกลางเองแล้วได้สองตา' }] },
+  { id: 'p17', level: '17 คิว', title: 'ฆ่ากลุ่มสามช่องงอ', steps: [{ t: 'point', rows: B(1, ['XX', 'OOX', '.OOX', '*.OX', 'OOOX', 'XXX']), text: 'กลุ่มขาวมีช่องว่างสามช่องงอเป็นรูปตัวแอล ดำเดิน ทำให้กลุ่มนี้ตาย', ok: 'จุดตรงมุมงอคือจุดตายของรูปนี้ ขาวเหลือตาเดียว', no: 'ขาวจะวางตรงมุมงอเอง แล้วทำสองตาได้' }] },
+  { id: 'p18', level: '16 คิว', title: 'ทำให้รอด สามช่องงอ', steps: [{ t: 'point', rows: B(1, ['OO', 'XXO', '.XXO', '*.XO', 'XXXO', 'OOO']), text: 'กลุ่มดำมีช่องว่างสามช่องงอเป็นรูปตัวแอล ดำเดิน ทำให้รอด', ok: 'วางตรงมุมงอ ได้สองตาแยกกัน ขาวฆ่าไม่ได้', no: 'ถ้าไม่ใช่มุมงอ ขาวจะวางตรงนั้นแล้วกลุ่มดำตาย' }] },
+  { id: 'p19', level: '16 คิว', title: 'ฆ่าสามช่องงอที่มุม', steps: [{ t: 'point', rows: B(0, ['*.OX', '.OOX', 'OOX', 'XX']), text: 'ช่องว่างในกลุ่มขาวที่มุมมี 3 ช่องงอเป็นรูปตัวแอล ดำเดิน ทำให้กลุ่มนี้ตาย', ok: 'จุดตรงมุมคือจุดตาย ขาวเหลือตาเดียว', no: 'ขาวจะวางจุดมุมเองแล้วทำสองตาได้' }] },
+  { id: 'p20', level: '15 คิว', title: 'โคะที่ริมกระดาน', steps: [{ t: 'point', check: 'capture', rows: B(0, ['.O*O', '.XOX', '..X']), text: 'ดำเดิน กินหมากขาวหนึ่งเม็ดที่ติดขอบ', ok: 'กินได้ แต่หมากดำที่เพิ่งวางก็เหลือลมหายใจเดียว', no: 'ยังไม่ใช่ ลองดูหมากขาวที่เหลือลมหายใจเดียว' },
+    { t: 'illegal', turn: 2, pre: [[2,0]], answers: [[2,1]], rows: B(0, ['.O.O', '.XOX', '..X']), text: 'คุณถือขาว หมากดำที่เพิ่งวางเหลือลมหายใจเดียว ลองกินกลับตรงจุดเดิม', ok: 'กินกลับทันทีไม่ได้ เพราะซ้ำรูปเดิม ต้องเดินที่อื่นก่อน แล้วค่อยกลับมากิน นี่คือกติกาโคะ' }] },
+  { id: 'p21', level: '15 คิว', title: 'ทำให้รอดที่มุม', steps: [{ t: 'point', rows: B(0, ['*.XO', '.XXO', 'XXO', 'OO']), text: 'ช่องว่างในกลุ่มดำที่มุมมี 3 ช่องงอเป็นรูปตัวแอล ดำเดิน ทำให้รอด', ok: 'วางที่มุม ได้สองตาแยกกัน ขาวฆ่าไม่ได้', no: 'ถ้าไม่ใช่จุดมุม ขาวจะวางจุดนั้นแล้วกลุ่มดำตาย' }] },
+  { id: 'p22', level: '14 คิว', title: 'แทรกกลางอาตาริสองทาง', steps: [{ t: 'point', check: 'double', rows: B(2, ['..X.X', '.XO*OX']), text: 'ดำเดิน วางหมากแทรกระหว่างขาวสองเม็ด ให้ทั้งสองเม็ดโดนอาตาริพร้อมกัน', ok: 'ขาวช่วยได้เม็ดเดียว ดำกินอีกเม็ดที่เหลือ', no: 'ขาวยังช่วยได้ทั้งสองเม็ด' }] },
+  { id: 'p23', level: '14 คิว', title: 'ตารูปไหนรอด', steps: [{ t: 'choice', rows: B(1, ['XX', 'OOX', '.OX', '.OX', '.OX', '.OX', 'OOX', 'XX']), text: 'กลุ่มขาวมีช่องว่างข้างในสี่ช่องเรียงตรง ดำเดินก่อนได้ กลุ่มนี้รอดไหม', choices: [{ label: 'รอด ดำวางตรงไหนขาวก็แบ่งเป็นสองตาได้', right: true }, { label: 'ตาย ดำวางจุดกลางก็ฆ่าได้' }], ok: 'ถูกต้อง สี่ช่องเรียงตรงรอดแน่นอน ดำวางจุดไหนขาวก็ตอบแล้วได้สองตา' },
+    { t: 'choice', rows: B(1, ['XXX', 'OOOX', '..OX', '..OX', 'OOOX', 'XXX']), text: 'คราวนี้ช่องว่างสี่ช่องรวมเป็นสี่เหลี่ยมจัตุรัส ดำเดินก่อนได้ กลุ่มนี้รอดไหม', choices: [{ label: 'ตาย สี่เหลี่ยมนับเป็นตาเดียว ไม่ว่าดำวางตรงไหน', right: true }, { label: 'รอด เพราะช่องว่างตั้งสี่ช่อง' }], ok: 'ถูกต้อง สี่เหลี่ยมจัตุรัสเป็นตาเดียวแม้มีสี่ช่อง กลุ่มนี้ตายเสมอ' }] },
+  { id: 'p24', level: '13 คิว', title: 'ตัดแล้วขาวต่อไม่ได้', steps: [{ t: 'point', rows: B(2, ['...X', '..XO*X', '..X*OX', '...XX']), text: 'ขาวสองเม็ดแตะกันทแยง ดำเดิน ตัดให้ขาดแล้วเอาไว้กินทั้งคู่ (จุดตัดมีสองจุด ได้ทั้งคู่)', ok: 'ขาวสองเม็ดโดนอาตาริที่จุดเดียวกัน ต่อกันก็ไม่ได้ เพราะต่อแล้วไม่เหลือลมหายใจ ดำกินทั้งสองเม็ดได้', no: 'ยังไม่ใช่ ลองตัดตรงจุดที่ขาวสองเม็ดแตะกันทแยง' }] },
+  { id: 'p25', level: '12 คิว', title: 'อาตาริสองทางที่ริม', steps: [{ t: 'point', check: 'double', rows: B(0, ['.....X', '....XO', '...XO*']), text: 'ดำเดิน อาตาริขาวสองเม็ดพร้อมกันด้วยตาเดียว', ok: 'ขาวสองเม็ดแตะกันทแยง ลมหายใจสุดท้ายอยู่คนละจุด ช่วยได้เม็ดเดียว', no: 'ขาวยังหนีได้ทั้งสองเม็ด' }] },
+  { id: 'p26', level: '11 คิว', title: 'อาตาริสองทางจากด้านข้าง', steps: [{ t: 'point', check: 'double', rows: B(0, ['...XXO', '....O*', '....X']), text: 'ดำเดิน หาตาเดียวที่ทำให้ขาวสองเม็ดโดนอาตาริทั้งคู่', ok: 'ขาวเม็ดบนและเม็ดล่างต่างเหลือลมหายใจเดียวคนละจุด ช่วยได้เม็ดเดียว', no: 'ตานี้ขาวยังหนีได้ทั้งสองเม็ด' }] },
+  { id: 'p27', level: '10 คิว', title: 'ทุ่มหมากแล้วกินคืน', steps: [{ t: 'point', rows: B(0, ['O*OOO', 'O.X', 'XX']), text: 'ดำเดิน ลองวางหมากทิ้งในช่องว่างติดขอบ ล่อให้ขาวกิน แล้วกินคืนหลายเม็ด', ok: 'ขาวกินหมากทิ้งได้ แต่กลุ่มขาวที่กินเหลือลมหายใจเดียวทันที ดำกินคืนได้สามเม็ด นี่คือสโนว์แบ็ก (หมากสะบัดกลับ)', no: 'ยังไม่ใช่ ลองวางหมากให้ขาวกินแล้วกินกลับได้มากกว่า' }] },
+  { id: 'p28', level: '9 คิว', title: 'ฆ่ารูปตัวที', steps: [{ t: 'point', rows: B(1, ['XX', 'OOX', '.OOX', '*.OX', '.OOX', 'OOX', 'XX']), text: 'ช่องว่างในกลุ่มขาวเรียงเป็นรูปตัวที ดำเดิน ทำให้กลุ่มนี้ตาย', ok: 'จุดกึ่งกลางของรูปตัวทีคือจุดตาย เหลือตาเดียวหรือสองตาที่ไม่แยกจากกันจริง ขาวทำสองตาไม่ได้', no: 'ขาวจะวางจุดกึ่งกลางเองแล้วทำสองตา' }] },
+  { id: 'p29', level: '9 คิว', title: 'ทำให้รอด รูปตัวที', steps: [{ t: 'point', rows: B(1, ['OO', 'XXO', '.XXO', '*.XO', '.XXO', 'XXO', 'OO']), text: 'ช่องว่างในกลุ่มดำเรียงเป็นรูปตัวที ดำเดิน ทำให้รอด', ok: 'วางจุดกึ่งกลางของรูปตัวที ได้สองตาแยกกัน ขาวฆ่าไม่ได้', no: 'ถ้าไม่ใช่จุดกึ่งกลาง ขาวจะวางจุดนั้นแล้วกลุ่มดำตาย' }] },
+  { id: 'p30', level: '8 คิว', title: 'สโนว์แบ็กที่มุม', steps: [{ t: 'point', rows: B(0, ['OOOX', '*.X', 'OX', 'O']), text: 'ดำเดิน ขาวสามเม็ดบนมุมดูมีลมหายใจสองจุด หาตาที่กินได้ทั้งกลุ่ม', ok: 'วางทิ้งไว้ติดหมากขาว ขาวกินได้เม็ดเดียวแต่กลุ่มเหลือลมหายใจเดียว ดำกินคืนได้สี่เม็ด', no: 'ถ้าอาตาริตรง ๆ ขาวต่อหนีได้ ลองวางหมากทิ้ง' }] },
 ];
 const MASTERS = [
   { id: 'go', name: 'โกะ เซเก็น', years: '1914–2014', tag: 'ผู้ปฏิวัติการเปิดเกม',
@@ -1998,6 +2031,25 @@ const nPuzzles = () => PUZZLES.filter(p => done[p.id]).length;
 const nBeaten = () => SENSEI.filter(s => wins(s.id) >= 1).length;
 const tiles = () => `<div class="tiles"><div class="tile"><b>${nLessons()}</b><span>บทเรียนที่จบ</span></div><div class="tile"><b>${nPuzzles()}</b><span>โจทย์ที่ผ่าน</span></div><div class="tile"><b>${nBeaten()}/${SENSEI.length}</b><span>คู่ประลองที่ชนะแล้ว</span></div></div>`;
 const dayNo = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
+const GTIPS = [
+  'หมากล้อมเล่นด้วยหมากดำกับหมากขาว ฝ่ายดำเดินก่อน และผลัดกันวางทีละเม็ด',
+  'หมากวางบนจุดตัดของเส้น ไม่ได้วางในช่องสี่เหลี่ยม',
+  'ลมหายใจคือจุดว่างที่ติดกับหมากตามแนวเส้น หมากที่ไม่เหลือลมหายใจจะถูกจับออกจากกระดาน',
+  'หมากที่ติดกันตามแนวเส้นตรงนับเป็นกลุ่มเดียวกัน ส่วนแนวเฉียงไม่นับว่าติดกัน',
+  'อาตาริ คือหมากที่เหลือลมหายใจเพียงจุดเดียว ถ้าไม่หนีก็ถูกจับในตาถัดไป',
+  'กลุ่มหมากที่มีตาจริงสองตา ฝ่ายตรงข้ามจับไม่ได้ เรียกว่าอยู่รอด',
+  'กฎโค ห้ามวางหมากแล้วทำให้กระดานกลับไปเหมือนตาก่อนหน้า ต้องไปเดินจุดอื่นก่อนแล้วค่อยกลับมา',
+  'ห้ามวางหมากในจุดที่ไม่มีลมหายใจ เว้นแต่การวางนั้นจับหมากฝ่ายตรงข้ามได้',
+  'เกมจบเมื่อทั้งสองฝ่ายผ่านติดต่อกัน จากนั้นนับพื้นที่ที่ล้อมได้เพื่อตัดสินผู้ชนะ',
+  'ฝ่ายดำเดินก่อนจึงได้เปรียบ จึงมีคอมิ คือแต้มชดเชยให้ฝ่ายขาว',
+  'ระดับฝีมือต่างกัน ให้ฝ่ายอ่อนกว่าวางหมากดำไว้ล่วงหน้า เรียกว่าแต้มต่อ',
+  'กระดานมาตรฐานคือ 19x19 ส่วน 9x9 และ 13x13 เหมาะกับการฝึกช่วงแรก',
+  'ตำแหน่งที่มีจุดดำเล็ก ๆ บนกระดานเรียกว่าจุดดาว ช่วยให้มองตำแหน่งได้ง่ายและใช้วางหมากแต้มต่อ',
+  'หลักทั่วไปในช่วงเปิดเกม คือเริ่มที่มุมก่อน แล้วขยายไปด้านข้าง และค่อยไปตรงกลาง',
+  'มารยาท ควรทักทายคู่ต่อสู้ก่อนเริ่มเกม และหยิบหมากด้วยนิ้วชี้กับนิ้วกลาง วางเบา ๆ',
+  'หมากล้อมมีประวัติยาวนานกว่าสองพันปี จีนเรียกเวยฉี ญี่ปุ่นเรียกอิโกะ เกาหลีเรียกบาดุก'
+];
+let gtipI = dayNo() % GTIPS.length;
 const TIPS = SENSEI.flatMap(s => [2, 3].map(k => [s.id, BANTER[s.id][k]]));
 
 function goPlay(id) {
@@ -2015,17 +2067,24 @@ function boardDeco() {
 function showPath() {
   $('#lesson-view').hidden = true; $('#path-view').hidden = false;
   const tot = LESSONS.length, nd = nLessons(), next = LESSONS.find(l => !done[l.id]), rs = bySid(recId() || 's9'), top = playerRank();
-  const Cc = 2 * Math.PI * 34, off = Cc * (1 - nd / tot);
-  const ring = `<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="เรียนแล้ว ${nd} จาก ${tot} บท"><circle cx="42" cy="42" r="40" fill="var(--surface)"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${Cc.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 42 42)"/><text x="42" y="48" text-anchor="middle" font-size="18" font-weight="500" style="font-family:var(--mono)">${nd}/${tot}</text></svg>`;
-  const hero = next
-    ? `<div class="col" style="gap:6px"><span class="eyebrow">เรียนต่อ</span><h2>${esc(next.title)}</h2><p class="small">ขั้น ${next.stage} · ${esc((STAGES.find(s => s.n === next.stage) || {}).title || '')}</p></div>${ring}<div class="go"><button class="btn primary" data-continue="${next.id}">เรียนต่อ</button></div>`
-    : `<div class="col" style="gap:6px"><span class="eyebrow">เรียนครบแล้ว</span><h2>ลองลงสนามจริงกับ${esc(rs.name)}</h2><p class="small">${esc(rs.rank)} กำลังรออยู่</p></div>${ring}<div class="go"><button class="btn primary" data-play="${rs.id}">ประลองกับ${esc(rs.name)}</button></div>`;
-  const tip = TIPS[dayNo() % TIPS.length], ts = bySid(tip[0]), pk = dayNo() % PUZZLES.length, pz = PUZZLES[pk];
+  const arc = (r, f, col) => { const c = 2 * Math.PI * r; return `<circle cx="42" cy="42" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="42" cy="42" r="${r}" fill="none" stroke="${col}" stroke-width="6" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - Math.max(0, Math.min(1, f)))).toFixed(1)}" transform="rotate(-90 42 42)"/>`; };
+  const np = nPuzzles(), nb = nBeaten(), pt = PUZZLES.length || 1, sb = SENSEI.length || 1, pct = Math.round(100 * (nd + np + nb) / ((tot + pt + sb) || 1));
+  const ring = `<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="ความคืบหน้า บทเรียน ${nd} จาก ${tot} โจทย์ ${np} จาก ${pt} คู่ประลอง ${nb} จาก ${sb}"><circle cx="42" cy="42" r="41" fill="var(--surface)"/>${arc(36, nd / tot, 'var(--accent)')}${arc(27, np / pt, 'var(--good)')}${arc(18, nb / sb, 'var(--bad)')}<text x="42" y="47" text-anchor="middle" font-size="12" font-weight="500" style="font-family:var(--mono)">${pct}%</text></svg>`;
+  const rsm = $('#game').hidden ? readGame() : null, sk0 = profile && profile.skill, skS = sk0 && sk0.self > 0 && nd === 0 && !rsm ? bySid(sk0.sid) : null;
+  let hero;
+  if (rsm) hero = `<div class="col" style="gap:6px"><span class="eyebrow">เกมที่ค้างอยู่</span><h2>เกมกับ${rsm.s ? esc(rsm.s.name) : 'เพื่อน'}</h2><p class="small">ตาที่ ${rsm.no}</p></div>${ring}<div class="go"><button class="btn primary" data-rs="go" type="button">ทำต่อ</button></div>`;
+  else if (skS) hero = `<div class="col" style="gap:6px"><span class="eyebrow">แนะนำสำหรับคุณ</span><h2>ลอง 9x9 กับ${esc(skS.name)}</h2><p class="small">${esc(skS.rank)}</p></div>${ring}<div class="go"><button class="btn primary" data-play="${skS.id}" type="button">ทำต่อ</button></div>`;
+  else if (next) hero = `<div class="col" style="gap:6px"><span class="eyebrow">${nd ? 'บทถัดไป' : 'เริ่มต้นที่นี่'}</span><h2>${esc(next.title)}</h2><p class="small">ขั้น ${next.stage} · ${esc((STAGES.find(s => s.n === next.stage) || {}).title || '')}</p></div>${ring}<div class="go"><button class="btn primary" data-continue="${next.id}" type="button">${nd ? 'ทำต่อ' : 'เริ่มเลย'}</button></div>`;
+  else hero = `<div class="col" style="gap:6px"><span class="eyebrow">เรียนครบแล้ว</span><h2>ลองลงสนามจริงกับ${esc(rs.name)}</h2><p class="small">${esc(rs.rank)} กำลังรออยู่</p></div>${ring}<div class="go"><button class="btn primary" data-play="${rs.id}" type="button">ทำต่อ</button></div>`;
+  const hr = new Date().getHours(), greet = hr >= 5 && hr < 12 ? 'อรุณสวัสดิ์' : hr >= 12 && hr < 17 ? 'สวัสดียามบ่าย' : hr >= 17 && hr < 21 ? 'สวัสดียามเย็น' : 'ค่ำแล้ว พักสมองด้วยหมากสักตา';
+  const fresh0 = nd + np + nb === 0;
+  const legend = `<ul class="legend small"><li><i style="background:var(--accent)"></i>บทเรียน</li><li><i style="background:var(--good)"></i>โจทย์</li><li><i style="background:var(--bad)"></i>คู่ประลอง</li></ul>`;
+  const pk = dayNo() % PUZZLES.length, pz = PUZZLES[pk];
   const stages = STAGES.filter(s => LESSONS.some(l => l.stage === s.n));
-  $('#home').innerHTML = `<div class="h-greet"><h1>สวัสดี ${esc(pn())}</h1>${justJoined ? `<div class="tipbox">${avatar(bySid('s2'), 48)}<p class="bubble">ยินดีที่ได้รู้จัก ${esc(pn())} เริ่มจากบทแรกได้เลย</p></div>` : ''}</div>
-    <div class="rs-slot"></div>${skBanner()}
-    <div class="h-grid"><div class="h-col"><div class="hero">${boardDeco()}${hero}</div>${tiles()}${top ? `<p class="small">ชนะถึง: ${esc(top.name)}</p>` : ''}</div>
-    <div class="h-col"><section class="hsec"><h2>เคล็ดลับวันนี้</h2><div class="tipbox">${avatar(ts, 48)}<p class="bubble">${esc(tip[1])}</p></div></section>
+  $('#home').innerHTML = `<div class="h-greet"><span class="h-av">${pav(72)}</span><div class="col"><span class="eyebrow">${greet}</span><h1>${esc(pn())}</h1>${justJoined ? `<p class="small">ยินดีที่ได้รู้จัก เริ่มจากบทแรกได้เลย</p>` : ''}</div></div>
+    ${skBanner()}
+    <div class="h-grid"><div class="h-col"><div class="hero">${boardDeco()}${hero}</div>${legend}${tiles()}<p class="small">${fresh0 ? 'ยังไม่มีผลการเรียน เริ่มบทแรกแล้วตัวเลขจะขึ้นที่นี่' : top ? 'ชนะถึง: ' + esc(top.name) : 'ยังไม่ชนะคู่ประลองคนไหน ลองสักตาไหม'}</p></div>
+    <div class="h-col"><section class="hsec"><h2>เกร็ดโกะ</h2><div class="gtip"><p id="gtip-t" aria-live="polite">${esc(GTIPS[gtipI % GTIPS.length])}</p><button class="btn" type="button" data-tip="1">เกร็ดถัดไป</button></div></section>
     ${teacherCard()}
     <section class="hsec"><h2>โจทย์ประจำวัน</h2><div class="daily"><div class="board static thumb" id="daily-b"></div><div class="col"><b>${esc(pz.title)}</b><span class="small">ระดับ ${esc(pz.level)}${done[pz.id] ? ' · ผ่านแล้ว' : ''}</span><div><button class="btn" data-daily="${pk}">ลองโจทย์นี้</button></div></div></div></section>
     <section class="hsec"><h2>ประลองเร็ว</h2><div class="quick">${avatar(rs, 56)}<div class="col"><b>${esc(rs.name)}</b><span class="small">${esc(rs.rank)}</span><div><button class="btn" data-play="${rs.id}">ประลองเลย</button></div></div></div></section></div></div>
@@ -2038,6 +2097,7 @@ $('#home').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.continue) { justJoined = false; openLesson(b.dataset.continue); }
   else if (b.dataset.id) { justJoined = false; openLesson(b.dataset.id); }
+  else if (b.dataset.tip) { gtipI = (gtipI + 1) % GTIPS.length; $('#gtip-t').textContent = GTIPS[gtipI]; }
   else if (b.dataset.play) goPlay(b.dataset.play);
   else if (b.dataset.daily) { showTab('puzzles'); openPuzzle(+b.dataset.daily); window.scrollTo(0, 0); }
 };
@@ -2263,7 +2323,7 @@ document.addEventListener('click', e => {
 });
 function skBanner() {
   if (!sk || skEl) return '';
-  return `<div class="resume-banner sk-banner"><p>${sk.step === 'q1' ? 'อยากให้เจ้าถิ่นแนะนำจุดเริ่มต้นไหม ใช้เวลาไม่ถึงสามนาที' : 'แบบวัดความรู้ที่ทำค้างไว้ ทำต่อได้เลย'}</p><div class="btns"><button class="btn primary" data-skb="go" type="button">${sk.step === 'q1' ? 'เริ่มเลย' : 'ทำต่อ'}</button><button class="btn" data-skb="drop" type="button">ไม่ต้องแล้ว</button></div></div>`;
+  return `<div class="resume-banner sk-banner"><p>${sk.step === 'q1' ? 'อยากให้เจ้าถิ่นแนะนำจุดเริ่มต้นไหม ใช้เวลาไม่ถึงสามนาที' : 'แบบวัดความรู้ที่ทำค้างไว้ ทำต่อได้เลย'}</p><div class="btns"><button class="btn" data-skb="go" type="button">${sk.step === 'q1' ? 'เริ่มเลย' : 'ทำต่อ'}</button><button class="btn" data-skb="drop" type="button">ไม่ต้องแล้ว</button></div></div>`;
 }
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-skb]'); if (!b) return;
