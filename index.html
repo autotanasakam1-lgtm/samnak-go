@@ -315,6 +315,7 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
 .bubble{position:relative;background:var(--wash);border-radius:16px;padding:10px 14px;flex:1 1 auto;min-width:0}
 .bubble::before{content:"";position:absolute;left:-8px;top:18px;border:8px solid transparent;border-right-color:var(--wash);border-left:0}
 .daily{display:flex;gap:14px;align-items:center}
+.t-note:empty{display:none}.t-more{margin-top:6px}.t-more summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--accent);font-weight:500}.t-more .chips{margin:0}.share-row{margin-top:2px}#tt .field{min-height:44px}#tt .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}#tt-board{margin:0 auto}
 .daily .board.thumb{width:96px;flex:none;border-radius:6px}
 .daily .col{gap:4px;min-width:0}
 .quick{display:flex;gap:14px;align-items:center}
@@ -418,6 +419,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
 <section id="v-me" hidden>
   <button class="back" id="me-back" type="button">← กลับ</button>
   <div class="col" id="me-top" style="gap:20px"></div>
+  <details class="explain" id="tt"><summary>ครูตั้งโจทย์</summary><div class="col" id="tt-body"></div></details>
   <section class="panel logbox" id="logbox" aria-labelledby="log-h"><h2 id="log-h">สมุดบันทึกผล</h2><div id="log-body"></div></section>
   <section class="panel col" id="backup" aria-labelledby="bk-h" style="margin-top:20px">
     <h2 id="bk-h">สำรองข้อมูล</h2>
@@ -858,8 +860,8 @@ function parseRows(rows) {
 const WHY = { occupied: 'จุดนี้มีหมากอยู่แล้ว', suicide: 'วางไม่ได้ หมากจะไม่มีลมหายใจ', ko: 'ยังกินกลับไม่ได้ ติดกติกาโคะ ต้องเดินที่อื่นก่อนหนึ่งตา' };
 
 // ---------- ตัวเล่นบทเรียนและโจทย์ ----------
-function Player(root, kind, onFinish) {
-  root.innerHTML = `<div class="stage"><div class="board"></div><aside class="panel"><span class="eyebrow"></span><h2></h2><div class="dots"></div><p class="text"></p><div class="choices"></div><p class="fb" aria-live="polite"></p><div class="btns"><button class="btn b-hint">ดูคำใบ้</button><button class="btn b-reset">เริ่มข้อนี้ใหม่</button><button class="btn primary b-next"></button></div></aside></div>`;
+function Player(root, kind, onFinish, onSolve) {
+  root.innerHTML = `<div class="stage"><div class="board"></div><aside class="panel"><span class="eyebrow"></span><h2></h2><div class="dots"></div><p class="text"></p><div class="choices"></div><p class="fb" aria-live="polite"></p><div class="btns"><button class="btn b-hint">ดูคำใบ้</button><button class="btn b-reset">เริ่มข้อนี้ใหม่</button><button class="btn primary b-next"></button></div><div class="btns share-row" hidden><button class="btn b-share" type="button">แชร์ผลไป LINE</button><button class="btn b-sharecopy" type="button">คัดลอกข้อความ</button></div></aside></div>`;
   const bd = $('.board', root), fbEl = $('.fb', root);
   let L, si, g, ans, marks, solved, hint, pos, busy, fresh;
   const step = () => L.steps[si];
@@ -873,7 +875,7 @@ function Player(root, kind, onFinish) {
   }
   function render() {
     const s = step(), last = si === L.steps.length - 1;
-    $('.eyebrow', root).textContent = kind === 'lesson' ? `ขั้น ${L.stage} · ${(s.turn || 1) === 1 ? 'คุณถือดำ' : 'คุณถือขาว'}` : `ระดับ ${L.level} · ดำเดิน`;
+    $('.eyebrow', root).textContent = kind === 'lesson' ? `ขั้น ${L.stage} · ${(s.turn || 1) === 1 ? 'คุณถือดำ' : 'คุณถือขาว'}` : L.teacher ? 'โจทย์จากครู · ดำเดิน' : `ระดับ ${L.level} · ดำเดิน`;
     $('h2', root).textContent = L.title;
     $('.dots', root).innerHTML = L.steps.length > 1 ? L.steps.map((_, k) => `<span class="${k <= si ? 'on' : ''}"></span>`).join('') : '';
     $('.text', root).textContent = s.text;
@@ -881,7 +883,9 @@ function Player(root, kind, onFinish) {
     if (s.t === 'choice') s.choices.forEach(c => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = c.label; b.disabled = solved; b.onclick = () => { if (c.right) { solved = true; fb(s.ok, 'good'); render(); } else fb('ยังไม่ใช่ ลองอ่านคำอธิบายอีกครั้ง', 'bad'); }; ch.appendChild(b); });
     const interactive = !['info', 'choice'].includes(s.t);
     $('.b-hint', root).hidden = !interactive || s.t === 'any'; $('.b-reset', root).hidden = !interactive;
-    const nx = $('.b-next', root); nx.disabled = !solved; nx.textContent = !last ? 'ถัดไป' : kind === 'lesson' ? 'จบบทเรียน' : 'ข้อต่อไป';
+    const nx = $('.b-next', root); nx.disabled = !solved; nx.textContent = !last ? 'ถัดไป' : kind === 'lesson' ? 'จบบทเรียน' : L.teacher ? 'เสร็จแล้ว' : 'ข้อต่อไป';
+    const shr = $('.share-row', root); shr.hidden = !(solved && last && root.id !== 'sk-pz');
+    if (solved && last && interactive && onSolve) onSolve(L);
     bd.classList.toggle('static', !interactive || solved);
     const hints = hint && !solved ? (s.t === 'seq' ? [s.seq[pos].at[1] * g.n + s.seq[pos].at[0]] : ans) : [];
     drawBoard(bd, { n: g.n, grid: g.grid, last: g.last, marks, hints, terr: s.terr ? g.score().terr : null, fresh });
@@ -904,6 +908,9 @@ function Player(root, kind, onFinish) {
     const r = g.play(i); if (!r.ok) return fb(WHY[r.reason], 'bad');
     fresh = i; solved = true; fb(s.ok, 'good'); render();
   }, render);
+  const shareTxt = () => { const s = step(); return shareResultText(kind === 'lesson' ? 'lesson' : 'puzzle', { title: L.title, level: L.level, take: firstSent(s.ok || s.text, 90) }); };
+  $('.b-share', root).onclick = e => shareOut(shareTxt(), e.currentTarget, root);
+  $('.b-sharecopy', root).onclick = e => copyText(shareTxt(), e.currentTarget, root);
   $('.b-hint', root).onclick = () => { hint = true; render(); };
   $('.b-reset', root).onclick = load;
   $('.b-next', root).onclick = () => { if (si < L.steps.length - 1) { si++; load(); } else onFinish(L); };
@@ -1009,7 +1016,7 @@ function renderExplain() {
   $('#explain').innerHTML = `<p>ระดับนับเป็นคิวและดั้ง คิวนับถอยหลังจาก 30 ลงไปถึง 1 แล้วจึงเป็นดั้งที่นับขึ้น สมัครเล่นไปถึงราว 7 ดั้ง ส่วนอาชีพมี 1 ถึง 9 ดั้งของตัวเอง</p>
     <div class="ladder">${LADDER.map(([a, b, c]) => `<div style="background:${c};color:${lum(c) > 150 ? '#16211D' : '#fff'}"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
     <p>สายสีในแอปเป็นการเปรียบเทียบแบบศิลปะต่อสู้ เพื่อให้จำง่าย ไม่ใช่ระบบสายของหมากล้อมจริง</p>
-    <p>ระดับของคู่ประลองในแอปเป็นค่าประมาณ ยังไม่ได้เทียบกับผู้เล่นจริง</p>`;
+    <p>ระดับของคู่ประลองวัดจากการแข่งกับ KataGo รุ่นจำลองฝีมือมนุษย์หลายสิบกระดานต่อตัว จึงเป็นค่าประมาณ ยังไม่ได้ยืนยันกับผู้เล่นจริง ครูแพร (3 ดั้ง) กำลังจะช่วยทดสอบ ถ้าคุณรู้สึกว่าตัวไหนเก่งหรืออ่อนกว่าป้าย บอกเราได้เลย</p>`;
 }
 // ---------- ลานสำนัก (ฉากประลอง) ----------
 const ZONES = [
@@ -1421,6 +1428,29 @@ function copyText(text, btn, host) {
   let p; try { p = navigator.clipboard.writeText(text); } catch (e) { return fail(); }
   p.then(() => { btn.textContent = 'คัดลอกแล้ว'; clearTimeout(btn._ct); btn._ct = setTimeout(() => { btn.textContent = btn.dataset.label; }, 1600); }, fail);
 }
+// ---------- แชร์ผลไป LINE ----------
+const SITE = 'https://autotanasakam1-lgtm.github.io/samnak-go/';
+const firstSent = (t, m) => { t = String(t || '').replace(/\s+/g, ' ').trim(); return t.length > m ? t.slice(0, m - 1) + '…' : t; };
+function shareResultText(kind, c) {
+  const nm = pn(), L = [];
+  if (kind === 'game') L.push(`${nm} เพิ่งประลองหมากล้อมกับ${c.opp} (${c.rank}) กระดาน ${c.n}x${c.n}`, `ผล: ${c.res}`);
+  else if (kind === 'lesson') L.push(`${nm} เรียนบท "${c.title}" จบแล้ว`);
+  else if (kind === 'puzzle') L.push(`${nm} แก้โจทย์ "${c.title}"${c.level ? ' (' + c.level + ')' : ''} ผ่านแล้ว`);
+  else L.push(`${nm} ฝึกหมากล้อมอยู่ที่สำนักหมากล้อม`, c.stat);
+  if (c.take) L.push('ข้อคิด: ' + c.take);
+  L.push('มาลองเล่นด้วยกันที่สำนักหมากล้อม ' + SITE);
+  return L.join('\n');
+}
+function openLine(text) {
+  const a = document.createElement('a'); a.href = 'https://line.me/R/msg/text/?' + encodeURIComponent(text); a.target = '_blank'; a.rel = 'noopener noreferrer';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function shareOut(text, btn, host) {
+  if (typeof navigator.share === 'function') {
+    let p; try { p = navigator.share({ text }); } catch (e) { return openLine(text); }
+    if (p && p.catch) p.catch(e => { if (!(e && e.name === 'AbortError')) openLine(text); });
+  } else openLine(text);
+}
 const isTeach = r => r.mode === 'teach';
 const logTag = r => `<small class="mtag ${isTeach(r) ? 'teach' : 'real'}">${isTeach(r) ? 'สอน' : 'จริง'}</small>`;
 const logRes = r => r.resign ? 'ยอมแพ้' : r.result === 'W' ? `ชนะ${r.handicap ? ' (ต่อ ' + r.handicap + ')' : ' ' + r.margin}${r.handicap ? ' ' + r.margin : ''}` : `แพ้ ${r.margin}`;
@@ -1508,6 +1538,8 @@ function leadGraph() {
   const end = pts[pts.length - 1], mx = Math.max(...pts), mn = Math.min(...pts);
   return `<div class="sgraph"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟแต้มนำ เริ่มที่ ${pts[0].toFixed(1)} สูงสุด ${mx.toFixed(1)} ต่ำสุด ${mn.toFixed(1)} จบที่ ${end.toFixed(1)} แต้ม บวกคือคุณนำ"><path d="M6 ${H / 2}H${W - 6}" stroke="var(--line)" stroke-dasharray="3 3" fill="none"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${X(pts.length - 1).toFixed(1)}" cy="${Y(end).toFixed(1)}" r="3.4" fill="var(--accent)"/></svg><p class="small">แต้มนำตลอดเกม (ประเมินโดยเซนเซ) ด้านบนเส้นประคือคุณนำ ด้านล่างคือตาม</p></div>`;
 }
+let lastTake = '';
+const gameShare = () => shareResultText('game', { opp: S.name, rank: S.rank, n: G.n, res: over.res.text, take: lastTake });
 function summaryHtml(o) {
   const { lost, res, phaseTxt, sa, ef, lostStones, links, momentsHtml, idx } = o, n = G.n, nx = SENSEI[idx + 1], pv = SENSEI[idx - 1];
   let pt, lk = null;
@@ -1526,11 +1558,12 @@ function summaryHtml(o) {
     if (gmode === 'teach') adv += ' ชัยชนะในโหมดสอนนับแยก ลองโหมดประลองจริงเพื่อให้นับเป็น \u2018ชนะแล้ว\u2019';
   } else if (res.margin > n * n * 0.08 && pv) { adv = `ลองเล่นกับ${pv.name} (${pv.rank}) สักสองสามกระดานก่อน แล้วกลับมาท้า${S.name}ใหม่`; nb = `<button class="btn" data-nx="${pv.id}" data-md="${gmode}">ไปเลือก${esc(pv.name)}</button>`; }
   else adv = `เล่นกับ${S.name}อีกครั้ง เกมสูสีพอที่จะพลิกได้`;
+  lastTake = pt;
   return `<section class="sumbox" aria-label="สรุปเกม">
     ${leadGraph()}
     ${momentsHtml ? `<h3>ช่วงสำคัญของเกม</h3>${momentsHtml}` : ''}
     <h3>สิ่งที่ควรฝึกก่อน</h3><p>${esc(pt)}</p>${lb ? `<div class="btns"><button class="btn" data-lesson="${lb.id}">เปิดบทเรียน ${esc(lb.title)}</button></div>` : ''}
-    <h3>คู่ประลองถัดไป</h3><p>${esc(adv)}</p>${nb ? `<div class="btns">${nb}</div>` : ''}</section>`;
+    <h3>คู่ประลองถัดไป</h3><p>${esc(adv)}</p>${nb ? `<div class="btns">${nb}</div>` : ''}<div class="btns"><button class="btn" data-act="share">แชร์ผลไป LINE</button><button class="btn" data-act="sharecopy">คัดลอกข้อความ</button></div></section>`;
 }
 // ข้อเสนอหมากต่อสำหรับเครื่องของสำนัก: แพ้เกมเท่ากัน 2 กระดานติด เริ่มที่ 4 แพ้ซ้ำ +2 ชนะ -1
 function suggestHc(sid, n) {
@@ -1547,6 +1580,8 @@ $('#review').onclick = e => {
   if (b.dataset.turn) { review = rec.find(t => t.no === +b.dataset.turn); renderGame(); GB.scrollIntoView({ block: 'nearest' }); const bk = $('#review'); if (!$('#rv-back')) bk.insertAdjacentHTML('afterbegin', '<button class="btn" id="rv-back">กลับไปดูตำแหน่งสุดท้าย</button>'); }
   else if (b.id === 'rv-back') { review = null; b.remove(); renderGame(); }
   else if (b.dataset.lesson) openLesson(b.dataset.lesson);
+  else if (b.dataset.act === 'share') shareOut(gameShare(), b, $('#review'));
+  else if (b.dataset.act === 'sharecopy') copyText(gameShare(), b, $('#review'));
   else if (b.dataset.act === 'sgf') copyText(lastSgf, b, $('#review'));
   else if (b.dataset.act === 'again') startGame(S, G.n, human, null, { hc: +b.dataset.hc || 0, mode: b.dataset.md || gmode });
   else if (b.dataset.nx) { sel = b.dataset.nx; selSize = bySid(sel).n; if (b.dataset.md) selMode = b.dataset.md; toLobby(); }
@@ -1640,7 +1675,7 @@ function showTab(t) {
   try { history.replaceState(null, '', '#' + t); } catch (e) { }
 }
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };
-window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+window.addEventListener('hashchange', () => { const h = location.hash; if (h.indexOf('#t=') === 0) handleTeacher(h); else showTab(h.slice(1)); });
 try { if (location.protocol === 'https:' && window.top === window.self && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { }
 // ---------- ทบทวนทั้งเกมด้วยรุ่นใหญ่ และโหมดฝึกเดินใหม่ ----------
 let deep = null, deepShown = false;
@@ -1919,12 +1954,13 @@ function showPath() {
     <div class="rs-slot"></div>${skBanner()}
     <div class="h-grid"><div class="h-col"><div class="hero">${boardDeco()}${hero}</div>${tiles()}${top ? `<p class="small">ชนะถึง: ${esc(top.name)}</p>` : ''}</div>
     <div class="h-col"><section class="hsec"><h2>เคล็ดลับวันนี้</h2><div class="tipbox">${avatar(ts, 48)}<p class="bubble">${esc(tip[1])}</p></div></section>
+    ${teacherCard()}
     <section class="hsec"><h2>โจทย์ประจำวัน</h2><div class="daily"><div class="board static thumb" id="daily-b"></div><div class="col"><b>${esc(pz.title)}</b><span class="small">ระดับ ${esc(pz.level)}${done[pz.id] ? ' · ผ่านแล้ว' : ''}</span><div><button class="btn" data-daily="${pk}">ลองโจทย์นี้</button></div></div></div></section>
     <section class="hsec"><h2>ประลองเร็ว</h2><div class="quick">${avatar(rs, 56)}<div class="col"><b>${esc(rs.name)}</b><span class="small">${esc(rs.rank)}</span><div><button class="btn" data-play="${rs.id}">ประลองเลย</button></div></div></div></section></div></div>
     <section class="hsec"><h2 class="path-h">เส้นทางเรียน</h2><ol class="path">${stages.map(s => `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)}</h2><div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div></div></li>`).join('')}</ol>
     <p class="soon">ขั้นถัดไปกำลังเขียนร่วมกับครูผู้สอน</p></section>`;
   const p = parseRows(pz.steps[0].rows); drawBoard($('#daily-b'), { n: p.g.n, grid: p.g.grid });
-  paintResume();
+  paintTeacher(); paintResume();
 }
 $('#home').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -1997,6 +2033,7 @@ function renderProfile() {
   const top = playerRank();
   $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
     ${tiles()}
+    <div class="btns"><button class="btn" type="button" data-psh="line">แชร์ผลไป LINE</button><button class="btn" type="button" data-psh="copy">คัดลอกข้อความ</button></div>
     ${skProfileBlock()}
     <section class="hsec"><h2>ผลกับคู่ประลอง</h2><ul class="recs">${SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 }; return `<li>${avatar(s, 32)}<span>${esc(s.name)}</span><span>ชนะ ${r.w} แพ้ ${r.l}</span></li>`; }).join('')}</ul></section>
     <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div>
@@ -2007,6 +2044,12 @@ function renderProfile() {
   $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>';
 }
 $('#me-top').addEventListener('click', pickAnimal);
+$('#me-top').addEventListener('click', e => {
+  const b = e.target.closest('[data-psh]'); if (!b) return;
+  const tip = TIPS[dayNo() % TIPS.length][1], top = playerRank();
+  const txt = shareResultText('profile', { stat: `ผ่านบทเรียน ${nLessons()} บท โจทย์ ${nPuzzles()} ข้อ ชนะคู่ประลอง ${nBeaten()}/${SENSEI.length} คน${top ? ' (ชนะถึง' + top.name + ')' : ''}`, take: tip });
+  b.dataset.psh === 'line' ? shareOut(txt, b, b.parentNode) : copyText(txt, b, b.parentNode);
+});
 $('#me-top').addEventListener('submit', e => {
   e.preventDefault();
   const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
@@ -2160,9 +2203,134 @@ function skProfileBlock() {
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-skb="redo"]'); if (b) openSkill(true); });
 
+// ---------- โจทย์ครูแพร (ไม่มีเซิร์ฟเวอร์: โจทย์อยู่ในลิงก์) ----------
+const TKEY = 'go-teacher-puzzles', T_MAX_HASH = 3000, T_MAX_JSON = 2400;
+const tTxt = (v, m) => typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f-\u009f‎‏‪-‮<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, m) : '';
+const tB64e = o => b64(JSON.stringify(o)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+function tB64d(c) {
+  if (typeof c !== 'string' || !c || c.length > T_MAX_HASH || !/^[A-Za-z0-9_-]+$/.test(c)) return null;
+  try { let t = c.replace(/-/g, '+').replace(/_/g, '/'); while (t.length % 4) t += '='; const j = unb64(t); return j.length > T_MAX_JSON ? null : JSON.parse(j); } catch (e) { return null; }
+}
+// ตรวจและทำความสะอาดโจทย์ (ถือว่าข้อมูลไม่น่าไว้ใจ) คืน {p, err}
+function tClean(o) {
+  const bad = err => ({ p: null, err });
+  if (!o || typeof o !== 'object' || Array.isArray(o) || o.v !== 1) return bad('ลิงก์นี้เป็นเวอร์ชันที่อ่านไม่ได้');
+  const n = o.n === 13 ? 13 : o.n === 9 ? 9 : 0; if (!n) return bad('ขนาดกระดานต้องเป็น 9 หรือ 13');
+  const N = n * n, ids = (a, max) => Array.isArray(a) && a.length <= max && a.every(v => Number.isInteger(v) && v >= 0 && v < N) ? [...new Set(a)].sort((x, y) => x - y) : null;
+  const b = ids(o.b, N), w = ids(o.w, N), a = ids(o.a, 6);
+  if (!b || !w || !a) return bad('ตำแหน่งหมากไม่ถูกต้อง');
+  if (b.length + w.length < 1) return bad('ต้องมีหมากบนกระดานอย่างน้อยหนึ่งเม็ด');
+  if (!a.length) return bad('ยังไม่ได้เลือกจุดคำตอบ');
+  const occ = new Set([...b, ...w]); if (occ.size !== b.length + w.length) return bad('มีหมากซ้อนกันอยู่');
+  if (a.some(i => occ.has(i))) return bad('จุดคำตอบต้องเป็นจุดว่าง');
+  const g = new Go(n); b.forEach(i => { g.grid[i] = 1; }); w.forEach(i => { g.grid[i] = 2; });
+  for (const i of occ) if (g.group(i).libs.size === 0) return bad('มีกลุ่มหมากที่ไม่เหลือลมหายใจเลย');
+  for (const i of a) { const t = g.clone(); t.turn = 1; if (!t.play(i).ok) return bad('จุดคำตอบนี้ดำวางไม่ได้ตามกติกา (' + g.name(i) + ')'); }
+  const t = tTxt(o.t, 40) || 'โจทย์จากครู';
+  return { p: { v: 1, n, b, w, a, t, h: tTxt(o.h, 120), e: tTxt(o.e, 240) }, err: '' };
+}
+const tHash = p => { let h = 2166136261; const s = JSON.stringify(p); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return 't' + (h >>> 0).toString(36); };
+function tList() {
+  const raw = store.get(TKEY, []), out = [], seen = new Set();
+  if (!Array.isArray(raw)) return out;
+  for (const x of raw) { const r = tClean(x && x.p); if (!r.p) continue; const id = tHash(r.p); if (!seen.has(id)) { seen.add(id); out.push({ id, p: r.p }); } if (out.length >= 20) break; }
+  return out;
+}
+function tSave(p) { const id = tHash(p), l = [{ id, p }, ...tList().filter(x => x.id !== id)].slice(0, 20); store.set(TKEY, l); return id; }
+function tPuzzle(it) {
+  const p = it.p, n = p.n, rows = [];
+  for (let y = 0; y < n; y++) { let r = ''; for (let x = 0; x < n; x++) { const i = y * n + x; r += p.b.includes(i) ? 'X' : p.w.includes(i) ? 'O' : p.a.includes(i) ? '*' : '.'; } rows.push(r); }
+  return { id: it.id, teacher: true, level: 'จากครู', title: p.t, steps: [{ t: 'point', rows, text: p.h || 'ดำเดิน หาตาที่ดีที่สุด', no: 'ยังไม่ใช่ ลองคิดใหม่ หรือกดดูคำใบ้ได้', ok: p.e || 'ถูกต้อง เก่งมาก' }] };
+}
+const tLink = p => ((location.protocol === 'http:' || location.protocol === 'https:') ? location.origin + location.pathname : SITE) + '#t=' + tB64e(p);
+let tNote = '';
+function tThumb(it) { const g = new Int8Array(it.p.n * it.p.n); it.p.b.forEach(i => { g[i] = 1; }); it.p.w.forEach(i => { g[i] = 2; }); return { n: it.p.n, grid: g }; }
+function teacherCard() {
+  const l = tList(), note = tNote ? `<p class="small t-note" role="status">${esc(tNote)}</p>` : '<p class="small t-note" role="status"></p>';
+  if (!l.length) return `<section class="hsec" id="t-card"><h2>โจทย์ครูแพร</h2>${note}<p class="small">ยังไม่มีโจทย์จากครู เมื่อครูแพรส่งลิงก์มา เปิดลิงก์นั้นแล้วโจทย์จะมาอยู่ตรงนี้</p></section>`;
+  const [f, ...rest] = l, dn = it => done[it.id] ? ' · ผ่านแล้ว' : ' · ยังไม่ได้ลอง';
+  return `<section class="hsec" id="t-card"><h2>โจทย์ครูแพร</h2>${note}<div class="daily"><div class="board static thumb" id="t-thumb"></div><div class="col"><span class="eyebrow">โจทย์จากครู</span><b>${esc(f.p.t)}</b><span class="small">${f.p.n} x ${f.p.n}${dn(f)}</span><div><button class="btn primary" data-tp="${f.id}">${done[f.id] ? 'ลองอีกรอบ' : 'ลองเลย'}</button></div></div></div>
+    ${rest.length ? `<details class="t-more"><summary>โจทย์ก่อนหน้า (${rest.length})</summary><div class="chips">${rest.map(it => `<button class="chip${done[it.id] ? ' done' : ''}" data-tp="${it.id}"><span>${esc(it.p.t)}</span></button>`).join('')}</div></details>` : ''}</section>`;
+}
+function paintTeacher() { const l = tList(), el = $('#t-thumb'); if (el && l[0]) drawBoard(el, tThumb(l[0])); }
+let tEl = null, tPrevFocus = null;
+function tClose() { if (!tEl) return; tEl.remove(); tEl = null; $('.wrap').inert = false; showPath(); if (tPrevFocus && tPrevFocus.isConnected) tPrevFocus.focus(); }
+function openTeacher(id) {
+  const it = tList().find(x => x.id === id); if (!it || tEl || $('#skill')) return;
+  tPrevFocus = document.activeElement;
+  tEl = document.createElement('div'); tEl.className = 'sheet-wrap'; tEl.id = 'tpz';
+  tEl.innerHTML = '<div class="sheet sk-sheet" role="dialog" aria-modal="true" aria-label="โจทย์จากครู" tabindex="-1"><div id="tpz-pl"></div><div class="btns"><button class="btn" type="button" data-tclose>ปิด</button></div></div>';
+  document.body.appendChild(tEl); $('.wrap').inert = true;
+  const mark = () => { if (!done[it.id]) { done[it.id] = 1; store.set('go-done', done); } };
+  const pl = Player($('#tpz-pl', tEl), 'puzzle', () => { mark(); tClose(); }, mark);
+  pl.open(tPuzzle(it));
+  tEl.addEventListener('keydown', e => { if (e.key === 'Escape') { e.stopPropagation(); tClose(); } });
+  tEl.addEventListener('click', e => { if (e.target.closest('[data-tclose]')) tClose(); });
+  const bd = $('.board', tEl); if (bd) bd.focus({ preventScroll: true });
+}
+function handleTeacher(h) {
+  const code = String(h || '').slice(3), r = tClean(tB64d(code));
+  try { history.replaceState(null, '', '#learn'); } catch (e) { }
+  showTab('learn');
+  if (!r.p) { tNote = 'ลิงก์โจทย์นี้ใช้ไม่ได้ (' + (r.err || 'ข้อมูลไม่ครบหรือเสียหาย') + ') ลองขอลิงก์ใหม่จากครู'; showPath(); return; }
+  const id = tSave(r.p); tNote = 'รับโจทย์ "' + r.p.t + '" จากครูแล้ว'; showPath();
+  if (!$('#welcome') && !$('#skill')) openTeacher(id);
+}
+$('#home').addEventListener('click', e => { const b = e.target.closest('[data-tp]'); if (b) openTeacher(b.dataset.tp); });
+
+// ---------- เครื่องมือ ครูตั้งโจทย์ (ในโปรไฟล์) ----------
+const TT = { n: 9, grid: null, ans: new Set(), tool: 'b', link: '' };
+function ttBoard() { return $('#tt-board'); }
+function ttDraw() {
+  const rings = [...TT.ans].map(i => ({ i, color: '#c2185b' }));
+  drawBoard(ttBoard(), { n: TT.n, grid: TT.grid, rings, hints: [] });
+  $('#tt-count').textContent = `ดำ ${TT.grid.filter(v => v === 1).length} เม็ด ขาว ${TT.grid.filter(v => v === 2).length} เม็ด จุดคำตอบ ${TT.ans.size} จุด`;
+}
+function ttReset(n) { TT.n = n; TT.grid = new Int8Array(n * n); TT.ans = new Set(); ttDraw(); $('#tt-out').hidden = true; }
+function ttMsg(t, bad) { const m = $('#tt-msg'); m.textContent = t; m.className = 'small ' + (bad ? 'bad-t' : 'good-t'); }
+function ttInit() {
+  const body = $('#tt-body'); if (!body) return;
+  body.innerHTML = `<p class="small">วางหมากเป็นโจทย์ให้ดำเดิน แล้วเลือกจุดคำตอบที่ถูก เสร็จแล้วกดสร้าง จะได้ลิงก์ส่งให้นักเรียนทาง LINE (โจทย์อยู่ในลิงก์ ไม่ต้องมีเซิร์ฟเวอร์)</p>
+    <div class="btns" role="group" aria-label="ขนาดกระดาน"><button class="btn" type="button" data-ttn="9" aria-pressed="true">9 x 9</button><button class="btn" type="button" data-ttn="13" aria-pressed="false">13 x 13</button></div>
+    <div class="btns" role="group" aria-label="เครื่องมือวางหมาก"><button class="btn" type="button" data-ttt="b" aria-pressed="true">หมากดำ</button><button class="btn" type="button" data-ttt="w" aria-pressed="false">หมากขาว</button><button class="btn" type="button" data-ttt="a" aria-pressed="false">จุดคำตอบ</button><button class="btn" type="button" data-ttt="x" aria-pressed="false">ลบ</button><button class="btn" type="button" data-ttt="clear">ล้างกระดาน</button></div>
+    <div class="board" id="tt-board"></div><p class="small" id="tt-count" role="status"></p>
+    <div><label class="lab" for="tt-title">ชื่อโจทย์ (ไม่เกิน 40 ตัวอักษร)</label><input id="tt-title" class="field" maxlength="40" autocomplete="off"></div>
+    <div><label class="lab" for="tt-hint">คำใบ้ / โจทย์ที่ถามนักเรียน (ไม่เกิน 120)</label><input id="tt-hint" class="field" maxlength="120" autocomplete="off" placeholder="เช่น ดำเดิน กินหมากขาวให้ได้"></div>
+    <div><label class="lab" for="tt-exp">คำอธิบายเฉลย (ไม่เกิน 240)</label><textarea id="tt-exp" class="field" maxlength="240" rows="3"></textarea></div>
+    <div class="btns"><button class="btn primary" type="button" id="tt-make">สร้างลิงก์โจทย์</button></div><p class="small" id="tt-msg" role="status"></p>
+    <div class="col" id="tt-out" hidden><label class="lab" for="tt-link">ลิงก์โจทย์ (ส่งให้นักเรียน)</label><textarea id="tt-link" class="codebox" readonly rows="3"></textarea>
+    <div class="btns"><button class="btn" type="button" id="tt-copy">คัดลอกลิงก์</button><button class="btn" type="button" id="tt-line">แชร์ลิงก์ไป LINE</button><button class="btn" type="button" id="tt-try">ลองเล่นเอง</button></div></div>`;
+  TT.grid = new Int8Array(81);
+  bindBoard(ttBoard(), i => {
+    if (TT.tool === 'a') { if (TT.grid[i]) return ttMsg('จุดคำตอบต้องเป็นจุดว่าง', true); TT.ans.has(i) ? TT.ans.delete(i) : TT.ans.add(i); }
+    else if (TT.tool === 'x') { TT.grid[i] = 0; TT.ans.delete(i); }
+    else { const c = TT.tool === 'b' ? 1 : 2; TT.grid[i] = TT.grid[i] === c ? 0 : c; TT.ans.delete(i); }
+    $('#tt-msg').textContent = ''; ttDraw();
+  }, ttDraw);
+  ttDraw();
+  body.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.ttn) { const n = +b.dataset.ttn; body.querySelectorAll('[data-ttn]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); if (n !== TT.n) ttReset(n); }
+    else if (b.dataset.ttt === 'clear') ttReset(TT.n);
+    else if (b.dataset.ttt) { TT.tool = b.dataset.ttt; body.querySelectorAll('[data-ttt]').forEach(x => x.hasAttribute('aria-pressed') && x.setAttribute('aria-pressed', String(x === b))); }
+    else if (b.id === 'tt-make') {
+      const o = { v: 1, n: TT.n, b: [], w: [], a: [...TT.ans], t: $('#tt-title').value, h: $('#tt-hint').value, e: $('#tt-exp').value };
+      TT.grid.forEach((v, i) => { if (v === 1) o.b.push(i); else if (v === 2) o.w.push(i); });
+      const r = tClean(o); if (!r.p) { $('#tt-out').hidden = true; return ttMsg(r.err, true); }
+      const link = tLink(r.p);
+      if (link.length > T_MAX_HASH + 200) { $('#tt-out').hidden = true; return ttMsg('โจทย์ยาวเกินไปสำหรับลิงก์ ลองลดข้อความหรือจำนวนหมาก', true); }
+      TT.link = link; TT.p = r.p; $('#tt-link').value = link; $('#tt-out').hidden = false; ttMsg('สร้างลิงก์แล้ว โจทย์ถูกต้องตามกติกา');
+    }
+    else if (b.id === 'tt-copy') copyText(TT.link, b, $('#tt-out'));
+    else if (b.id === 'tt-line') shareOut(`ครูแพรตั้งโจทย์หมากล้อมมาให้แล้ว: "${TT.p.t}"\nกดลิงก์เพื่อลองแก้โจทย์ได้เลย\n${TT.link}`, b, $('#tt-out'));
+    else if (b.id === 'tt-try' && TT.p) { const id = tSave(TT.p); showPath(); openTeacher(id); }
+  });
+}
+
 // ---------- เริ่มต้น ----------
-renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); showTab(location.hash.slice(1));
-if (!profile) showWelcome();
+const bootHash = location.hash;
+renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); ttInit();
+if (bootHash.indexOf('#t=') === 0) { if (!profile) showWelcome(); handleTeacher(bootHash); } else { showTab(bootHash.slice(1)); if (!profile) showWelcome(); }
 
 </script>
 </body>
