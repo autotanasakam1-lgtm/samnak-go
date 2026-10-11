@@ -1,0 +1,1197 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#274690">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>สำนักหมากล้อม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600&family=Chonburi&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* layout: เดสก์ท็อปมีแถบบนพร้อมแท็บ, มือถือแนวตั้งใช้แท็บล่าง, มือถือแนวนอนใช้แท็บข้างซ้าย */
+:root{
+  --bg:#E4EAE6; --surface:#F3F6F3; --ink:#16211D; --muted:#55645D; --line:#C3CEC7;
+  --accent:#274690; --accent-ink:#FFFFFF; --good:#1B7448; --bad:#AE372B; --wash:#D7E0DA;
+  --display:"Chonburi","Anuphan",system-ui,sans-serif;
+  --body:"Anuphan","Noto Sans Thai",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --rail:64px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#111614; --surface:#1A211E; --ink:#E3EAE5; --muted:#9BAAA2; --line:#2F3B36;
+  --accent:#A3B7F7; --accent-ink:#101830; --good:#6FCF97; --bad:#F0897D; --wash:#232C28; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#1A211E; --ink:#E3EAE5; --muted:#9BAAA2; --line:#2F3B36;
+  --accent:#A3B7F7; --accent-ink:#101830; --good:#6FCF97; --bad:#F0897D; --wash:#232C28; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+.topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;padding-block:18px 14px;border-bottom:1px solid var(--line);margin-bottom:24px}
+.brand{font-family:var(--display);font-size:1.5rem;line-height:1.3;display:flex;align-items:center;gap:10px}
+.brand i{width:18px;height:18px;border-radius:50%;background:var(--ink);box-shadow:11px 0 0 -1px var(--surface),11px 0 0 0 var(--ink);margin-right:10px}
+nav{display:flex;flex-wrap:wrap;gap:4px}
+button{font:inherit;color:inherit;cursor:pointer}
+nav button{background:none;border:0;min-height:44px;padding:6px 16px;border-radius:999px;color:var(--muted);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px}
+nav button[aria-current="page"]{background:var(--ink);color:var(--bg)}
+nav svg{display:none;width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,4vw,2.2rem);line-height:1.35;margin:0 0 8px;text-wrap:balance}
+h2{font-size:1.25rem;line-height:1.4;margin:0;font-weight:600;text-wrap:balance}
+h3{font-size:1rem;margin:0;font-weight:600}
+p{margin:0}
+.lede{color:var(--muted);max-width:60ch}
+.eyebrow{font-family:var(--mono);font-size:.78rem;color:var(--muted);letter-spacing:.04em}
+.col{display:flex;flex-direction:column;gap:12px}
+.intro{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
+
+/* กระดานและแผงข้าง */
+.stage{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.board{width:min(100%,620px,calc(100dvh - 150px));justify-self:center;border-radius:6px;overflow:hidden;box-shadow:0 1px 0 #0003,0 10px 24px -12px #0006;touch-action:manipulation}
+.board svg{display:block;width:100%;height:auto;cursor:pointer}
+.board.static svg{cursor:default}
+.board text{font-family:var(--mono)}
+@media (max-width:560px){.board svg.n19 .co{display:none}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.fb{min-height:1.7em;font-weight:500}
+.fb.good{color:var(--good)} .fb.bad{color:var(--bad)}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{border:1px solid var(--line);background:var(--bg);border-radius:8px;min-height:44px;padding:8px 16px;font-weight:500}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn[hidden]{display:none}
+.choices{display:flex;flex-direction:column;gap:8px}
+.choices .btn{text-align:left}
+.dots{display:flex;gap:6px}
+.dots span{width:22px;height:4px;border-radius:2px;background:var(--line)}
+.dots span.on{background:var(--accent)}
+.back{align-self:flex-start;background:none;border:0;min-height:44px;padding:0 4px;color:var(--accent);font-weight:500;margin-bottom:4px}
+
+.path{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:28px}
+.path>li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 24px}
+@media (max-width:640px){.path>li{grid-template-columns:minmax(0,1fr)}}
+.path .lv{font-family:var(--mono);font-size:.8rem;color:var(--muted);padding-top:4px}
+.path .lv b{display:block;font-family:var(--display);font-weight:400;font-size:1.6rem;color:var(--ink);line-height:1.2}
+.lessons{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:10px}
+.lesson{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:8px 14px}
+.lesson:hover{border-color:var(--accent)}
+.lesson small{font-family:var(--mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.lesson.done small{color:var(--good)}
+.soon{color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;min-height:44px;padding:5px 16px;font-weight:500;display:flex;gap:8px;align-items:center}
+.chip small{font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.7}
+.chip.done::after{content:"\2713";color:var(--good)}
+
+/* บล็อกเรียนต่อ */
+.resume{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,260px);gap:20px;margin-bottom:32px}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.rankbox{border-left:1px solid var(--line);padding-left:20px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.rankbox b{font-family:var(--display);font-weight:400;font-size:1.5rem;line-height:1.3}
+.small{font-size:.9rem;color:var(--muted)}
+@media (max-width:640px){.resume{grid-template-columns:minmax(0,1fr)}.rankbox{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:12px}}
+
+/* ห้องประลอง */
+.lobby{display:grid;grid-template-columns:280px minmax(0,1fr);gap:24px;align-items:start}
+.roster{display:flex;flex-direction:column;gap:8px;min-width:0}
+.scard{display:grid;grid-template-columns:auto minmax(0,1fr);gap:0 12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-height:64px}
+.scard .av{grid-row:1/4}
+.scard[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.scard .nm{font-weight:600;line-height:1.4}
+.scard .rk{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:.85rem;line-height:1.5}
+.rec{font-family:var(--mono);font-size:.75rem;color:var(--muted);line-height:1.5}
+.tag{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:.75rem;padding:0 8px;margin-left:4px;font-weight:500}
+.belt{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;background:var(--wash);border-radius:999px;padding:0 10px 0 5px;line-height:1.6;white-space:nowrap}
+.belt i{width:20px;height:8px;border-radius:4px;box-shadow:inset 0 0 0 1px #0005}
+.av{flex:none;display:block}
+.dhead{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.dhead>div{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+dl.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:0}
+dl.facts dt{color:var(--muted)} dl.facts dd{margin:0}
+@media (max-width:480px){dl.facts{grid-template-columns:minmax(0,1fr);gap:0}dl.facts dt{margin-top:8px}}
+.lab{font-size:.9rem;color:var(--muted);margin-bottom:4px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:44px;padding:6px 16px;border:1px solid var(--line);background:var(--bg);border-radius:8px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.friend{margin-top:24px;display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center}
+details.explain{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0 18px}
+details.explain summary{min-height:44px;display:flex;align-items:center;font-weight:600;cursor:pointer}
+details.explain[open] summary{margin-bottom:8px}
+details.explain .col{padding-bottom:16px}
+.ladder{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ladder>div{flex:1 1 140px;padding:8px 12px;font-size:.9rem;line-height:1.5;display:flex;flex-direction:column}
+.ladder b{font-weight:600}
+
+/* หน้าเกม */
+.ghead{display:flex;flex-direction:row;align-items:center;gap:8px 12px;flex-wrap:wrap}
+.ghead .who{display:flex;flex-direction:column;flex:1 1 140px;min-width:0;line-height:1.45}
+.ghead .btn{padding:6px 12px}
+.turn{display:flex;align-items:center;gap:10px;font-weight:600}
+.st{width:18px;height:18px;border-radius:50%;flex:none;border:1px solid #0008}
+.st.b{background:#1b1b1d}.st.w{background:#f4f2ec}
+table.tally{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.tally td{padding:4px 0;border-top:1px solid var(--line)} .tally td:last-child{text-align:right;font-family:var(--mono)}
+.tutor{background:var(--wash);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.warn{border:1px solid var(--bad);border-radius:8px;padding:8px 12px;font-size:.95rem}
+.stage.game{grid-template-areas:"b h" "b p";grid-template-rows:auto 1fr}
+.stage.game .ghead{grid-area:h}.stage.game .board{grid-area:b}.stage.game .side{grid-area:p}
+.review{margin-top:24px}
+.review .tips{display:flex;flex-direction:column;gap:12px}
+.review .rv{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.review .rv .btn{text-align:left;height:auto}
+.review h3{margin-top:4px}
+
+.masters{display:grid;grid-template-columns:240px minmax(0,1fr);gap:24px;align-items:start}
+.mlist{display:flex;flex-direction:column;gap:6px}
+.mlist button{text-align:left;background:none;border:1px solid transparent;border-radius:8px;min-height:44px;padding:8px 12px;display:flex;flex-direction:column;line-height:1.4}
+.mlist button small{color:var(--muted);font-size:.8rem}
+.mlist button[aria-pressed="true"]{background:var(--surface);border-color:var(--line)}
+.mbody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,320px);gap:24px;align-items:start}
+.mbody ul{margin:0;padding-left:1.2em}
+.mbody .board{width:min(100%,320px);justify-self:start}
+.cap{font-size:.9rem;color:var(--muted);line-height:1.55}
+.note{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem;max-width:70ch}
+@media (prefers-reduced-motion:no-preference){.board circle.new{animation:drop .18s ease-out}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@keyframes drop{from{opacity:0;transform:scale(1.25)}}
+.board circle.new{transform-box:fill-box;transform-origin:center}
+
+/* มือถือแนวตั้งและจอแคบ: แท็บล่าง */
+@media (max-width:820px){
+  .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+  .topbar{padding-block:10px;margin-bottom:16px}
+  .brand{font-size:1.2rem}
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  nav button{flex-direction:column;gap:0;min-height:56px;border-radius:0;padding:6px 2px;font-size:.875rem;line-height:1.4}
+  nav button[aria-current="page"]{background:none;color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+  nav svg{display:block}
+  .stage,.masters,.mbody,.lobby{grid-template-columns:minmax(0,1fr)}
+  .stage.game{grid-template-areas:"h" "b" "p";grid-template-rows:auto}
+  .mlist{flex-direction:row;flex-wrap:wrap}
+}
+@media (max-width:1000px){.mbody{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:820px),(orientation:landscape) and (max-height:520px){
+  .lobby{grid-template-columns:minmax(0,1fr)}
+  .roster{flex-direction:row;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+  .scard{flex:0 0 210px;scroll-snap-align:start}
+}
+/* มือถือแนวนอน: แท็บข้างซ้าย กระดานพอดีความสูง */
+@media (orientation:landscape) and (max-height:520px){
+  .wrap{padding-block:16px;padding-inline:calc(var(--rail) + 16px + env(safe-area-inset-left)) 16px}
+  .topbar{display:block;padding:0;margin:0;border:0}
+  .brand{display:none}
+  nav{position:fixed;top:0;bottom:0;left:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));z-index:20;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,minmax(44px,1fr));background:var(--surface);border-top:0;border-right:1px solid var(--line);padding:0 0 0 env(safe-area-inset-left)}
+  nav button{flex-direction:column;gap:0;min-height:44px;border-radius:0;padding:2px;font-size:.8rem;line-height:1.3}
+  nav button[aria-current="page"]{background:none;color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+  nav svg{display:block;width:22px;height:22px}
+  .intro{margin-bottom:12px}
+  .stage{grid-template-columns:auto minmax(0,1fr);gap:16px}
+  .stage>.panel{max-height:calc(100dvh - 32px);overflow:auto}
+  .board{width:calc(100dvh - 32px)}
+  .mbody .board{width:min(100%,320px)}
+  .stage.game{grid-template-columns:auto minmax(0,1fr);grid-template-areas:"b h" "b p";grid-template-rows:auto minmax(0,1fr);height:calc(100dvh - 32px)}
+  .stage.game .ghead{max-height:none}
+  .stage.game .side{max-height:none;min-height:0;overflow:auto}
+  .masters{grid-template-columns:200px minmax(0,1fr)}
+}
+
+/* สถานะเครื่องของสำนัก และสมุดบันทึกผล */
+.srv{display:inline-block;border-radius:999px;font-family:var(--body);font-size:.75rem;line-height:1.5;padding:0 8px;background:var(--wash);color:var(--muted);font-weight:500}
+.srv.on{background:var(--good);color:var(--bg)}
+.logbox{margin-top:24px}
+.logscroll{overflow-x:auto;max-width:100%}
+table.logt{border-collapse:collapse;width:100%;font-size:.9rem;white-space:nowrap}
+.logt th,.logt td{text-align:left;padding:6px 12px 6px 0;border-top:1px solid var(--line);vertical-align:middle}
+.logt th{font-weight:600;color:var(--muted);border-top:0}
+.logt .btn{min-height:44px;padding:4px 12px;font-size:.85rem}
+textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+</style>
+<div class="wrap">
+<div class="topbar">
+  <div class="brand"><i></i>สำนักหมากล้อม</div>
+  <nav aria-label="หน้าหลัก" id="tabs">
+    <button data-tab="learn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg><span>เรียน</span></button>
+    <button data-tab="puzzles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>โจทย์</span></button>
+    <button data-tab="play"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16M14 4v16M4 10h16M4 14h16"/></svg><span>ประลอง</span></button>
+    <button data-tab="masters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>คลังเซียน</span></button>
+  </nav>
+</div>
+<main>
+<section id="v-learn">
+  <div id="path-view">
+    <div class="intro"><h1>จากไม่เป็นเลย ถึงระดับเซียน</h1>
+    <p class="lede">หกขั้นเรียงตามระดับฝีมือ ทุกบทให้วางหมากเองบนกระดานจริง ตอนนี้เปิดสองขั้นแรก</p></div>
+    <div class="panel resume" id="resume"></div>
+    <ol class="path" id="path"></ol>
+  </div>
+  <div id="lesson-view" hidden><button class="back" id="lesson-back">← กลับไปเส้นทางเรียน</button><div id="lesson-player"></div></div>
+</section>
+<section id="v-puzzles" hidden>
+  <div class="intro"><h1>โจทย์ฝึก</h1><p class="lede">เรียงจากง่ายไปยาก ทุกข้อดำเป็นฝ่ายเดิน แตะจุดที่คิดว่าถูก</p></div>
+  <div class="chips" id="pz-list"></div><div id="pz-player"></div>
+</section>
+<section id="v-play" hidden>
+  <div id="lobby">
+    <div class="intro"><h1>ประลอง</h1><p class="lede">เลือกคู่ประลองที่ใกล้ฝีมือคุณ ไม่มีด่านล็อก เลือกใครก็ได้ ผลแพ้ชนะเก็บไว้ในเครื่องนี้</p></div>
+    <div class="lobby">
+      <div class="roster" id="roster" role="group" aria-label="รายชื่อคู่ประลอง"></div>
+      <div class="panel" id="detail"></div>
+    </div>
+    <section class="panel logbox" id="logbox" aria-labelledby="log-h"><h2 id="log-h">สมุดบันทึกผล</h2><div id="log-body"></div></section>
+    <div class="friend panel" style="flex-direction:row;flex-wrap:wrap;align-items:center">
+      <h3>เล่นกับเพื่อนบนเครื่องเดียวกัน</h3>
+      <div class="seg" id="friend-size" role="group" aria-label="ขนาดกระดานเล่นกับเพื่อน"></div>
+      <button class="btn" id="friend-start">เล่นกับเพื่อน</button>
+    </div>
+    <details class="explain">
+      <summary>ระดับในหมากล้อมวัดอย่างไร</summary>
+      <div class="col" id="explain"></div>
+    </details>
+  </div>
+  <div id="game" hidden>
+    <div class="stage game">
+      <div class="panel ghead" id="ghead"></div>
+      <div class="board" id="play-board"></div>
+      <aside class="panel side">
+        <div class="turn" id="turn" aria-live="polite"></div>
+        <table class="tally"><tbody id="tally"></tbody></table>
+        <div class="tutor"><span class="eyebrow">ติวเตอร์</span><p id="tutor-text" aria-live="polite"></p></div>
+        <p class="warn" id="gnote" hidden></p>
+        <div class="btns"><button class="btn" id="b-pass">ผ่าน</button><button class="btn" id="b-undo">ถอยหนึ่งตา</button><button class="btn" id="b-hint" hidden>ขอคำใบ้</button><button class="btn" id="b-resign">ยอมแพ้</button><button class="btn primary" id="b-retry" hidden>ลองเดินตานี้ใหม่</button><button class="btn primary" id="b-final" hidden>ยืนยันผลการนับ</button></div>
+        <p class="fb" id="play-fb" aria-live="polite"></p>
+      </aside>
+    </div>
+    <section class="panel review" id="review" hidden aria-live="polite"></section>
+  </div>
+</section>
+<section id="v-masters" hidden>
+  <div class="intro"><h1>คลังเซียน</h1><p class="lede">แนวคิดของผู้เล่นที่เปลี่ยนวิธีเล่นหมากล้อม พร้อมวิธีฝึกตาม</p></div>
+  <div class="masters"><div class="mlist" id="mlist"></div><div class="mbody" id="mbody"></div></div>
+</section>
+</main>
+<p class="note">รุ่นต้นแบบ ความคืบหน้าและสถิติเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ภาพในคลังเซียนเป็นภาพประกอบแนวคิด ยังไม่ใช่บันทึกเกมจริง</p>
+</div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="gB" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#5a5a60"/><stop offset=".45" stop-color="#1c1c1f"/><stop offset="1" stop-color="#050506"/></radialGradient>
+  <radialGradient id="gW" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eeebe2"/><stop offset="1" stop-color="#c9c4b6"/></radialGradient>
+  <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E3BC6E"/><stop offset="1" stop-color="#D3A552"/></linearGradient>
+</defs></svg>
+<script>
+const BLACK = 1, WHITE = 2;
+const LET = 'ABCDEFGHJKLMNOPQRST';
+class Go {
+  constructor(n, komi = 6.5) {
+    this.n = n; this.komi = komi; this.grid = new Int8Array(n * n);
+    this.turn = BLACK; this.ko = -1; this.caps = [0, 0, 0]; this.passes = 0;
+    this.hist = []; this.moves = []; this.last = -1; this.nb = [];
+    for (let i = 0; i < n * n; i++) {
+      const x = i % n, y = (i / n) | 0, a = [];
+      if (x > 0) a.push(i - 1); if (x < n - 1) a.push(i + 1);
+      if (y > 0) a.push(i - n); if (y < n - 1) a.push(i + n);
+      this.nb.push(a);
+    }
+  }
+  group(i, grid = this.grid) {
+    const c = grid[i], stones = [i], seen = new Set([i]), libs = new Set();
+    for (let k = 0; k < stones.length; k++) for (const j of this.nb[stones[k]]) {
+      const v = grid[j];
+      if (v === 0) libs.add(j);
+      else if (v === c && !seen.has(j)) { seen.add(j); stones.push(j); }
+    }
+    return { stones, libs };
+  }
+  snap() { return { grid: this.grid.slice(), turn: this.turn, ko: this.ko, caps: this.caps.slice(), passes: this.passes, last: this.last }; }
+  restore(s) { this.grid = s.grid; this.turn = s.turn; this.ko = s.ko; this.caps = s.caps; this.passes = s.passes; this.last = s.last; }
+  play(i) {
+    if (this.grid[i]) return { ok: false, reason: 'occupied' };
+    if (i === this.ko) return { ok: false, reason: 'ko' };
+    const c = this.turn, o = 3 - c, s = this.snap();
+    this.grid[i] = c; let cap = [];
+    for (const j of this.nb[i]) if (this.grid[j] === o) {
+      const g = this.group(j);
+      if (g.libs.size === 0) { for (const k of g.stones) this.grid[k] = 0; cap = cap.concat(g.stones); }
+    }
+    const me = this.group(i);
+    if (me.libs.size === 0) { this.grid = s.grid; return { ok: false, reason: 'suicide' }; }
+    this.hist.push(s); this.moves.push(i);
+    this.ko = (cap.length === 1 && me.stones.length === 1 && me.libs.size === 1) ? cap[0] : -1;
+    this.caps[c] += cap.length; this.turn = o; this.passes = 0; this.last = i;
+    return { ok: true, captured: cap, libs: me.libs.size, size: me.stones.length };
+  }
+  pass() { this.hist.push(this.snap()); this.moves.push(-1); this.ko = -1; this.turn = 3 - this.turn; this.passes++; this.last = -1; }
+  undo() { if (!this.hist.length) return false; this.restore(this.hist.pop()); this.moves.pop(); return true; }
+  clone() {
+    const g = new Go(this.n, this.komi);
+    g.grid = this.grid.slice(); g.turn = this.turn; g.ko = this.ko; g.caps = this.caps.slice();
+    g.passes = this.passes; g.last = this.last; g.moves = this.moves.slice(); return g;
+  }
+  // นับแบบพื้นที่: หมากบนกระดาน + จุดว่างที่ล้อมได้ ; dead = หมากตายที่เอาออกก่อนนับ
+  score(dead) {
+    const N = this.n * this.n, g = this.grid.slice(), terr = new Int8Array(N), seen = new Uint8Array(N);
+    if (dead) for (const i of dead) g[i] = 0;
+    let b = 0, w = 0;
+    for (let i = 0; i < N; i++) {
+      if (g[i] === BLACK) b++; else if (g[i] === WHITE) w++;
+      else if (!seen[i]) {
+        const q = [i]; seen[i] = 1; let mask = 0;
+        for (let k = 0; k < q.length; k++) for (const j of this.nb[q[k]]) {
+          if (g[j]) mask |= g[j]; else if (!seen[j]) { seen[j] = 1; q.push(j); }
+        }
+        if (mask === BLACK) { b += q.length; for (const k of q) terr[k] = BLACK; }
+        else if (mask === WHITE) { w += q.length; for (const k of q) terr[k] = WHITE; }
+      }
+    }
+    return { b, w: w + this.komi, terr };
+  }
+  name(i) { return LET[i % this.n] + (this.n - ((i / this.n) | 0)); }
+}
+
+// ข้อเท็จจริงของตาที่เดิน ใช้ป้อนให้ติวเตอร์ (ต่อไปจะรวมกับผลวิเคราะห์ของ KataGo)
+function moveFacts(g, i) {
+  const c = g.turn, o = 3 - c, n = g.n, t = g.clone();
+  const wasAtari = new Set();
+  for (const j of g.nb[i]) if (g.grid[j] === c && g.group(j).libs.size === 1) wasAtari.add(j);
+  const eyeFill = g.nb[i].every(j => g.grid[j] === c);
+  const r = t.play(i); if (!r.ok) return null;
+  const f = { captured: r.captured.length, selfAtari: r.libs === 1 && r.captured.length === 0, size: r.size,
+    ataris: [], ownAtari: [], saved: wasAtari.size > 0 && r.libs >= 2, eyeFill, moveNo: g.moves.length,
+    line: Math.min(i % n, (i / n) | 0, n - 1 - i % n, n - 1 - ((i / n) | 0)) + 1 };
+  const seen = new Set();
+  for (const j of t.nb[i]) if (t.grid[j] === o && !seen.has(j)) {
+    const gg = t.group(j); gg.stones.forEach(s => seen.add(s));
+    if (gg.libs.size === 1) f.ataris.push({ at: gg.stones[0], size: gg.stones.length });
+  }
+  const mine = new Set(t.group(i).stones);
+  for (let k = 0; k < n * n; k++) if (t.grid[k] === c && !mine.has(k)) {
+    const gg = t.group(k); gg.stones.forEach(s => mine.add(s));
+    if (gg.libs.size === 1) f.ownAtari.push({ at: gg.stones[0], size: gg.stones.length });
+  }
+  return f;
+}
+
+// คอมระดับมือใหม่: มองล่วงหน้า 1 ตา ให้คะแนนจากการกิน การหนี และรูปร่างง่าย ๆ
+function aiMove(g, noise = 1.5) {
+  const n = g.n, N = n * n, c = g.turn, o = 3 - c, sc = g.score(), seen = new Uint8Array(N), regionSize = new Int32Array(N);
+  for (let i = 0; i < N; i++) if (!g.grid[i] && !seen[i]) {
+    const q = [i]; seen[i] = 1;
+    for (let k = 0; k < q.length; k++) for (const j of g.nb[q[k]]) if (!g.grid[j] && !seen[j]) { seen[j] = 1; q.push(j); }
+    for (const k of q) regionSize[k] = q.length;
+  }
+  let best = -1, bestS = -1e9;
+  for (let i = 0; i < N; i++) {
+    if (g.grid[i] || i === g.ko) continue;
+    const f = moveFacts(g, i); if (!f) continue;
+    if (f.eyeFill && !f.captured) continue;
+    if (sc.terr[i] === c && !f.captured && !f.saved) continue;
+    let s = Math.random() * noise;
+    if (f.captured) s += 5 + 10 * f.captured;
+    if (f.selfAtari) s -= 12 + 2 * f.size;
+    else for (const a of f.ataris) s += 3 + 2 * a.size;
+    if (f.saved) s += 6 + 2 * f.size;
+    if (sc.terr[i] === o && regionSize[i] <= N / 5 && !f.captured) s -= 6;
+    s += f.line === 1 ? -3 : f.line === 2 ? -1 : f.line <= 4 ? 1.5 : 0.5;
+    const x = i % n, y = (i / n) | 0;
+    for (const j of g.nb[i]) s += g.grid[j] === o ? 1 : g.grid[j] === c ? 0.4 : 0;
+    for (const [dx, dy] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+      const X = x + dx, Y = y + dy;
+      if (X >= 0 && Y >= 0 && X < n && Y < n && g.grid[Y * n + X]) s += 0.4;
+    }
+    if (s > bestS) { bestS = s; best = i; }
+  }
+  const late = Math.max(0, g.moves.length - N * 0.9) * 0.06;
+  if (best < 0 || bestS < -1.5 + late) return -1;
+  if (g.passes > 0 && bestS < 1.2) return -1;
+  return best;
+}
+// แผนภาพ: X ดำ, O ขาว, . ว่าง, * คำตอบ, + จุดที่ชี้ให้ดู
+function B(start, lines, n = 9) {
+  const r = []; for (let i = 0; i < n; i++) r.push('.'.repeat(n));
+  lines.forEach((l, k) => { r[start + k] = (l + '.'.repeat(n)).slice(0, n); }); return r;
+}
+const STAGES = [
+  { n: 1, level: 'ไม่เป็นเลย', title: 'กติกาและการกินหมาก', open: true },
+  { n: 2, level: '25–15 คิว', title: 'กลุ่มหมากรอดและตาย', open: true },
+  { n: 3, level: '15–8 คิว', title: 'รูปร่างหมากและการเปิดเกม', topics: 'รูปร่างดีและเสีย มุม ข้าง กลาง ขยับจากกระดาน 13x13 ไป 19x19' },
+  { n: 4, level: '8–1 คิว', title: 'โจเซกิยุค AI และเทสุจิ', topics: 'การบุกและลดทอน เทสุจิ หมากปิดเกม' },
+  { n: 5, level: '1–4 ดั้ง', title: 'การอ่านลึกและการประเมินกระดาน', topics: 'โคะซับซ้อน การสละหมาก การนับแต้มระหว่างเกม' },
+  { n: 6, level: 'เซียน', title: 'ถอดเกมระดับโลก', topics: 'เกมดังทีละตา และแนวคิดของ AI' },
+];
+const LESSONS = [
+  { id: 'l1', stage: 1, title: 'กระดานและการวางหมาก', steps: [
+    { t: 'info', rows: B(0, []), text: 'หมากล้อมเล่นสองคน ฝ่ายดำเดินก่อน แล้วสลับกันวางหมากทีละเม็ด หมากวางบนจุดตัดของเส้น ไม่ได้วางในช่อง และวางแล้วจะไม่ขยับอีก' },
+    { t: 'any', rows: B(0, []), text: 'ลองวางหมากดำหนึ่งเม็ดบนจุดตัดไหนก็ได้', ok: 'ใช่แล้ว หมากอยู่บนจุดตัด เป้าหมายของเกมคือล้อมพื้นที่บนกระดานให้ได้มากกว่าคู่แข่ง' } ] },
+  { id: 'l2', stage: 1, title: 'ลมหายใจ', steps: [
+    { t: 'info', rows: ['X+.......', '+........', '.........', '....+....', '...+X+...', '....+....', '.........', '....+....', '...+X+...'],
+      text: 'จุดว่างที่ติดกับหมากตามเส้นเรียกว่าลมหายใจ (จุดสีฟ้าในภาพ) หมากกลางกระดานมี 4 ลมหายใจ ริมกระดานมี 3 และมุมมีแค่ 2' },
+    { t: 'point', check: 'capture', rows: B(3, ['....X', '...XO*', '....X']), text: 'หมากขาวเม็ดนี้เหลือลมหายใจเดียว ปิดลมหายใจสุดท้ายเพื่อกินหมาก', ok: 'กินได้ หมากที่ไม่เหลือลมหายใจต้องออกจากกระดาน' } ] },
+  { id: 'l3', stage: 1, title: 'กินหมากเป็นกลุ่ม', steps: [
+    { t: 'point', check: 'capture', rows: B(2, ['...XX', '..XOOX', '...X*']), text: 'หมากสีเดียวกันที่ติดกันตามเส้นนับเป็นกลุ่มเดียว และใช้ลมหายใจร่วมกัน กลุ่มขาวนี้เหลือลมหายใจเดียว หาให้เจอแล้วกิน', ok: 'กินได้ทั้งกลุ่มในตาเดียว ยิ่งกลุ่มใหญ่ยิ่งต้องดูลมหายใจให้ดี' },
+    { t: 'choice', rows: B(3, ['...X', '....X']), text: 'หมากดำสองเม็ดนี้แตะกันแนวทแยง นับเป็นกลุ่มเดียวกันไหม',
+      choices: [{ label: 'ไม่ใช่ ต้องติดกันตามเส้นเท่านั้น', right: true }, { label: 'ใช่ แตะกันก็นับ' }], ok: 'ถูกต้อง แนวทแยงยังไม่ต่อกัน คู่แข่งยังแทรกตัดได้' } ] },
+  { id: 'l4', stage: 1, title: 'อาตาริ', steps: [
+    { t: 'point', check: 'atari', rows: B(3, ['....X', '...XO*', '....*']), text: 'หมากที่เหลือลมหายใจเดียวเรียกว่าโดนอาตาริ ตาต่อไปจะโดนกินได้ วางดำให้หมากขาวโดนอาตาริ', ok: 'อาตาริ ขาวเหลือลมหายใจเดียว ถ้าไม่หนี ตาหน้าคุณกินได้' },
+    { t: 'point', check: 'libs3', rows: B(3, ['....O', '...OXO', '....*']), text: 'คราวนี้หมากดำของคุณโดนอาตาริ ต่อหมากออกไปเพื่อเพิ่มลมหายใจ', ok: 'รอดแล้ว จาก 1 ลมหายใจกลายเป็น 3' } ] },
+  { id: 'l5', stage: 1, title: 'จุดห้ามวาง', steps: [
+    { t: 'illegal', rows: B(3, ['....O', '...O*O', '....O']), text: 'ห้ามวางหมากในจุดที่วางแล้วไม่มีลมหายใจเลย ลองแตะจุดกลางวงล้อมของขาวดู', ok: 'กระดานไม่ยอมให้วาง เพราะหมากดำจะไม่มีลมหายใจทันที' },
+    { t: 'point', check: 'capture', rows: B(0, ['*OX', 'OX', 'X']), text: 'มีข้อยกเว้นข้อเดียว ถ้าวางแล้วกินหมากคู่แข่งได้ก็วางได้ เพราะกินแล้วจะได้ลมหายใจกลับมา ลองวางที่มุม', ok: 'วางได้ และกินขาวไปสองเม็ด' } ] },
+  { id: 'l6', stage: 1, title: 'โคะ', steps: [
+    { t: 'point', check: 'capture', rows: B(3, ['...XO', '..XO*O', '...XO']), text: 'รูปนี้เรียกว่าโคะ ดำกินหมากขาวได้หนึ่งเม็ด ลองกินดู', ok: 'กินได้ แต่หมากดำที่เพิ่งวางก็เหลือลมหายใจเดียวเหมือนกัน' },
+    { t: 'illegal', turn: 2, pre: [[4, 4]], answers: [[3, 4]], rows: B(3, ['...XO', '..XO.O', '...XO']), text: 'ตอนนี้คุณเป็นฝ่ายขาว หมากดำที่เพิ่งกินเหลือลมหายใจเดียว ลองกินกลับทันทีที่จุดที่ขาวเพิ่งโดนกิน', ok: 'กินกลับทันทีไม่ได้ กติกาโคะบังคับให้ขาวไปเดินที่อื่นก่อนหนึ่งตา ไม่อย่างนั้นเกมจะวนไม่จบ' } ] },
+  { id: 'l7', stage: 1, title: 'จบเกมและนับแต้ม', steps: [
+    { t: 'info', terr: true, rows: Array(9).fill('....XO...'), text: 'เมื่อไม่มีจุดไหนเดินแล้วได้ประโยชน์ ให้กดผ่าน ผ่านติดกันสองครั้งเกมจบ แต้มของแต่ละฝ่ายคือจำนวนหมากบนกระดานรวมกับจุดว่างที่ล้อมไว้ได้ (สี่เหลี่ยมเล็กในภาพ)' },
+    { t: 'choice', terr: true, rows: Array(9).fill('....XO...'), text: 'ดำมีหมาก 9 เม็ด ล้อมได้ 36 จุด รวม 45 แต้ม ขาวมีหมาก 9 เม็ด ล้อมได้ 27 จุด และได้โคมิ 6.5 แต้มชดเชยที่เดินทีหลัง รวม 42.5 แต้ม ใครชนะ',
+      choices: [{ label: 'ดำชนะ 2.5 แต้ม', right: true }, { label: 'ขาวชนะ 2.5 แต้ม' }, { label: 'เสมอ' }], ok: 'ถูกต้อง 45 ลบ 42.5 เหลือ 2.5 โคมิที่มีเศษครึ่งแต้มทำให้เกมไม่มีเสมอ' } ] },
+  { id: 'l8', stage: 2, title: 'ต่อและตัด', steps: [
+    { t: 'point', rows: B(3, ['...XO', '..O*X']), text: 'หมากดำสองเม็ดนี้ยังไม่ต่อกัน ถ้าขาวได้เดินจุดนั้นก่อน ดำจะถูกตัดเป็นสองกลุ่มที่อ่อนแอ ต่อหมากให้เป็นกลุ่มเดียว', ok: 'ต่อแล้ว กลุ่มเดียวที่แข็งแรงดูแลง่ายกว่าสองกลุ่มที่ต้องหนีพร้อมกัน' },
+    { t: 'point', rows: B(3, ['...OX', '..X*O']), text: 'หมากขาวมีจุดอ่อนแบบเดียวกัน วางดำเพื่อตัดขาวออกเป็นสองส่วน', ok: 'ตัดขาด ขาวต้องดูแลสองกลุ่ม ส่วนคุณได้เลือกว่าจะโจมตีกลุ่มไหน' } ] },
+  { id: 'l9', stage: 2, title: 'สองตา', steps: [
+    { t: 'illegal', turn: 2, rows: B(0, ['*X*XO', 'XXXXO', 'OOOOO']), text: 'กลุ่มดำนี้มีช่องว่างข้างในสองช่อง แต่ละช่องเรียกว่าตา คุณเป็นฝ่ายขาว ลองวางในตาช่องไหนก็ได้', ok: 'วางไม่ได้ทั้งสองช่อง ขาวจึงปิดลมหายใจได้ไม่ครบ กลุ่มที่มีสองตาไม่มีวันโดนกิน' },
+    { t: 'point', rows: B(0, ['X.*.XO', 'XXXXXO', 'OOOOOO']), text: 'กลุ่มดำมีช่องว่างสามช่องเรียงกัน ยังไม่เป็นสองตา วางหนึ่งเม็ดเพื่อแบ่งให้เป็นสองตา', ok: 'จุดกลางคือจุดสำคัญ แบ่งแล้วได้ตาซ้ายและตาขวา กลุ่มนี้รอดถาวร', no: 'วางตรงนี้จะเหลือช่องว่างติดกันสองช่อง ซึ่งนับเป็นตาเดียว ลองจุดที่แบ่งช่องว่างออกเป็นสองฝั่ง' } ] },
+  { id: 'l10', stage: 2, title: 'เป็นและตาย', steps: [
+    { t: 'point', rows: B(0, ['O.*.OX', 'OOOOOX', 'XXXXXX']), text: 'รูปเดียวกัน แต่เป็นกลุ่มขาวและถึงตาคุณเดิน วางจุดไหนขาวจึงทำสองตาไม่ได้', ok: 'ขาวตายแล้ว จุดที่ทำให้ตัวเองรอดคือจุดเดียวกับที่ใช้ฆ่าคู่แข่ง สุภาษิตหมากล้อมว่า จุดสำคัญของศัตรูคือจุดสำคัญของเรา', no: 'ถ้าวางตรงนี้ ขาวจะวางจุดกลางแล้วได้สองตา ลองจุดที่ขาวอยากได้ที่สุด' },
+    { t: 'choice', rows: B(0, ['X.XO', 'XXXO', 'OOOO']), text: 'กลุ่มดำนี้ถูกล้อมไว้หมด และมีตาเดียว จะรอดไหม',
+      choices: [{ label: 'ไม่รอด ขาววางในตาเพื่อกินทั้งกลุ่มได้', right: true }, { label: 'รอด เพราะมีตาแล้ว' }], ok: 'ถูกต้อง ลมหายใจสุดท้ายอยู่ในตา ขาววางแล้วกินได้ จึงต้องมีสองตาเสมอ' } ] },
+  { id: 'l11', stage: 2, title: 'บันได', steps: [
+    { t: 'seq', captures: 6, rows: B(4, ['.....X', '....XO', '....X']), text: 'ขาวเหลือสองลมหายใจ ถ้าอาตาริถูกด้าน ขาวจะหนีเป็นขั้นบันไดจนชนขอบแล้วโดนกินหมด ไล่ขาวไปให้ถึงขอบกระดาน',
+      seq: [{ at: [6, 5], reply: [5, 6] }, { at: [5, 7], reply: [6, 6] }, { at: [7, 6], reply: [6, 7] }, { at: [6, 8], reply: [7, 7] }, { at: [8, 7], reply: [7, 8] }, { at: [8, 8] }],
+      ok: 'กินได้ทั้งหกเม็ด ทุกตาที่ขาวหนีมีแค่สองลมหายใจ คุณจึงอาตาริซ้ำได้เรื่อย ๆ', no: 'ยังไม่ใช่ ทุกตาต้องอาตาริ และต้องบังด้านที่ขาวจะหนีออกที่โล่ง เริ่มใหม่อีกครั้ง' },
+    { t: 'info', rows: B(4, ['.....X', '....XO', '....X', '.......O']), text: 'บันไดใช้ได้เมื่อไม่มีหมากขาวรออยู่บนเส้นทาง ในภาพนี้มีหมากขาวดักอยู่มุมขวาล่าง ขาวจะหนีไปต่อกับหมากนั้นแล้วรอด ก่อนไล่บันไดให้มองไปจนสุดทางเสมอ' } ] },
+  { id: 'l12', stage: 2, title: 'ตาข่าย', steps: [
+    { t: 'point', rows: B(3, ['....XX', '...XO', '...X.*']), text: 'บางครั้งอาตาริตรง ๆ จับไม่อยู่ ให้วางหมากดักห่างออกมาหนึ่งก้าว ขาวหนีทางไหนก็ชนตาข่าย หาจุดดักนั้น', ok: 'ขาวออกทางไหนก็โดนอาตาริแล้วโดนกิน ตาข่ายไม่ต้องไล่ยาวเหมือนบันได และไม่ต้องห่วงหมากดักทาง', no: 'ตานี้ขาวยังหนีออกอีกด้านได้ ลองจุดที่คุมทางออกทั้งสองด้านพร้อมกัน' } ] },
+];
+const PUZZLES = [
+  { id: 'p1', level: '30 คิว', title: 'กินที่ริมกระดาน', steps: [{ t: 'point', check: 'capture', rows: B(0, ['XOOO*', '.XXX']), text: 'ดำเดิน กินหมากขาวสามเม็ด', ok: 'ริมกระดานมีลมหายใจน้อย หมากที่ติดขอบจึงโดนกินง่าย' }] },
+  { id: 'p2', level: '25 คิว', title: 'อาตาริสองทาง', steps: [{ t: 'point', check: 'double', rows: B(2, ['...X', '..XO', '...*', '..XO', '...X']), text: 'ดำเดิน หาตาเดียวที่อาตาริหมากขาวสองเม็ดพร้อมกัน', ok: 'ขาวช่วยได้แค่เม็ดเดียว อีกเม็ดเป็นของคุณ', no: 'ตานี้อาตาริได้แค่เม็ดเดียว ขาวหนีได้' }] },
+  { id: 'p3', level: '22 คิว', title: 'แข่งลมหายใจ', steps: [{ t: 'point', check: 'capture', rows: B(0, ['.XXOO*', 'OOOXXX']), text: 'ดำสองเม็ดบนและขาวสองเม็ดบนต่างเหลือลมหายใจเดียว ดำเดินก่อน', ok: 'เมื่อสองกลุ่มล้อมกันเอง ฝ่ายที่ปิดลมหายใจได้ก่อนเป็นฝ่ายชนะ', no: 'ถ้าไม่กินตานี้ ขาวจะกินดำสองเม็ดก่อน' }] },
+  { id: 'p4', level: '20 คิว', title: 'ฆ่ากลุ่มมุม', steps: [{ t: 'point', rows: B(6, ['...XXXXXX', '...XOOOOO', '...XO.*.O']), text: 'ดำเดิน ทำให้กลุ่มขาวมีตาเดียว', ok: 'ช่องว่างสามช่องเรียงกัน จุดกลางตัดสินว่าเป็นหรือตาย', no: 'ขาวจะวางจุดกลางแล้วได้สองตา' }] },
+  { id: 'p5', level: '20 คิว', title: 'ทำให้รอด', steps: [{ t: 'point', rows: B(1, ['OOO', 'XXO', '.XO', '*XO', '.XO', 'XXO', 'OOO']), text: 'ดำเดิน ทำสองตาให้กลุ่มริมซ้าย', ok: 'ได้สองตา กลุ่มนี้ไม่ต้องห่วงอีกตลอดเกม', no: 'ช่องว่างสองช่องที่ติดกันนับเป็นตาเดียว' }] },
+  { id: 'p6', level: '15 คิว', title: 'เลือกด้านบันได', steps: [{ t: 'point', check: 'atari', rows: B(4, ['...X', '..*OX', '....X']), text: 'ดำเดิน อาตาริด้านไหนจึงไล่ขาวเป็นบันไดได้', ok: 'ขาวต้องหนีลงล่างไปชนหมากดำ แล้วไล่ต่อเป็นบันไดไปถึงมุมซ้ายล่าง', no: 'ด้านนี้ขาวต่อออกไปได้สามลมหายใจ บันไดไม่เกิด' }] },
+  { id: 'p7', level: '12 คิว', title: 'ดักด้วยตาข่าย', steps: [{ t: 'point', rows: B(3, ['...X.*', '...XO', '....XX']), text: 'ดำเดิน จับหมากขาวโดยไม่ต้องอาตาริ', ok: 'ทางออกทั้งสองด้านถูกคุมไว้แล้ว', no: 'ขาวยังมีทางออกอีกด้าน' }] },
+];
+const MASTERS = [
+  { id: 'go', name: 'โกะ เซเก็น', years: '1914–2014', tag: 'ผู้ปฏิวัติการเปิดเกม',
+    body: 'เกิดที่จีนและเล่นอาชีพในญี่ปุ่น ร่วมกับคิทานิ มิโนรุ เสนอแนวเปิดเกมใหม่ในปี 1933 ที่ให้น้ำหนักกับความเร็วและอิทธิพลกลางกระดาน แทนการยึดมุมตามตำราเดิม',
+    ideas: ['เดินจุดเดียวจบมุม เช่น จุดดาวหรือจุด 3-3 แล้วรีบไปจุดใหญ่อื่น', 'ยอมแลกหมากบางส่วนเพื่อได้ตาเดินก่อนในที่ที่ใหญ่กว่า', 'มองทั้งกระดานก่อนมองการต่อสู้เฉพาะจุด'],
+    drill: 'ก่อนเดินทุกตาในช่วงเปิดเกม ถามตัวเองว่าจุดที่ใหญ่ที่สุดบนกระดานตอนนี้อยู่ไหน',
+    n: 19, stones: [[16, 2, 1, '1'], [15, 15, 1, '3'], [9, 9, 1, '5']], cap: 'ภาพประกอบ: ปี 1933 เขาเปิดด้วยจุด 3-3 จุดดาว และจุดกลางกระดาน ซึ่งผิดธรรมเนียมยุคนั้นทั้งสามตา (ตำแหน่งมุมในภาพจัดวางเพื่ออธิบาย)' },
+  { id: 'tk', name: 'ทาเคมิยะ มาซากิ', years: 'เกิด 1951', tag: 'สไตล์จักรวาล',
+    body: 'มืออาชีพ 9 ดั้งชาวญี่ปุ่น ขึ้นชื่อเรื่องการสร้างโครงพื้นที่ขนาดใหญ่กลางกระดาน แทนการเก็บแต้มริมและมุมแบบที่คนส่วนใหญ่ทำ',
+    ideas: ['เปิดด้วยจุดดาวสามจุดเรียงด้านเดียวกัน (ซันเร็นเซ)', 'ใช้กำแพงหนาหันเข้ากลางกระดาน', 'ชวนคู่แข่งบุกเข้ามา แล้วได้กำไรจากการโจมตี'],
+    drill: 'ลองเล่นสิบเกมโดยเปิดด้วยจุดดาวทุกตา และห้ามเดินต่ำกว่าเส้นที่ 4 ในยี่สิบตาแรก',
+    n: 19, stones: [[15, 3, 1, '1'], [15, 15, 1, '3'], [15, 9, 1, '5'], [3, 3, 2, ''], [3, 15, 2, '']], cap: 'ภาพประกอบ: ซันเร็นเซ ดำวางจุดดาวสามจุดเรียงด้านขวา' },
+  { id: 'ch', name: 'อี ชางโฮ', years: 'เกิด 1975', tag: 'พระพุทธรูปหิน',
+    body: 'มืออาชีพชาวเกาหลีที่ครองวงการช่วงทศวรรษ 1990 ถึงต้น 2000 ได้ฉายาจากสีหน้าที่นิ่งและการเล่นที่ไม่หวือหวา ชนะด้วยการนับแต้มแม่นและหมากปิดเกมที่แทบไม่พลาด',
+    ideas: ['เลือกทางที่ชนะแน่นอนแม้ได้น้อย แทนทางที่ได้มากแต่เสี่ยง', 'นับแต้มทั้งกระดานตลอดเกม', 'เก็บแต้มปิดเกมทีละครึ่งแต้มจนแซง'],
+    drill: 'หลังจบทุกเกม ลองนับว่าช่วงปิดเกมเสียไปกี่แต้มเทียบกับตาที่ดีที่สุด',
+    cap: 'สไตล์นี้อยู่ที่การนับ ไม่ได้อยู่ที่รูปร่างหมาก จึงไม่มีภาพตำแหน่ง' },
+  { id: 'sd', name: 'อี เซดล', years: 'เกิด 1983', tag: 'นักสู้พลิกแพลง',
+    body: 'มืออาชีพชาวเกาหลีที่ถนัดการต่อสู้ซับซ้อนและการพลิกเกมจากตำแหน่งที่เสียเปรียบ ปี 2016 แพ้ AlphaGo 1–4 และกระดานที่ชนะมาจากตาที่ 78 ซึ่งเป็นหมากแทรกที่เครื่องประเมินพลาด',
+    ideas: ['สร้างความซับซ้อนเมื่อตามหลัง', 'หาหมากแทรกและจุดตัดที่คู่แข่งมองข้าม', 'กล้าสละหมากเพื่อเปลี่ยนทิศทางเกม'],
+    drill: 'ทำโจทย์เทสุจิวันละสิบข้อ โดยมองหาตาที่ดูไม่น่าเดินได้ก่อน',
+    n: 19, stones: [[8, 9, 1, ''], [10, 9, 1, ''], [9, 9, 2, '△']], cap: 'ภาพประกอบ: หมากแทรก คือการวางลงระหว่างหมากคู่แข่งสองเม็ดที่ห่างกันหนึ่งช่อง (ไม่ใช่ตำแหน่งจริงจากเกม)' },
+  { id: 'sj', name: 'เคอ เจี๋ย และ ชิน จินซอ', years: 'เกิด 1997 และ 2000', tag: 'รุ่นที่เรียนกับ AI',
+    body: 'เคอ เจี๋ย จากจีน แพ้ AlphaGo 0–3 ในปี 2017 แล้วเป็นคนแรก ๆ ที่นำแนวคิดของเครื่องมาใช้ ชิน จินซอ จากเกาหลี เป็นมือหนึ่งของประเทศต่อเนื่องหลายปี และขึ้นชื่อว่าเดินตรงกับ AI บ่อยที่สุดในหมู่มนุษย์',
+    ideas: ['บุกจุด 3-3 ใต้จุดดาวตั้งแต่ต้นเกม', 'ไม่ยึดติดโจเซกิ ทิ้งรูปค้างไว้แล้วไปที่อื่นได้', 'ทบทวนทุกเกมกับ AI เพื่อหาตาที่เสียแต้ม'],
+    drill: 'ทบทวนเกมตัวเองกับ AI แล้วจดเฉพาะสามตาที่เสียแต้มมากที่สุด',
+    n: 19, stones: [[15, 3, 1, ''], [16, 2, 2, '△']], cap: 'ภาพประกอบ: ขาวบุกจุด 3-3 ใต้หมากจุดดาวของดำ' },
+  { id: 'ai', name: 'AlphaGo และ KataGo', years: '2016 ถึงปัจจุบัน', tag: 'เครื่องที่เปลี่ยนตำรา',
+    body: 'AlphaGo ของ DeepMind ชนะมืออาชีพระดับโลกในปี 2016 ส่วน KataGo เป็นโปรแกรมโอเพนซอร์สที่ทุกคนใช้ทบทวนเกมได้ฟรี ทั้งคู่ประเมินกระดานด้วยโอกาสชนะ ไม่ได้ยึดสุภาษิตเดิม',
+    ideas: ['กดไหล่บนเส้นที่ 5 ได้ ถ้าภาพรวมทั้งกระดานคุ้ม', 'ให้ค่าความหนาและตาเดินก่อนมากกว่าแต้มที่เห็นตรงหน้า', 'ตาเล็กที่ดูไม่มีอะไร อาจดีที่สุดเมื่อคิดทั้งกระดาน'],
+    drill: 'เมื่อ AI แนะนำตาที่ไม่เข้าใจ ให้เดินตามลำดับที่มันคาดไว้อีกห้าตาแล้วดูผลลัพธ์',
+    n: 19, stones: [[15, 9, 2, ''], [14, 8, 1, '△']], cap: 'ภาพประกอบ: หมากกดไหล่บนเส้นที่ 5 แบบเดียวกับตาที่ 37 ของ AlphaGo ในปี 2016 (ไม่ใช่ตำแหน่งจริงจากเกม)' },
+];
+// คู่ประลอง: ระดับเป็นค่าประมาณ ยังไม่ได้เทียบกับผู้เล่นจริง
+const SENSEI = [
+  { id: 's1', name: 'น้องเจี๊ยบ', kind: 'chick', fur: '#F6C945', rank: '30 คิว', belt: 'สายขาว', bc: '#F4F3EE', n: 9, eng: 'basic', noise: 8,
+    exp: 'เพิ่งรู้กติกาได้หนึ่งสัปดาห์', style: 'วางตามใจ มักลืมดูลมหายใจ', fit: 'คนที่เพิ่งเรียนจบขั้น 1 และยังไม่เคยเล่นจบกระดาน', goal: 'เล่นให้จบเกม และกินหมากที่โดนอาตาริให้ได้' },
+  { id: 's2', name: 'พี่กระต่าย', kind: 'rabbit', fur: '#EFE7DA', rank: '25 คิว', belt: 'สายเหลือง', bc: '#F2CB3D', n: 9, eng: 'basic', noise: 1.5,
+    exp: 'เล่นมาราว 30 กระดาน', style: 'เห็นอาตาริเป็นกิน โดนอาตาริเป็นหนี แต่ยังไม่วางแผน', fit: 'คนที่ชนะน้องเจี๊ยบได้สม่ำเสมอ', goal: 'ไม่ปล่อยให้หมากตัวเองโดนกินฟรี' },
+  { id: 's3', name: 'ลุงเต่า', kind: 'turtle', fur: '#7DAE78', rank: '20 คิว', belt: 'สายส้ม', bc: '#EE8A2F', n: 13, eng: 'kata', temp: 2.0, blunder: 0.35,
+    exp: 'เล่นมาครึ่งปี สัปดาห์ละครั้ง', style: 'รูปร่างพอใช้ แต่พลาดบ่อยและอ่านไม่ลึก', fit: 'คนที่เรียนจบขั้น 2 และอยากลองกระดานใหญ่ขึ้น', goal: 'ลงโทษตาพลาดของคู่แข่งให้ได้' },
+  { id: 's4', name: 'ครูจิ้งจอก', kind: 'fox', fur: '#E27B32', rank: '15 คิว', belt: 'สายเขียว', bc: '#3E9B5F', n: 13, eng: 'kata', temp: 1.5, blunder: 0.22,
+    exp: 'เล่นมาหนึ่งปี', style: 'ชอบตัดและสู้ระยะประชิด', fit: 'คนที่รู้จักบันได ตาข่าย และสองตาแล้ว', goal: 'ต่อหมากให้แข็งแรงก่อนออกไปสู้' },
+  { id: 's5', name: 'ครูนกฮูก', kind: 'owl', fur: '#8D6E53', rank: '10 คิว', belt: 'สายฟ้า', bc: '#3C8FD0', n: 19, eng: 'kata', temp: 1.25, blunder: 0.12,
+    exp: 'เล่นมาสองปี ผ่านมาหลายร้อยกระดาน', style: 'เปิดเกมตามหลัก มุม ข้าง กลาง', fit: 'คนที่เล่นกระดาน 19 x 19 จบได้สบาย', goal: 'เปิดเกมไม่เสียเปรียบใน 50 ตาแรก' },
+  { id: 's6', name: 'ครูเสือ', kind: 'tiger', fur: '#F0A43A', rank: '5 คิว', belt: 'สายน้ำตาล', bc: '#8A5A33', n: 19, eng: 'kata', temp: 1.0, blunder: 0.05,
+    exp: 'เล่นจริงจังมาสามปี ลงแข่งเป็นประจำ', style: 'โจมตีกลุ่มอ่อนอย่างต่อเนื่อง', fit: 'คนที่ชนะครูนกฮูกได้มากกว่าแพ้', goal: 'ไม่มีกลุ่มอ่อนเกินหนึ่งกลุ่มในเวลาเดียวกัน' },
+  { id: 's7', name: 'เซนเซแมวดำ', kind: 'cat', fur: '#232327', rank: '1 ดั้ง', belt: 'สายดำ', bc: '#1B1B1E', n: 19, eng: 'kata', temp: 0.6, blunder: 0,
+    exp: 'เล่นมากว่าห้าปี สอบผ่านระดับดั้ง', style: 'เดินตามสัญชาตญาณที่ฝึกมาดี แทบไม่มีตาเสียรูป', fit: 'ผู้เล่นคิวต้น ๆ ที่ตั้งเป้าสอบดั้ง', goal: 'แพ้ไม่เกิน 10 แต้มให้ได้ก่อน แล้วค่อยหวังชนะ' },
+  { id: 's8', name: 'อาจารย์กระเรียน', kind: 'crane', fur: '#F3F2EC', rank: '3 ดั้ง', belt: 'สายดำขีดแดง', bc: '#1B1B1E', bc2: '#C5382C', n: 19, eng: 'kata', mode: 'search', visits: 40,
+    exp: 'เล่นมาเป็นสิบปี สอนในสำนัก', style: 'อ่านล่วงหน้าทุกตา ใจเย็น เก็บแต้มแม่น', fit: 'ผู้เล่นระดับดั้งที่อยากทดสอบการอ่าน', goal: 'หาตาที่เสียเกิน 5 แต้มของตัวเองให้เหลือไม่เกินสามตา' },
+  { id: 's9', name: 'ปรมาจารย์มังกร', kind: 'dragon', fur: '#2F8474', rank: '5 ดั้งขึ้นไป', belt: 'สายแดง', bc: '#C5382C', n: 19, eng: 'kata', mode: 'search', visits: 200,
+    exp: 'ฝึกจากการเล่นกับตัวเองหลายล้านกระดาน', style: 'คิดลึกที่สุดในสำนัก ใช้เวลาคิดตาละไม่กี่วินาที', fit: 'ผู้เล่นแนวหน้าที่อยากได้คู่ซ้อมที่ไม่มีวันเหนื่อย', goal: 'เรียนจากตาที่มังกรเลือก มากกว่าหวังผลแพ้ชนะ' },
+  { id: 's10', name: 'เทพมังกรฟ้า', kind: 'dragon', fur: '#3F74C8', rank: 'เหนือมืออาชีพ', belt: 'สายทอง', bc: '#D4A72C', n: 19, eng: 'server', mode: 'search', visits: 300,
+    exp: 'ใช้ KataGo รุ่นใหญ่ที่รันบนเครื่องของสำนัก', style: 'ระดับเดียวกับเอไอที่มืออาชีพใช้ซ้อม', fit: 'ครูและผู้เล่นระดับดั้งที่อยากวัดฝีมือกับของจริง', goal: 'ดูว่าเสียแต้มช่วงไหนของเกมมากที่สุด' },
+];
+const LADDER = [['30–21 คิว', 'เริ่มต้น', '#F4F3EE'], ['20–11 คิว', 'รู้หลัก', '#EE8A2F'], ['10–1 คิว', 'เล่นเป็น', '#3C8FD0'], ['1–7 ดั้ง', 'สมัครเล่นระดับสูง', '#1B1B1E'], ['มืออาชีพ 1–9 ดั้ง', 'อาชีพ', '#C5382C']];
+// ตัวเชื่อม KataGo ในเบราว์เซอร์ (เอนจินจากโครงการ web-katrain สัญญาอนุญาต MIT, โครงข่าย g170-b6c96)
+const Kata = {
+  w: null, ready: null, seq: 0, pend: new Map(), backend: '', chain: Promise.resolve(),
+  init() {
+    if (this.ready) return this.ready;
+    this.ready = new Promise((res, rej) => {
+      try { this.w = new Worker('engine/katago-worker.js'); } catch (e) { return rej(e); }
+      const to = setTimeout(() => rej(new Error('timeout')), 60000);
+      this.w.onerror = () => { clearTimeout(to); rej(new Error('worker')); };
+      this.w.onmessage = e => {
+        const m = e.data;
+        if (m.type === 'katago:init_result') { clearTimeout(to); if (m.ok) { this.backend = m.backend; res(); } else rej(new Error(m.error)); }
+        else if (m.type === 'katago:analyze_result') { const p = this.pend.get(m.id); if (p) { this.pend.delete(m.id); m.ok && m.analysis ? p.res(m.analysis) : p.rej(new Error(m.error || 'analysis failed')); } }
+      };
+      // โฮสต์ปกติใช้ไฟล์ .bin ตรง ๆ ; ที่ที่เสิร์ฟ .bin ไม่ได้ใช้สำเนา base64 ใน .json แทน
+      fetch('engine/katago-small.bin', { method: 'HEAD' }).then(r => { if (!r.ok) throw 0; return new URL('engine/katago-small.bin', location.href).href; })
+        .catch(() => fetch('engine/katago-small.json').then(r => r.json()).then(j => { const bin = atob(j.b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return URL.createObjectURL(new Blob([u])); }))
+        .then(url => { this.url = url; this.w.postMessage({ type: 'katago:init', modelUrl: url, backend: 'auto' }); }, e => { clearTimeout(to); rej(new Error('model')); });
+    });
+    this.ready.catch(() => { this.ready = null; });
+    return this.ready;
+  },
+  // วิเคราะห์ตำแหน่งปัจจุบันของเกม g ; คืน {lead (มุมมองดำ), best (idx หรือ -1), policy, ownership, moves}
+  analyze(g, visits = 16, ms = 8000) {
+    const n = g.n, toB = grid => { const b = []; for (let y = 0; y < n; y++) { const r = []; for (let x = 0; x < n; x++) { const v = grid[y * n + x]; r.push(v === 1 ? 'black' : v === 2 ? 'white' : null); } b.push(r); } return b; };
+    const req = { board: toB(g.grid), previousBoard: g.hist.length ? toB(g.hist[g.hist.length - 1].grid) : undefined,
+      currentPlayer: g.turn === 1 ? 'black' : 'white', komi: g.komi,
+      moveHistory: g.moves.map((m, k) => ({ x: m < 0 ? -1 : m % n, y: m < 0 ? -1 : (m / n) | 0, player: k % 2 ? 'white' : 'black' })) };
+    const run = () => this.init().then(() => new Promise((res, rej) => {
+      const id = ++this.seq; this.pend.set(id, { res, rej });
+      this.w.postMessage({ type: 'katago:analyze', id, modelUrl: this.url, backend: 'auto', rules: 'chinese', visits, maxTimeMs: ms, topK: 10, analysisPvLen: 3, ownershipMode: 'root', reuseTree: false, ...req });
+    })).then(a => {
+      const mv = (a.moves || []).slice().sort((p, q) => p.order - q.order)[0];
+      return { lead: a.rootScoreLead, best: !mv || mv.x < 0 ? -1 : mv.y * n + mv.x, policy: a.policy, ownership: a.ownership };
+    });
+    const p = this.chain.then(run, run); this.chain = p.catch(() => { }); return p;
+  },
+  // เลือกตาเดินตามระดับของคู่ประลอง
+  pick(g, a, s) {
+    const n = g.n, N = n * n, pol = a.policy;
+    if (a.best < 0 || (pol && pol[N] > 0.6)) return -1;
+    if (s.mode === 'search') return a.best;
+    const wild = Math.random() < s.blunder, T = wild ? 4 : s.temp;
+    let max = 0; for (let i = 0; i < N; i++) if (pol[i] > max) max = pol[i];
+    const cand = []; let sum = 0;
+    for (let i = 0; i < N; i++) {
+      if (!(pol[i] > 0) || g.grid[i] || i === g.ko || (!wild && pol[i] < max * 0.03)) continue;
+      const f = moveFacts(g, i); if (!f || (f.eyeFill && !f.captured)) continue;
+      const w = Math.pow(pol[i], 1 / T); cand.push([i, w]); sum += w;
+    }
+    if (!cand.length) return a.best;
+    let r = Math.random() * sum; for (const [i, w] of cand) { r -= w; if (r <= 0) return i; }
+    return cand[cand.length - 1][0];
+  },
+};
+
+// เครื่องของสำนัก: KataGo รุ่นใหญ่บนพีซีของเจ้าของ ผ่านสะพานที่ url ใน server.json (ถ้าไม่มีไฟล์ แปลว่าปิดอยู่)
+const Srv = {
+  url: null, online: false, checked: false, at: 0, p: null, chain: Promise.resolve(),
+  check() {
+    if (this.p) return this.p;
+    if (this.checked && Date.now() - this.at < 60000) return Promise.resolve(this.online);
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 6000);
+    this.p = fetch('server.json', { cache: 'no-store', signal: ctl.signal }).then(r => { if (!r.ok) throw 0; return r.json(); })
+      .then(j => { if (!j || typeof j.url !== 'string' || !j.url) throw 0; this.url = j.url.replace(/\/+$/, ''); return fetch(this.url + '/health', { cache: 'no-store', signal: ctl.signal }); })
+      .then(r => { if (!r.ok) throw 0; return r.json(); }).then(j => { if (!j || !j.ok) throw 0; return true; })
+      .catch(() => false)
+      .then(ok => { clearTimeout(to); this.online = ok; this.checked = true; this.at = Date.now(); this.p = null; return ok; });
+    return this.p;
+  },
+  analyze(g, visits = 60) {
+    const n = g.n, N = n * n, names = g.moves.map(m => m < 0 ? 'pass' : g.name(m));
+    const run = () => {
+      if (!this.url) return Promise.reject(new Error('offline'));
+      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 60000);
+      return fetch(this.url + '/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ n, komi: g.komi, moves: names, visits }), signal: ctl.signal })
+        .then(r => r.json()).then(j => {
+          if (!j || !j.ok) throw new Error((j && j.error) || 'analysis failed');
+          let best = -1;
+          if (j.best && String(j.best).toLowerCase() !== 'pass') { const b = String(j.best).toUpperCase(); for (let i = 0; i < N; i++) if (g.name(i).toUpperCase() === b) { best = i; break; } if (best < 0) throw new Error('bad move'); }
+          return { lead: j.lead, best, policy: null, ownership: Array.isArray(j.ownership) && j.ownership.length === N ? j.ownership : null };
+        }).finally(() => clearTimeout(to));
+    };
+    const p = this.chain.then(run, run); this.chain = p.catch(() => { }); return p;
+  },
+};
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+let done = store.get('go-done', {});
+const STARS = { 9: [2, 4, 6], 13: [3, 6, 9], 19: [3, 9, 15] };
+const C = 30, M = 28;
+
+// วาดกระดาน: o = {n, grid, last, hints[], marks[], rings[{i,color}], terr, dead:Set, labels:{i:txt}, fresh}
+// เคอร์เซอร์คีย์บอร์ดอ่านจาก el._cur เมื่อ el._kb เป็นจริง
+function drawBoard(el, o) {
+  const n = o.n, S = M * 2 + C * (n - 1), P = k => M + k * C;
+  el._n = n;
+  let h = `<svg viewBox="0 0 ${S} ${S}" class="n${n}" role="img" aria-label="กระดานหมากล้อม ${n} x ${n}"><rect width="${S}" height="${S}" fill="url(#gWood)"/>`;
+  for (let k = 0; k < n; k++) {
+    h += `<path d="M${P(k)} ${M}V${P(n - 1)}M${M} ${P(k)}H${P(n - 1)}" stroke="#3a2a10" stroke-width="${k === 0 || k === n - 1 ? 1.6 : 1}" fill="none"/>`;
+    h += `<g class="co" fill="#5b4520" font-size="10" text-anchor="middle"><text x="${P(k)}" y="${S - 7}">${LET[k]}</text><text x="11" y="${P(k) + 3.5}">${n - k}</text></g>`;
+  }
+  const st = STARS[n] || [];
+  for (const a of st) for (const b of st) if (n !== 9 || (a === 4) === (b === 4)) h += `<circle cx="${P(a)}" cy="${P(b)}" r="3" fill="#3a2a10"/>`;
+  for (let i = 0; i < n * n; i++) {
+    const x = P(i % n), y = P((i / n) | 0), v = o.grid[i], dead = o.dead && o.dead.has(i);
+    if (v) {
+      h += `<circle cx="${x + 1}" cy="${y + 2}" r="13.6" fill="#000" opacity="${dead ? .08 : .25}"/><circle${o.fresh === i ? ' class="new"' : ''} cx="${x}" cy="${y}" r="13.8" fill="url(#g${v === 1 ? 'B' : 'W'})" opacity="${dead ? .4 : 1}"/>`;
+      if (o.last === i) h += `<circle cx="${x}" cy="${y}" r="5.5" fill="none" stroke="${v === 1 ? '#fff' : '#111'}" stroke-width="1.8"/>`;
+      const lb = o.labels && o.labels[i];
+      if (lb) h += `<text x="${x}" y="${y + 4.5}" font-size="13" font-weight="500" text-anchor="middle" fill="${v === 1 ? '#fff' : '#111'}">${esc(lb)}</text>`;
+    }
+    const t = o.terr && o.terr[i];
+    if (t && (!v || dead)) h += `<rect x="${x - 5}" y="${y - 5}" width="10" height="10" fill="${t === 1 ? '#111' : '#fbfaf5'}" stroke="${t === 1 ? '#111' : '#6b5a36'}" stroke-width=".8"/>`;
+  }
+  for (const i of o.marks || []) h += `<circle cx="${P(i % n)}" cy="${P((i / n) | 0)}" r="5.5" fill="#1d4ed8"/>`;
+  for (const i of o.hints || []) h += `<circle cx="${P(i % n)}" cy="${P((i / n) | 0)}" r="11" fill="#1d4ed833" stroke="#1d4ed8" stroke-width="2.2" stroke-dasharray="4 3"/>`;
+  for (const r of o.rings || []) h += `<circle cx="${P(r.i % n)}" cy="${P((r.i / n) | 0)}" r="16.5" fill="none" stroke="${r.color}" stroke-width="3"/>`;
+  if (el._kb && el._cur >= 0 && el._cur < n * n) h += `<rect x="${P(el._cur % n) - 15}" y="${P(((el._cur / n) | 0)) - 15}" width="30" height="30" rx="4" fill="none" stroke="#c2185b" stroke-width="2.4"/>`;
+  el.innerHTML = h + '</svg>';
+}
+// ผูกการแตะและคีย์บอร์ดเข้ากับกระดาน: fn(idx) เมื่อเลือกจุด, redraw() วาดใหม่
+function bindBoard(el, fn, redraw) {
+  el.tabIndex = 0; el.setAttribute('role', 'group');
+  el.setAttribute('aria-label', 'กระดานหมากล้อม ใช้ปุ่มลูกศรเลื่อนจุด กด Enter หรือเว้นวรรคเพื่อวางหมาก');
+  el.onclick = e => {
+    const svg = el.firstElementChild, N = el._n; if (!svg || !N) return;
+    const r = svg.getBoundingClientRect(), S = M * 2 + C * N - C;
+    const x = Math.round(((e.clientX - r.left) / r.width * S - M) / C), y = Math.round(((e.clientY - r.top) / r.height * S - M) / C);
+    if (el._kb) { el._kb = false; redraw(); }
+    if (x >= 0 && y >= 0 && x < N && y < N) fn(y * N + x);
+  };
+  el.onfocus = () => { const N = el._n; if (!N) return; if (el.matches(':focus-visible')) { el._kb = true; if (!(el._cur >= 0)) el._cur = (N >> 1) * N + (N >> 1); redraw(); } };
+  el.onblur = () => { if (el._kb) { el._kb = false; redraw(); } };
+  el.onkeydown = e => {
+    const N = el._n; if (!N) return;
+    const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (!(el._cur >= 0)) el._cur = (N >> 1) * N + (N >> 1);
+    if (d) {
+      e.preventDefault(); el._kb = true;
+      const x = Math.min(N - 1, Math.max(0, el._cur % N + d[0])), y = Math.min(N - 1, Math.max(0, ((el._cur / N) | 0) + d[1]));
+      el._cur = y * N + x; redraw();
+    } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el._kb = true; fn(el._cur); }
+  };
+  el._redraw = redraw;
+}
+function parseRows(rows) {
+  const n = rows.length, g = new Go(n), ans = [], marks = [];
+  rows.forEach((r, y) => [...r].forEach((ch, x) => { const i = y * n + x; if (ch === 'X') g.grid[i] = 1; else if (ch === 'O') g.grid[i] = 2; else if (ch === '*') ans.push(i); else if (ch === '+') marks.push(i); }));
+  return { g, ans, marks };
+}
+const WHY = { occupied: 'จุดนี้มีหมากอยู่แล้ว', suicide: 'วางไม่ได้ หมากจะไม่มีลมหายใจ', ko: 'ยังกินกลับไม่ได้ ติดกติกาโคะ ต้องเดินที่อื่นก่อนหนึ่งตา' };
+
+// ---------- ตัวเล่นบทเรียนและโจทย์ ----------
+function Player(root, kind, onFinish) {
+  root.innerHTML = `<div class="stage"><div class="board"></div><aside class="panel"><span class="eyebrow"></span><h2></h2><div class="dots"></div><p class="text"></p><div class="choices"></div><p class="fb" aria-live="polite"></p><div class="btns"><button class="btn b-hint">ดูคำใบ้</button><button class="btn b-reset">เริ่มข้อนี้ใหม่</button><button class="btn primary b-next"></button></div></aside></div>`;
+  const bd = $('.board', root), fbEl = $('.fb', root);
+  let L, si, g, ans, marks, solved, hint, pos, busy, fresh;
+  const step = () => L.steps[si];
+  const fb = (t, c) => { fbEl.textContent = t; fbEl.className = 'fb ' + (c || ''); };
+  function load() {
+    const s = step(), p = parseRows(s.rows); g = p.g; ans = p.ans; marks = p.marks;
+    if (s.pre) s.pre.forEach(([x, y]) => g.play(y * g.n + x));
+    if (s.turn) g.turn = s.turn;
+    if (s.answers) ans = s.answers.map(([x, y]) => y * g.n + x);
+    solved = s.t === 'info'; hint = false; pos = 0; busy = false; fresh = -1; fb(''); render();
+  }
+  function render() {
+    const s = step(), last = si === L.steps.length - 1;
+    $('.eyebrow', root).textContent = kind === 'lesson' ? `ขั้น ${L.stage} · ${(s.turn || 1) === 1 ? 'คุณถือดำ' : 'คุณถือขาว'}` : `ระดับ ${L.level} · ดำเดิน`;
+    $('h2', root).textContent = L.title;
+    $('.dots', root).innerHTML = L.steps.length > 1 ? L.steps.map((_, k) => `<span class="${k <= si ? 'on' : ''}"></span>`).join('') : '';
+    $('.text', root).textContent = s.text;
+    const ch = $('.choices', root); ch.innerHTML = '';
+    if (s.t === 'choice') s.choices.forEach(c => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = c.label; b.disabled = solved; b.onclick = () => { if (c.right) { solved = true; fb(s.ok, 'good'); render(); } else fb('ยังไม่ใช่ ลองอ่านคำอธิบายอีกครั้ง', 'bad'); }; ch.appendChild(b); });
+    const interactive = !['info', 'choice'].includes(s.t);
+    $('.b-hint', root).hidden = !interactive || s.t === 'any'; $('.b-reset', root).hidden = !interactive;
+    const nx = $('.b-next', root); nx.disabled = !solved; nx.textContent = !last ? 'ถัดไป' : kind === 'lesson' ? 'จบบทเรียน' : 'ข้อต่อไป';
+    bd.classList.toggle('static', !interactive || solved);
+    const hints = hint && !solved ? (s.t === 'seq' ? [s.seq[pos].at[1] * g.n + s.seq[pos].at[0]] : ans) : [];
+    drawBoard(bd, { n: g.n, grid: g.grid, last: g.last, marks, hints, terr: s.terr ? g.score().terr : null, fresh });
+  }
+  bindBoard(bd, i => {
+    const s = step(); if (solved || busy || ['info', 'choice'].includes(s.t)) return;
+    if (s.t === 'illegal') {
+      if (!ans.includes(i)) return fb('ลองแตะจุดที่โจทย์พูดถึง กดดูคำใบ้ได้', 'bad');
+      const r = g.play(i); if (!r.ok) { solved = true; fb(s.ok, 'good'); } return render();
+    }
+    if (s.t === 'seq') {
+      const m = s.seq[pos];
+      if (i !== m.at[1] * g.n + m.at[0]) { fb(s.no, 'bad'); const keep = fbEl.textContent; load(); return fb(keep, 'bad'); }
+      g.play(i); fresh = i; fb('');
+      if (!m.reply) { solved = true; fb(s.ok, 'good'); return render(); }
+      busy = true; render();
+      return setTimeout(() => { const j = m.reply[1] * g.n + m.reply[0]; g.play(j); fresh = j; pos++; busy = false; render(); }, 420);
+    }
+    if (s.t === 'point' && !ans.includes(i)) return fb(g.grid[i] ? WHY.occupied : s.no || 'ยังไม่ใช่ ลองนับลมหายใจของหมากอีกครั้ง', 'bad');
+    const r = g.play(i); if (!r.ok) return fb(WHY[r.reason], 'bad');
+    fresh = i; solved = true; fb(s.ok, 'good'); render();
+  }, render);
+  $('.b-hint', root).onclick = () => { hint = true; render(); };
+  $('.b-reset', root).onclick = load;
+  $('.b-next', root).onclick = () => { if (si < L.steps.length - 1) { si++; load(); } else onFinish(L); };
+  return { open(l) { L = l; si = 0; load(); } };
+}
+
+// ---------- สถิติและระดับของผู้เล่น ----------
+let recs = store.get('go-rec', {});
+const wins = id => (recs[id] && recs[id].w) || 0;
+const playerRank = () => { let r = null; SENSEI.forEach(s => { if (wins(s.id) >= 1) r = s; }); return r; };
+const recId = () => { const s = SENSEI.find(s => s.eng !== 'server' && wins(s.id) < 2); return s ? s.id : null; };
+const beltCss = s => s.bc2 ? `linear-gradient(90deg,${s.bc} 0 62%,${s.bc2} 62%)` : s.bc;
+const belt = s => `<span class="belt"><i style="background:${beltCss(s)}"></i>${esc(s.belt)}</span>`;
+
+// ---------- หน้าเรียน ----------
+const lessonPlayer = Player($('#lesson-player'), 'lesson', L => { done[L.id] = 1; store.set('go-done', done); showPath(); });
+function openLesson(id) {
+  const L = LESSONS.find(l => l.id === id); if (!L) return;
+  showTab('learn'); $('#path-view').hidden = true; $('#lesson-view').hidden = false; lessonPlayer.open(L); window.scrollTo(0, 0);
+}
+function showPath() {
+  $('#lesson-view').hidden = true; $('#path-view').hidden = false;
+  const nDone = LESSONS.filter(l => done[l.id]).length, tot = LESSONS.length, next = LESSONS.find(l => !done[l.id]), pr = playerRank();
+  $('#resume').innerHTML = `<div class="col"><span class="eyebrow">${next ? 'บทถัดไปของคุณ' : 'เรียนครบแล้ว'}</span>
+    <h2>${next ? esc(next.title) : 'คุณเรียนครบทุกบทที่เปิดอยู่แล้ว'}</h2>
+    <div class="bar" role="progressbar" aria-label="ความคืบหน้าการเรียน" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${nDone}"><i style="width:${Math.round(nDone / tot * 100)}%"></i></div>
+    <p>เรียนแล้ว ${nDone} จาก ${tot} บท</p>
+    <div class="btns">${next ? '<button class="btn primary" id="r-next">เรียนต่อ</button>' : '<button class="btn primary" id="r-puz">ไปฝึกโจทย์</button>'}<button class="btn" id="r-play">เล่นทันที</button></div>
+    <p class="small">ไม่ต้องสมัครสมาชิก</p></div>
+    <div class="rankbox"><span class="eyebrow">ระดับของคุณ</span><b>${pr ? esc(pr.rank) : 'ยังไม่มีระดับ'}</b><p class="small">${pr ? 'จากการชนะ' + esc(pr.name) + ' ชนะคู่ประลองที่แข็งขึ้นเพื่อเลื่อนระดับ' : 'ชนะคู่ประลองสักคนในแท็บประลองเพื่อรับระดับแรก'}</p></div>`;
+  if (next) $('#r-next').onclick = () => openLesson(next.id); else $('#r-puz').onclick = () => showTab('puzzles');
+  $('#r-play').onclick = () => showTab('play');
+  $('#path').innerHTML = STAGES.map(s => `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)}</h2>${s.open
+    ? `<div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div>`
+    : `<p class="soon">${esc(s.topics)} · กำลังจัดทำ</p>`}</div></li>`).join('');
+}
+$('#path').onclick = e => { const b = e.target.closest('.lesson'); if (b) openLesson(b.dataset.id); };
+$('#lesson-back').onclick = showPath;
+
+// ---------- หน้าโจทย์ ----------
+let pzCur = 0;
+const pzPlayer = Player($('#pz-player'), 'puzzle', L => { done[L.id] = 1; store.set('go-done', done); openPuzzle((pzCur + 1) % PUZZLES.length); });
+function openPuzzle(k) {
+  pzCur = k;
+  $('#pz-list').innerHTML = PUZZLES.map((p, j) => `<button class="chip${done[p.id] ? ' done' : ''}" data-k="${j}" aria-pressed="${j === k}"><span>${esc(p.title)}</span><small>${p.level}</small></button>`).join('');
+  pzPlayer.open(PUZZLES[k]);
+}
+$('#pz-list').onclick = e => { const b = e.target.closest('.chip'); if (b) openPuzzle(+b.dataset.k); };
+
+// ---------- ตัวการ์ตูนคู่ประลอง ----------
+let avSeq = 0;
+function avatar(s, px) {
+  const f = s.fur, k = s.kind, ink = '#1b1b1e', ln = '#00000045', id = 'avc' + (++avSeq);
+  const tri = (a, b, c, d, e, g, col) => `<path d="M${a} ${b}L${c} ${d}L${e} ${g}Z" fill="${col}" stroke="${ln}" stroke-width="1" stroke-linejoin="round"/>`;
+  let back = '', front = '', smile = true;
+  switch (k) {
+    case 'chick': back = `<path d="M26 14c0-7 4-8 5-3 1-6 6-5 5 3 2-4 6-2 4 4z" fill="${f}" stroke="${ln}"/>`; front = `<path d="M28 39h8l-4 6z" fill="#F08A2C" stroke="${ln}"/><circle cx="18" cy="40" r="3.2" fill="#F29C7A" opacity=".65"/><circle cx="46" cy="40" r="3.2" fill="#F29C7A" opacity=".65"/>`; smile = false; break;
+    case 'rabbit': back = `<ellipse cx="23" cy="14" rx="5.5" ry="13" fill="${f}" stroke="${ln}"/><ellipse cx="41" cy="14" rx="5.5" ry="13" fill="${f}" stroke="${ln}"/><ellipse cx="23" cy="15" rx="2.4" ry="8.5" fill="#F2B8B5"/><ellipse cx="41" cy="15" rx="2.4" ry="8.5" fill="#F2B8B5"/>`; front = `<ellipse cx="32" cy="40" rx="2.6" ry="2" fill="#E78F9A"/><circle cx="18" cy="41" r="3" fill="#F2B8B5" opacity=".7"/><circle cx="46" cy="41" r="3" fill="#F2B8B5" opacity=".7"/>`; break;
+    case 'turtle': back = `<ellipse cx="32" cy="18" rx="20" ry="14" fill="#4F7F4B" stroke="${ln}"/><path d="M14 20h36M25 6l-3 14M39 6l3 14" stroke="#2E5A34" stroke-width="1.6" fill="none"/>`; front = `<circle cx="29.5" cy="40" r="1.1" fill="${ln}"/><circle cx="34.5" cy="40" r="1.1" fill="${ln}"/>`; break;
+    case 'fox': back = tri(13, 28, 16, 5, 31, 16, f) + tri(51, 28, 48, 5, 33, 16, f) + tri(18, 22, 19, 11, 27, 17, '#3B2418') + tri(46, 22, 45, 11, 37, 17, '#3B2418'); front = `<path d="M32 51c-9 0-14-5-15-11 6 3 10 3 15 0 5 3 9 3 15 0-1 6-6 11-15 11z" fill="#FFF7EA"/><ellipse cx="32" cy="41" rx="2.8" ry="2.1" fill="${ink}"/>`; break;
+    case 'owl': back = tri(14, 24, 13, 5, 28, 14, f) + tri(50, 24, 51, 5, 36, 14, f); front = `<circle cx="24" cy="34" r="8" fill="#FBF5E6" stroke="${ln}"/><circle cx="40" cy="34" r="8" fill="#FBF5E6" stroke="${ln}"/><path d="M29 41h6l-3 6z" fill="#E8A33A" stroke="${ln}"/>`; smile = false; break;
+    case 'tiger': back = `<circle cx="15" cy="18" r="6.5" fill="${f}" stroke="${ln}"/><circle cx="49" cy="18" r="6.5" fill="${f}" stroke="${ln}"/><circle cx="15" cy="18" r="3" fill="#3A2412"/><circle cx="49" cy="18" r="3" fill="#3A2412"/>`; front = `<path d="M32 13v8M25 14l2 7M39 14l-2 7M10 33l6 1.5M54 33l-6 1.5M11 40l5 .5M53 40l-5 .5" stroke="#3A2412" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="32" cy="46" rx="9" ry="6" fill="#FFF3DC"/><ellipse cx="32" cy="42.5" rx="2.6" ry="2" fill="#7A3B2A"/>`; smile = false; break;
+    case 'cat': back = tri(13, 30, 14, 5, 30, 16, f) + tri(51, 30, 50, 5, 34, 16, f) + tri(17, 24, 17, 12, 26, 17, '#5A3B4C') + tri(47, 24, 47, 12, 38, 17, '#5A3B4C'); front = `<ellipse cx="32" cy="41" rx="2.4" ry="1.8" fill="#E78F9A"/><path d="M8 40l12 2M8 46l12-2M56 40l-12 2M56 46l-12-2" stroke="#C9C9D0" stroke-width="1.2" stroke-linecap="round"/>`; break;
+    case 'crane': back = ''; front = `<path d="M22 17q10-9 20 0q-10 4-20 0z" fill="#C5382C"/><path d="M29.5 39l2.5 17 2.5-17z" fill="#E7B84A" stroke="${ln}"/><path d="M16 36q2-3 5-2M48 36q-2-3-5-2" stroke="${ln}" fill="none"/>`; smile = false; break;
+    case 'dragon': back = tri(19, 20, 12, 3, 28, 13, '#F1E6C8') + tri(45, 20, 52, 3, 36, 13, '#F1E6C8'); front = `<circle cx="22" cy="43" r="2" fill="#ffffff55"/><circle cx="42" cy="43" r="2" fill="#ffffff55"/><circle cx="29.5" cy="40.5" r="1.3" fill="${ink}"/><circle cx="34.5" cy="40.5" r="1.3" fill="${ink}"/><path d="M27 47l1.5 4 1.5-4M34 47l1.5 4 1.5-4" fill="#fff" stroke="${ln}"/>`; smile = false; break;
+  }
+  const eye = x => k === 'cat'
+    ? `<ellipse cx="${x}" cy="34" rx="4" ry="4.2" fill="#E9E58A"/><ellipse cx="${x}" cy="34" rx="1.3" ry="3.4" fill="#111"/>`
+    : `<circle cx="${x}" cy="34" r="${k === 'owl' ? 3.8 : 3}" fill="${ink}"/><circle cx="${x + 1}" cy="33" r="1" fill="#fff"/>`;
+  const mouth = smile ? `<path d="M28 ${k === 'cat' || k === 'fox' ? 45 : 44}q4 3 8 0" stroke="${ink}" stroke-width="1.6" fill="none" stroke-linecap="round"/>` : '';
+  const ring = `<circle cx="32" cy="32" r="29.5" fill="none" stroke="${s.bc}" stroke-width="5"/><circle cx="32" cy="32" r="32" fill="none" stroke="#0000004d" stroke-width=".8"/><circle cx="32" cy="32" r="27" fill="none" stroke="#0000004d" stroke-width=".8"/>`
+    + (s.bc2 ? `<circle cx="32" cy="32" r="29.5" fill="none" stroke="${s.bc2}" stroke-width="5" stroke-dasharray="28 157.2" stroke-dashoffset="-14"/>` : '');
+  return `<svg class="av" width="${px}" height="${px}" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><clipPath id="${id}"><circle cx="32" cy="32" r="28"/></clipPath></defs><circle cx="32" cy="32" r="29" style="fill:var(--wash)"/><g clip-path="url(#${id})">${back}<circle cx="32" cy="36" r="23" fill="${f}" stroke="${ln}" stroke-width="1"/>${front}${eye(24)}${eye(40)}${mouth}</g>${ring}</svg>`;
+}
+
+// ---------- ห้องประลอง ----------
+let sel = null, selSize = 9, selCol = 1, friendSize = 9;
+const bySid = id => SENSEI.find(s => s.id === id);
+const lum = h => { const v = [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16)); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+const sizeBtns = (list, cur, attr) => list.map(n => `<button data-${attr}="${n}" aria-pressed="${n === cur}">${n} x ${n}${n === 7 ? ' (สั้นมาก)' : ''}</button>`).join('');
+function renderLobby() {
+  const rid = recId();
+  if (!sel) { sel = rid || SENSEI[0].id; selSize = bySid(sel).n; }
+  renderRoster(rid);
+  renderDetail();
+  $('#friend-size').innerHTML = sizeBtns([9, 13, 19], friendSize, 'fs');
+  renderLog();
+  Srv.check().then(() => { if (!$('#lobby').hidden) { renderRoster(recId()); renderDetail(); } });
+}
+const srvChip = () => `<span class="srv${Srv.online ? ' on' : ''}">${Srv.online ? 'ออนไลน์' : Srv.checked ? 'ออฟไลน์' : 'กำลังตรวจ'}</span>`;
+function renderRoster(rid) {
+  $('#roster').innerHTML = SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 };
+    return `<button class="scard" data-id="${s.id}" aria-pressed="${s.id === sel}">${avatar(s, 48)}<span class="nm">${esc(s.name)}${s.id === rid ? '<span class="tag">แนะนำ</span>' : ''}</span><span class="rk">${esc(s.rank)} ${belt(s)}</span><span class="rec">ชนะ ${r.w} แพ้ ${r.l}${s.eng === 'server' ? ' ' + srvChip() : ''}</span></button>`; }).join('');
+}
+function renderDetail() {
+  const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online;
+  $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(s.rank)}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
+    <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
+    <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
+    <div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${selCol === 1}">ดำ เดินก่อน</button><button data-col="2" aria-pressed="${selCol === 2}">ขาว</button></div></div>
+    <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
+}
+function renderExplain() {
+  $('#explain').innerHTML = `<p>ระดับในหมากล้อมนับเป็นคิวและดั้ง คิวนับถอยหลัง เริ่มที่ 30 คิวสำหรับผู้เริ่มต้น แล้วลดลงจนถึง 1 คิว จากนั้นเป็นดั้งที่นับขึ้นตั้งแต่ 1 ดั้งไปถึงราว 7 ดั้งในระดับสมัครเล่น นักหมากล้อมอาชีพมีระดับดั้งของตัวเองตั้งแต่ 1 ถึง 9 ดั้ง</p>
+    <div class="ladder">${LADDER.map(([a, b, c]) => `<div style="background:${c};color:${lum(c) > 150 ? '#16211D' : '#fff'}"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
+    <p>สายสีในแอปนี้เป็นการเปรียบเทียบแบบศิลปะต่อสู้ เพื่อให้จำง่าย ไม่ใช่ระบบสายของหมากล้อมจริง</p>
+    <p>การสอบวัดระดับของสมาคมกีฬาหมากล้อมแห่งประเทศไทยครอบคลุมตั้งแต่ระดับคิวถึง 1 ดั้ง และนักกีฬาแนวหน้าของไทยอยู่ราว 5–6 ดั้ง</p>
+    <p>ระดับของคู่ประลองในแอปเป็นค่าประมาณ ยังไม่ได้เทียบกับผู้เล่นจริง</p>`;
+}
+$('#roster').onclick = e => {
+  const b = e.target.closest('.scard'); if (!b) return;
+  sel = b.dataset.id; selSize = bySid(sel).n;
+  document.querySelectorAll('#roster .scard').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  renderDetail();
+};
+$('#detail').onclick = e => {
+  const t = e.target.closest('button'); if (!t) return;
+  if (t.dataset.sz) { selSize = +t.dataset.sz; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); }
+  else if (t.dataset.col) { selCol = +t.dataset.col; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); }
+  else if (t.id === 'start') { const s = bySid(sel); if (s.eng === 'server' && !Srv.online) return; startGame(s, selSize, selCol); }
+};
+$('#friend-size').onclick = e => { const t = e.target.closest('button'); if (!t) return; friendSize = +t.dataset.fs; t.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === t))); };
+$('#friend-start').onclick = () => startGame(null, friendSize, 1);
+
+// ---------- หน้าเกม ----------
+const GB = $('#play-board');
+let G, S = null, human = 1, token = 0, over = null, dead = new Set(), busy = false, rec = [], pre = null, fresh = -1, hintIdx = -1, review = null, degraded = false, kataOK = false, tutorMsg = '', retry = false, lastSgf = '';
+const cname = c => c === 1 ? 'ดำ' : 'ขาว';
+const delay = ms => new Promise(r => setTimeout(r, ms));
+const gfb = t => { $('#play-fb').textContent = t; };
+const tutor = t => { $('#tutor-text').textContent = t; };
+const usesAI = s => !!s && (s.eng === 'kata' || s.eng === 'server');
+const isKata = () => usesAI(S) && kataOK && !degraded;
+const engine = () => S.eng === 'server' ? Srv : Kata;
+const preVis = () => S.eng === 'server' ? 60 : 16;
+function srvDrop() {
+  retry = true; $('#gnote').hidden = false;
+  $('#gnote').textContent = `การเชื่อมต่อกับเครื่องของสำนักหลุด ${S.name}ยังไม่ได้ตอบ กดปุ่มลองเดินตานี้ใหม่เพื่อเรียกอีกครั้ง`;
+  gfb(''); renderGame();
+}
+const botToMove = () => !!S && G.turn !== human;
+
+async function startGame(s, n, col) {
+  const my = ++token;
+  S = s; human = s ? col : 1; G = new Go(n, n === 19 ? 7.5 : 6.5);
+  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; review = null; degraded = false; kataOK = false; retry = false;
+  GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
+  $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
+  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs คุณ (ถือ${cname(human)})</span></div>`
+    : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
+    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="small" id="gline" style="flex-basis:100%"></div>`;
+  tutor(usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเสียกี่แต้มและควรเดินจุดไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
+    : n <= 9 ? 'เริ่มได้เลย ลองเปิดใกล้จุดกลางหรือจุดดาว แล้วดูลมหายใจของหมากทุกตา' : 'เริ่มได้เลย ช่วงเปิดเกมให้จับมุมก่อน แล้วขยายไปข้าง เส้นที่ 3 และ 4 คุ้มที่สุด');
+  gfb('');
+  if (S && S.eng === 'server') {
+    busy = true; gfb('กำลังเชื่อมต่อเครื่องของสำนัก'); renderGame();
+    const ok = await Srv.check(); if (my !== token) return;
+    busy = false; gfb('');
+    if (!ok) { toLobby(); return; }
+    kataOK = true;
+  } else if (S && S.eng === 'kata') {
+    busy = true; gfb('กำลังเรียกเซนเซ ครั้งแรกใช้เวลาสักครู่'); renderGame();
+    try { await Kata.init(); kataOK = true; } catch (e) { degraded = true; }
+    if (my !== token) return;
+    busy = false; gfb('');
+    if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `เครื่องนี้โหลดเอนจินระดับสูงไม่สำเร็จ เกมนี้จึงเล่นต่อด้วยคอมพื้นฐาน ${S.name}กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
+  }
+  renderGame();
+  if (botToMove()) botTurn();
+}
+function gameTitle() { return !over ? `ตาที่ ${G.moves.length + 1} · ${cname(G.turn)}เดิน${S ? (G.turn === human ? ' (คุณ)' : '') : ''}` : ''; }
+function renderGame() {
+  const sc = over && over.type === 'score' && !over.pending ? G.score(dead) : null;
+  if (review) {
+    const rings = [{ i: review.idx, color: '#dc2626' }]; if (review.best >= 0 && review.best !== review.idx) rings.push({ i: review.best, color: '#2563eb' });
+    drawBoard(GB, { n: G.n, grid: review.before, rings });
+  } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], terr: sc && sc.terr, dead: sc ? dead : null });
+  const myTurn = !over && !busy && !review && (!S || G.turn === human), canTap = myTurn || (!!over && over.type === 'score' && !over.pending && !over.final && !review);
+  GB.classList.toggle('static', !canTap);
+  $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · โคมิ ${G.komi}`;
+  const t = $('#turn');
+  if (review) t.textContent = `กำลังดูตำแหน่งก่อนตาที่ ${review.no}`;
+  else if (over && over.res) t.textContent = 'จบเกม ' + over.res.text;
+  else if (over && over.type === 'score') { const d = sc ? sc.b - sc.w : 0; t.textContent = over.pending ? 'กำลังนับพื้นที่' : `ผลนับเบื้องต้น ${d > 0 ? 'ดำ' : 'ขาว'}ชนะ ${Math.abs(d)} แต้ม`; }
+  else if (busy && S) t.textContent = `${S.name}กำลังคิด`;
+  else t.innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}"></span>${esc(gameTitle())}`;
+  $('#tally').innerHTML = sc
+    ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมโคมิ ${G.komi})</td><td>${sc.w}</td></tr>`
+    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>โคมิให้ขาว</td><td>${G.komi}</td></tr>`;
+  const fin = !!over && !!over.final;
+  $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
+  $('#b-undo').disabled = !G.hist.length || busy || fin;
+  const hb = $('#b-hint'); hb.hidden = !(usesAI(S) && !degraded); $('#b-retry').hidden = !retry; hb.disabled = !myTurn || !kataOK;
+  const fb = $('#b-final'); fb.hidden = !(over && over.type === 'score' && !over.final); fb.disabled = !!(over && over.pending);
+  GB._redraw = renderGame;
+}
+function ruleLines(f, name, warnOnly) {
+  const out = [];
+  if (f.selfAtari) out.push(`ระวัง หมากที่ ${name} เหลือลมหายใจเดียว คู่แข่งกินได้ในตาถัดไป ก่อนวางให้นับลมหายใจที่จะเหลือหลังวางเสมอ`);
+  if (f.ownAtari.length) out.push(`กลุ่มของคุณที่ ${G.name(f.ownAtari[0].at)} ยังโดนอาตาริอยู่ ควรหนีหรือยอมทิ้งให้ชัดเจน`);
+  if (f.eyeFill && !f.captured) out.push('ตานี้ถมตาของตัวเอง กลุ่มที่เหลือตาน้อยลงจะโดนกินง่ายขึ้น');
+  if (warnOnly) return out;
+  if (f.captured) out.unshift(`กินได้ ${f.captured} เม็ดที่ ${name} ทำได้ดี`);
+  if (f.saved) out.push('หนีจากอาตาริได้ทัน กลุ่มนี้มีลมหายใจเพิ่มแล้ว');
+  if (!f.selfAtari) { if (f.ataris.length > 1) out.push('อาตาริสองกลุ่มพร้อมกัน คู่แข่งช่วยได้แค่กลุ่มเดียว'); else if (f.ataris.length) out.push(`อาตาริ กลุ่มคู่แข่ง ${f.ataris[0].size} เม็ดที่ ${G.name(f.ataris[0].at)} เหลือลมหายใจเดียว`); }
+  if (!out.length && f.line === 1 && f.moveNo < G.n * 2) out.push('เส้นริมสุดได้พื้นที่น้อยและโดนกินง่าย ช่วงต้นเกมลองเส้นที่ 3 หรือ 4');
+  if (!out.length) out.push(f.moveNo < G.n ? 'ตานี้ไม่มีจุดอันตราย ช่วงเปิดเกมให้กระจายหมากไปยังมุมและข้างที่ยังว่าง' : 'ตานี้ไม่มีกลุ่มไหนเสี่ยงโดนกินทันที ลองมองหาจุดตัดของคู่แข่งหรือจุดที่ขยายพื้นที่ได้กว้าง');
+  return out;
+}
+const tutorSay = (f, name) => tutor(ruleLines(f, name).slice(0, 2).join(' '));
+function kataTutor(t) {
+  const x = Math.round(t.loss); let s;
+  if (t.loss < 1.5) s = 'ตานี้ดี แทบไม่เสียแต้ม';
+  else if (t.loss < 4) s = `ตานี้พอใช้ เสียราว ${x} แต้ม`;
+  else { s = `ตานี้เสียราว ${x} แต้ม`; if (t.best >= 0 && t.best !== t.idx) s += ` เซนเซมองว่า ${G.name(t.best)} ดีกว่า`; if (t.loss >= 10) s = 'พลาดใหญ่ ' + s; }
+  const w = t.facts ? ruleLines(t.facts, G.name(t.idx), true) : [];
+  tutor(s + (w.length ? ' ' + w[0] : ''));
+}
+function startPre() {
+  if (!isKata() || over || G.turn !== human) return;
+  pre = { at: G.moves.length, p: engine().analyze(G, preVis()).catch(() => null) };
+}
+async function settle(t, a, my) {
+  let p = null; try { p = t.preP ? await t.preP : null; } catch (e) { }
+  if (my !== token) return;
+  if (p) t.best = p.best;
+  if (a && p) { t.lead0 = p.lead; t.lead1 = a.lead; t.loss = Math.max(0, (p.lead - a.lead) * (human === 1 ? 1 : -1)); }
+  else if (a) t.loss = 0;
+  if (t.loss != null) kataTutor(t); else if (t.facts) tutorSay(t.facts, G.name(t.idx));
+}
+async function botTurn() {
+  const my = token; busy = true; renderGame();
+  let a = null;
+  if (isKata()) {
+    const last = rec[rec.length - 1], pend = last && last.loss == null && last.no === G.moves.length ? last : null;
+    if (pend) tutor('เซนเซกำลังคิด...');
+    try { a = await engine().analyze(G, S.visits || 16); } catch (e) { a = null; if (S.eng === 'server') { if (my !== token) return; busy = false; return srvDrop(); } degraded = true; }
+    if (my !== token) return;
+    if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `การวิเคราะห์ขัดข้อง ${S.name}จึงเล่นต่อด้วยคอมพื้นฐาน กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
+    if (pend) { await settle(pend, a, my); if (my !== token) return; }
+  } else await delay(400);
+  const play = m => m >= 0 && G.play(m).ok;
+  let mv = -1, ok = false;
+  if (a) {
+    mv = Kata.pick(G, a, S);
+    if (mv >= 0) { ok = play(mv); if (!ok) { mv = a.best; ok = play(mv); if (!ok) { mv = aiMove(G, 1.5); ok = play(mv); } } }
+  } else { mv = aiMove(G, S.eng === 'basic' ? S.noise : 1.5); ok = play(mv); }
+  if (ok) { fresh = mv; gfb(`${S.name}เดินที่ ${G.name(mv)}`); }
+  else { G.pass(); fresh = -1; gfb(`${S.name}ผ่าน ถ้าคุณไม่มีจุดที่อยากเดินแล้วให้กดผ่านเพื่อนับแต้ม`); }
+  busy = false;
+  if (G.passes >= 2) return endScoring();
+  renderGame(); startPre();
+}
+function afterMove() {
+  if (G.passes >= 2) return endScoring();
+  renderGame();
+  if (botToMove()) botTurn();
+}
+function humanPlay(i) {
+  if (review) return;
+  if (over) {
+    if (over.type === 'score' && !over.pending && !over.final && G.grid[i]) { const on = !dead.has(i); G.group(i).stones.forEach(s => on ? dead.add(s) : dead.delete(s)); renderGame(); }
+    return;
+  }
+  if (busy || (S && G.turn !== human)) return;
+  const f = moveFacts(G, i), before = G.grid.slice(), no = G.moves.length + 1, preP = pre && pre.at === G.moves.length ? pre.p : null;
+  const r = G.play(i);
+  if (!r.ok) { gfb(WHY[r.reason]); return; }
+  fresh = i; hintIdx = -1; gfb('');
+  if (S) rec.push({ no, idx: i, before, facts: f, preP, loss: null, best: -1 });
+  if (S && !isKata()) tutorSay(f, G.name(i));
+  else if (!S) tutorSay(f, G.name(i));
+  afterMove();
+}
+bindBoard(GB, humanPlay, renderGame);
+
+async function endScoring() {
+  const my = token; busy = false; retry = false;
+  over = { type: 'score', pending: isKata(), final: false }; dead = new Set(); renderGame();
+  if (over.pending) {
+    try {
+      const a = await engine().analyze(G, preVis()); if (my !== token) return;
+      if (!a.ownership) throw new Error('no ownership');
+      for (let i = 0; i < G.n * G.n; i++) { const c = G.grid[i], v = a.ownership[i]; if ((c === 1 && v < -.6) || (c === 2 && v > .6)) dead.add(i); }
+    } catch (e) { if (my !== token) return; if (S.eng === 'server') { over.pending = true; return srvDrop(); } }
+    if (my !== token) return;
+    over.pending = false;
+  }
+  gfb('ถ้ามีหมากที่ตายแล้วค้างอยู่ในพื้นที่ของอีกฝ่าย แตะที่กลุ่มนั้นเพื่อเอาออก แล้วกดยืนยันผลการนับ');
+  renderGame();
+}
+function finish() {
+  const o = over; o.final = true; let won = null, margin = 0, text;
+  if (o.type === 'resign') {
+    if (S) { won = false; margin = Infinity; text = 'คุณยอมแพ้'; } else text = `${cname(o.loser)}ยอมแพ้ ${cname(3 - o.loser)}ชนะ`;
+  } else {
+    const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
+    if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
+  }
+  o.res = { won, margin, text };
+  if (S) {
+    const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 };
+    if (won) { if (!degraded) r.w++; } else r.l++;
+    store.set('go-rec', recs);
+    lastSgf = logGame(o, won, margin);
+  }
+  gfb(''); renderGame(); renderReview();
+  $('#review').scrollIntoView({ block: 'nearest' });
+}
+
+// ---------- สมุดบันทึกผล ----------
+let matchLog = store.get('go-log', []);
+function buildSgf(re) {
+  const L = 'abcdefghijklmnopqrstuvwxyz', n = G.n, pn = 'ผู้เล่น';
+  let t = `(;GM[1]FF[4]CA[UTF-8]SZ[${n}]KM[${G.komi}]RU[Chinese]PB[${human === 1 ? pn : S.name}]PW[${human === 2 ? pn : S.name}]DT[${new Date().toISOString().slice(0, 10)}]RE[${re}]`;
+  G.moves.forEach((m, k) => { t += `;${k % 2 ? 'W' : 'B'}[${m < 0 ? '' : L[m % n] + L[(m / n) | 0]}]`; });
+  return t + ')';
+}
+function logGame(o, won, margin) {
+  let re;
+  if (o.type === 'resign') re = human === 1 ? 'W+R' : 'B+R';
+  else { const d = G.score(dead); re = d.b > d.w ? `B+${margin}` : `W+${margin}`; }
+  const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
+  const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
+    margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length,
+    avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
+  matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog);
+  return sgf;
+}
+function manualCopy(text, host) {
+  const old = host.querySelector('textarea.manual'); if (old) old.remove();
+  const ta = document.createElement('textarea'); ta.className = 'manual'; ta.readOnly = true; ta.value = text; ta.setAttribute('aria-label', 'ข้อความสำหรับคัดลอกเอง');
+  host.appendChild(ta); ta.focus(); ta.select();
+}
+function copyText(text, btn, host) {
+  const label = btn.textContent, fail = () => manualCopy(text, host);
+  let p; try { p = navigator.clipboard.writeText(text); } catch (e) { return fail(); }
+  p.then(() => { btn.textContent = 'คัดลอกแล้ว'; setTimeout(() => { btn.textContent = label; }, 1600); }, fail);
+}
+const logRes = r => r.resign ? 'ยอมแพ้' : r.result === 'W' ? `ชนะ ${r.margin}` : `แพ้ ${r.margin}`;
+const logRows = () => matchLog.slice().reverse();
+function logSummary() {
+  const by = {}; matchLog.forEach(r => { const b = by[r.sid] = by[r.sid] || { name: r.sname, w: 0, l: 0, m: 0, mc: 0 }; r.result === 'W' ? b.w++ : b.l++; if (r.margin != null) { b.m += r.result === 'W' ? r.margin : -r.margin; b.mc++; } });
+  return Object.values(by);
+}
+function renderLog() {
+  const box = $('#log-body'); if (!box) return;
+  if (!matchLog.length) { box.innerHTML = '<p class="small">ยังไม่มีเกมที่จบ เล่นกับคู่ประลองสักกระดาน ผลจะมาอยู่ที่นี่</p>'; return; }
+  const rows = logRows().slice(0, 20);
+  box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}</p>`).join('')}</div>
+    <div class="logscroll"><table class="logt"><thead><tr><th>วันที่</th><th>คู่ประลอง</th><th>กระดาน</th><th>ผล</th><th>แต้มเสียเฉลี่ยต่อตา</th><th></th></tr></thead><tbody>${rows.map((r, k) =>
+      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}</td><td>${esc(logRes(r))}</td><td>${r.avgLoss == null ? '-' : r.avgLoss.toFixed(1)}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
+    <div class="btns"><button class="btn" id="log-copy">คัดลอกสรุปผล</button><button class="btn" id="log-clear">ล้างสมุดบันทึก</button></div></div>`;
+}
+$('#log-body').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const host = $('#logbox');
+  if (b.dataset.sgf != null) copyText(logRows()[+b.dataset.sgf].sgf, b, host);
+  else if (b.id === 'log-copy') {
+    const lines = logSummary().map(x => `${x.name}: ชนะ ${x.w} แพ้ ${x.l}${x.mc ? ` แต้มต่างเฉลี่ย ${x.m / x.mc >= 0 ? '+' : ''}${(x.m / x.mc).toFixed(1)}` : ''}`);
+    const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n} ${logRes(r)}${r.avgLoss == null ? '' : ' เสียเฉลี่ย ' + r.avgLoss.toFixed(1)}`);
+    copyText(['สรุปผลสำนักหมากล้อม', ...lines, '', 'เกมล่าสุด', ...games].join('\n'), b, host);
+  } else if (b.id === 'log-clear') {
+    b.outerHTML = '<span class="small">ล้างทั้งหมดและย้อนกลับไม่ได้</span> <button class="btn" id="log-clear-yes">ยืนยันล้าง</button><button class="btn" id="log-clear-no">ยกเลิก</button>';
+  } else if (b.id === 'log-clear-yes') { matchLog = []; store.set('go-log', matchLog); renderLog(); }
+  else if (b.id === 'log-clear-no') renderLog();
+};
+
+// ---------- บทเรียนจากเกมนี้ ----------
+const lessonBtn = id => { const L = LESSONS.find(l => l.id === id); return L ? `<button class="btn" data-lesson="${id}">เปิดบทเรียน ${esc(L.title)}</button>` : ''; };
+function renderReview() {
+  const R = $('#review'); if (!over || !over.final) { R.hidden = true; return; }
+  R.hidden = false;
+  const res = over.res;
+  if (!S) { R.innerHTML = `<h2>จบเกม</h2><p>${esc(res.text)}</p><div class="btns"><button class="btn primary" data-act="again">เล่นอีกครั้ง</button><button class="btn" data-act="lobby">กลับห้องประลอง</button></div>`; return; }
+  const n = G.n, lost = !res.won, idx = SENSEI.indexOf(S), prev = SENSEI[idx - 1], next = SENSEI[idx + 1] && SENSEI[idx + 1].eng !== 'server' ? SENSEI[idx + 1] : null, blocks = [], links = new Set();
+  if (isKata()) {
+    const bad = rec.filter(t => t.loss != null && t.loss >= 2).sort((a, b) => b.loss - a.loss).slice(0, lost ? 3 : 1);
+    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · เสียราว ${Math.round(t.loss)} แต้ม${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>');
+    const ph = [[], [], []], o1 = n * n / 7, o2 = n * n * 0.42;
+    rec.forEach(t => { if (t.loss != null) ph[t.no <= o1 ? 0 : t.no <= o2 ? 1 : 2].push(t.loss); });
+    let bi = -1, bv = 1.5; ph.forEach((a, k) => { if (a.length) { const m = a.reduce((x, y) => x + y, 0) / a.length; if (m > bv) { bv = m; bi = k; } } });
+    if (bi >= 0 && (lost || bv >= 3)) blocks.push(`<h3>ช่วงที่ควรฝึก</h3><p>${['ช่วงเปิดเกมเสียแต้มเฉลี่ยมากที่สุด ให้จับมุมก่อน แล้วค่อยขยายไปข้าง และอย่าเพิ่งเข้าไปสู้รบในช่วงต้น',
+      'ช่วงกลางเกมเสียแต้มเฉลี่ยมากที่สุด ก่อนตัดหรือบุกเข้าไปในพื้นที่คู่แข่ง ให้นับลมหายใจและเช็กกลุ่มอ่อนของตัวเองก่อน',
+      'ช่วงท้ายเกมเสียแต้มเฉลี่ยมากที่สุด ให้เลือกจุดที่ใหญ่ที่สุดก่อน และตอบเฉพาะเมื่อคู่แข่งขู่จริง'][bi]}</p>`);
+  }
+  const sa = rec.filter(t => t.facts && t.facts.selfAtari).length, ef = rec.filter(t => t.facts && t.facts.eyeFill && !t.facts.captured).length, lostStones = G.caps[3 - human];
+  if (sa >= 2) { blocks.push(`<h3>เหลือลมหายใจเดียว</h3><p>คุณวางหมากจนเหลือลมหายใจเดียว ${sa} ครั้ง ก่อนวางทุกตาให้นับลมหายใจของกลุ่มที่จะได้ก่อนเสมอ</p>`); links.add('l4'); }
+  if (lostStones >= n) { blocks.push(`<h3>หมากถูกกินมาก</h3><p>${S.name}กินหมากคุณไป ${lostStones} เม็ด กลุ่มที่มีสองตาจะไม่โดนกิน ลองฝึกเรื่องสองตาและการดูว่ากลุ่มเป็นหรือตาย</p>`); links.add('l9'); links.add('l10'); }
+  if (ef >= 1) { blocks.push(`<h3>ถมตาของตัวเอง</h3><p>คุณถมตาของตัวเอง ${ef} ครั้ง ตาในกลุ่มคือสิ่งที่ทำให้กลุ่มรอด อย่าถมถ้าไม่จำเป็น</p>`); links.add('l9'); }
+  const thr = n * n * 0.08; let close;
+  if (lost) close = res.margin > thr
+    ? (prev ? `ครั้งนี้แพ้ห่างพอสมควร ลองเล่นกับ${prev.name} (${prev.rank}) สักสองสามกระดานก่อน แล้วกลับมาท้า${S.name}ใหม่` : 'ครั้งนี้แพ้ห่างพอสมควร ลองทบทวนบทเรียนแล้วเล่นอีกครั้ง')
+    : `แพ้ไปนิดเดียว เกมนี้สูสีมาก ประลองอีกครั้งได้เลย อีกหนึ่งหรือสองตาที่ดีขึ้นก็พลิกผลได้`;
+  else { close = `ยินดีด้วย คุณชนะ${S.name}`; if (wins(S.id) >= 2 && next) close += ` ชนะมาแล้ว ${wins(S.id)} ครั้ง ลองท้า${next.name} (${next.rank}) ต่อได้`; else if (degraded) close += ' แต่กระดานนี้คู่ประลองเล่นต่ำกว่าระดับ จึงไม่นับเป็นสถิติ'; }
+  R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b></p><div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>
+    <div class="btns"><button class="btn primary" data-act="again">ประลองอีกครั้ง</button><button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+}
+$('#review').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.turn) { review = rec.find(t => t.no === +b.dataset.turn); renderGame(); GB.scrollIntoView({ block: 'nearest' }); const bk = $('#review'); if (!$('#rv-back')) bk.insertAdjacentHTML('afterbegin', '<button class="btn" id="rv-back">กลับไปดูตำแหน่งสุดท้าย</button>'); }
+  else if (b.id === 'rv-back') { review = null; b.remove(); renderGame(); }
+  else if (b.dataset.lesson) openLesson(b.dataset.lesson);
+  else if (b.dataset.act === 'sgf') copyText(lastSgf, b, $('#review'));
+  else if (b.dataset.act === 'again') startGame(S, G.n, human);
+  else if (b.dataset.act === 'lobby') toLobby();
+};
+function toLobby() { token++; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
+$('#ghead').onclick = e => { if (e.target.closest('#g-back')) toLobby(); };
+
+$('#b-pass').onclick = () => { if (busy) return; G.pass(); fresh = -1; hintIdx = -1; gfb(`${cname(3 - G.turn)}ผ่าน`); afterMove(); };
+$('#b-undo').onclick = () => {
+  token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true;
+  G.undo(); if (S && G.turn !== human && G.hist.length) G.undo();
+  retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= G.moves.length); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
+  tutor('ถอยกลับมาแล้ว ลองเดินใหม่ได้เลย'); renderGame(); startPre(); if (botToMove()) botTurn();
+};
+$('#b-retry').onclick = () => {
+  if (!retry) return; retry = false; $('#gnote').hidden = true;
+  if (over && over.type === 'score') endScoring(); else if (botToMove()) botTurn();
+};
+$('#b-resign').onclick = () => { over = { type: 'resign', loser: S ? human : G.turn }; finish(); };
+$('#b-final').onclick = () => { if (over && over.type === 'score' && !over.pending) finish(); };
+$('#b-hint').onclick = async () => {
+  if (busy || over || G.turn !== human || !isKata()) return;
+  const my = token, at = G.moves.length;
+  if (!pre || pre.at !== at) startPre();
+  gfb('เซนเซกำลังดูให้'); const p = await pre.p;
+  if (my !== token || over || G.moves.length !== at) return;
+  if (!p) return gfb('ขอคำใบ้ไม่สำเร็จในตอนนี้ ลองใหม่อีกครั้ง');
+  if (p.best < 0) return gfb('เซนเซเห็นว่าผ่านได้แล้ว');
+  hintIdx = p.best; gfb(`เซนเซแนะจุด ${G.name(p.best)} ดูวงประสีน้ำเงินบนกระดาน`); renderGame();
+};
+
+// ---------- คลังเซียน ----------
+function openMaster(id) {
+  const m = MASTERS.find(x => x.id === id) || MASTERS[0];
+  $('#mlist').innerHTML = MASTERS.map(x => `<button data-id="${x.id}" aria-pressed="${x === m}"><span>${esc(x.name)}</span><small>${esc(x.tag)}</small></button>`).join('');
+  $('#mbody').innerHTML = `<div class="col"><span class="eyebrow">${esc(m.years)} · ${esc(m.tag)}</span><h2>${esc(m.name)}</h2><p>${esc(m.body)}</p><h3>แนวคิดหลัก</h3><ul>${m.ideas.map(i => `<li>${esc(i)}</li>`).join('')}</ul><h3>ฝึกตามอย่างไร</h3><p>${esc(m.drill)}</p></div><div class="col">${m.stones ? '<div class="board static" id="mboard"></div>' : ''}<p class="cap">${esc(m.cap)}</p></div>`;
+  if (m.stones) { const grid = new Int8Array(m.n * m.n), labels = {}; m.stones.forEach(([x, y, c, t]) => { grid[y * m.n + x] = c; if (t) labels[y * m.n + x] = t; }); drawBoard($('#mboard'), { n: m.n, grid, labels }); }
+}
+$('#mlist').onclick = e => { const b = e.target.closest('button'); if (b) openMaster(b.dataset.id); };
+
+// ---------- แท็บ ----------
+const TABS = ['learn', 'puzzles', 'play', 'masters'];
+function showTab(t) {
+  if (!TABS.includes(t)) t = 'learn';
+  TABS.forEach(k => { $('#v-' + k).hidden = k !== t; });
+  document.querySelectorAll('#tabs button').forEach(b => b.dataset.tab === t ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  if (t === 'learn' && $('#lesson-view').hidden) showPath();
+  if (t === 'play' && !$('#lobby').hidden) renderLobby();
+  try { history.replaceState(null, '', '#' + t); } catch (e) { }
+}
+$('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };
+window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); showTab(location.hash.slice(1));
+try { if (location.protocol === 'https:' && window.top === window.self && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { }
+
+</script>
+</body>
+</html>

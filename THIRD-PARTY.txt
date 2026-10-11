@@ -1,0 +1,19 @@
+Third-party software used by this site
+======================================
+
+1. In-browser Go engine: engine/katago-worker.js
+   Built from the web-katrain project.
+   License: MIT License
+   Copyright (c) 2026 Web KatRain Contributors
+   See: engine/LICENSE-web-katrain.txt
+
+2. Bundled TensorFlow.js (Apache License 2.0)
+   Copyright the TensorFlow Authors.
+
+3. Bundled pako (MIT License)
+   Copyright (c) 2014-2025 Nodeca and contributors.
+
+4. Neural network: engine/katago-small.bin
+   KataGo network g170-b6c96-s175395328-d26788732
+   Author: David J. Wu (lightvector)
+   Project: KataGo (https://github.com/lightvector/KataGo)

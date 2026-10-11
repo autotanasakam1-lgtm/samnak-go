@@ -1,2 +1,7 @@
-# samnak-go
-Samnak Go - Thai Go (Baduk) learning web app
+# สำนักหมากล้อม
+
+เว็บแอปสอนหมากล้อมภาษาไทย: บทเรียน โจทย์ และคู่ประลองตามระดับคิวและดั้ง
+
+เปิดใช้งาน: https://autotanasakam1-lgtm.github.io/samnak-go/
+
+เครดิตซอฟต์แวร์ของผู้อื่นอยู่ใน THIRD-PARTY.txt
