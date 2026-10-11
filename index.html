@@ -189,11 +189,13 @@ table.tally{width:100%;border-collapse:collapse;font-variant-numeric:tabular-num
   .wrap{padding-block:16px;padding-inline:calc(var(--rail) + 16px + env(safe-area-inset-left)) 16px}
   .topbar{display:block;padding:0;margin:0;border:0}
   .brand{display:none}
-  nav{position:fixed;top:0;bottom:0;left:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));z-index:20;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,minmax(44px,1fr));background:var(--surface);border-top:0;border-right:1px solid var(--line);padding:0 0 0 env(safe-area-inset-left)}
+  nav{position:fixed;top:48px;bottom:0;left:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));z-index:20;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,minmax(44px,1fr));background:var(--surface);border-top:0;border-right:1px solid var(--line);padding:0 0 0 env(safe-area-inset-left)}
   nav button{flex-direction:column;gap:0;min-height:44px;border-radius:0;padding:2px;font-size:.8rem;line-height:1.3}
   nav button[aria-current="page"]{background:none;color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
   nav svg{display:block;width:22px;height:22px}
   .intro{margin-bottom:12px}
+  .pchip{position:fixed;top:0;left:0;width:calc(var(--rail) + env(safe-area-inset-left));height:48px;max-width:none;z-index:21;border:0;border-radius:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);justify-content:center;padding:0 0 0 env(safe-area-inset-left)}
+  .pchip span{display:none}
   .stage{grid-template-columns:auto minmax(0,1fr);gap:16px}
   .stage>.panel{max-height:calc(100dvh - 32px);overflow:auto}
   .board{width:calc(100dvh - 32px)}
@@ -258,6 +260,67 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
 #lobby.scene-mode #detail{max-width:760px}
 #detail{scroll-margin-bottom:80px}
 @media (max-width:700px){.court{grid-template-columns:minmax(0,1fr)}}
+
+/* โปรไฟล์ หน้าแรก และเกมค้าง */
+.pchip{display:flex;align-items:center;gap:8px;min-height:44px;max-width:190px;padding:4px 14px 4px 6px;border:1px solid var(--line);background:var(--surface);border-radius:999px;font-weight:500}
+.pchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+@media (max-width:820px){.pchip{max-width:40vw}.brand{min-width:0}}
+.field{display:block;width:100%;min-height:44px;font:inherit;font-size:16px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.linkbtn{background:none;border:0;color:var(--accent);text-decoration:underline;min-height:44px;padding:0 4px;font-weight:500}
+.logline{margin-top:16px}
+.sheet-wrap{position:fixed;inset:0;z-index:50;background:#000a;display:flex;align-items:flex-end;justify-content:center;overflow:auto}
+@media (min-width:600px){.sheet-wrap{align-items:center;padding:24px}}
+.sheet{background:var(--surface);color:var(--ink);width:100%;max-width:480px;max-height:100dvh;overflow:auto;border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+@media (min-width:600px){.sheet{border-radius:20px}}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:1.4rem}
+.animals{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.animals button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:64px;padding:4px 0;border:1px solid var(--line);background:var(--bg);border-radius:12px}
+.animals button small{font-size:.75rem;line-height:1.3;color:var(--muted)}
+.animals button[aria-pressed="true"]{border-color:var(--accent);background:var(--wash);box-shadow:0 0 0 2px var(--accent) inset}
+.home{display:flex;flex-direction:column;gap:20px}
+.h-greet{display:flex;flex-direction:column;gap:10px}
+.h-greet h1{margin:0;overflow-wrap:anywhere}
+.h-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:20px}
+@media (min-width:900px){.h-grid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:start}}
+.h-col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.hero{position:relative;overflow:hidden;isolation:isolate;border-radius:22px;padding:22px 20px;background:var(--surface);border:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 16px;align-items:center}
+.hero .deco{position:absolute;right:-50px;top:-60px;width:210px;height:210px;z-index:-1;color:var(--ink);pointer-events:none}
+.hero h2{font-family:var(--display);font-weight:400;font-size:1.45rem;line-height:1.4;overflow-wrap:anywhere}
+.hero .go{grid-column:1/-1}
+.hero .btn.primary{min-height:52px;font-size:1.05rem;width:100%;border-radius:14px}
+@media (min-width:560px){.hero .btn.primary{width:auto;min-width:220px}}
+.ring{width:84px;height:84px;color:var(--ink);flex:none}
+.ring text{fill:currentColor}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.tile b{font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:1.2}
+.tile span{font-size:.85rem;color:var(--muted);line-height:1.4}
+.hsec{display:flex;flex-direction:column;gap:10px}
+.hsec>h2{font-size:1.05rem}
+.h-col .hsec+.hsec{border-top:1px solid var(--line);padding-top:20px}
+.tipbox{display:flex;gap:12px;align-items:flex-start}
+.bubble{position:relative;background:var(--wash);border-radius:16px;padding:10px 14px;flex:1 1 auto;min-width:0}
+.bubble::before{content:"";position:absolute;left:-8px;top:18px;border:8px solid transparent;border-right-color:var(--wash);border-left:0}
+.daily{display:flex;gap:14px;align-items:center}
+.daily .board.thumb{width:96px;flex:none;border-radius:6px}
+.daily .col{gap:4px;min-width:0}
+.quick{display:flex;gap:14px;align-items:center}
+.quick .col{gap:4px;min-width:0}
+.quick .belt{align-self:flex-start}
+.resume-banner{background:var(--wash);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.resume-banner p{overflow-wrap:anywhere}
+.rs-slot:empty{display:none}
+.rs-slot{margin-bottom:16px}
+.path-h{font-size:1.05rem}
+.me-head{display:flex;gap:16px;align-items:center}
+.me-head h1{margin:0;overflow-wrap:anywhere}
+.recs{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 20px}
+.recs li{display:flex;align-items:center;gap:10px;min-height:44px}
+.recs li span:last-child{margin-left:auto;font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px;word-break:break-all;resize:vertical;min-height:88px}
+.ask[hidden]{display:none}
+.ask{flex-basis:100%;background:var(--wash);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.bad-t{color:var(--bad)} .good-t{color:var(--good)}
 </style>
 <div class="wrap">
 <div class="topbar">
@@ -268,15 +331,11 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
     <button data-tab="play"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16M14 4v16M4 10h16M4 14h16"/></svg><span>ประลอง</span></button>
     <button data-tab="masters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>คลังเซียน</span></button>
   </nav>
+  <button class="pchip" id="pchip" type="button"></button>
 </div>
 <main>
 <section id="v-learn">
-  <div id="path-view">
-    <div class="intro"><h1>จากไม่เป็นเลย ถึงระดับเซียน</h1>
-    <p class="lede">หกขั้นเรียงตามระดับฝีมือ ทุกบทให้วางหมากเองบนกระดานจริง ตอนนี้เปิดสองขั้นแรก</p></div>
-    <div class="panel resume" id="resume"></div>
-    <ol class="path" id="path"></ol>
-  </div>
+  <div id="path-view"><div class="home" id="home"></div></div>
   <div id="lesson-view" hidden><button class="back" id="lesson-back">← กลับไปเส้นทางเรียน</button><div id="lesson-player"></div></div>
 </section>
 <section id="v-puzzles" hidden>
@@ -285,13 +344,14 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
 </section>
 <section id="v-play" hidden>
   <div id="lobby">
-    <div class="intro"><h1>ลานสำนัก</h1><p class="lede">แตะใครก็ได้เพื่อชวนประลอง ไม่มีด่านล็อก เลือกได้ตามใจ ผลแพ้ชนะเก็บไว้ในเครื่องนี้</p><button class="btn" id="view-toggle" type="button">ดูแบบรายชื่อ</button></div>
+    <div class="intro"><h1>ลานสำนัก</h1><p class="lede">แตะใครก็ได้เพื่อชวนประลอง ไม่มีด่านล็อก</p><button class="btn" id="view-toggle" type="button">ดูแบบรายชื่อ</button></div>
+    <div class="rs-slot"></div>
     <div class="court paused-off" id="courtyard" aria-label="ลานสำนัก"></div>
     <div class="lobby">
       <div class="roster" id="roster" role="group" aria-label="รายชื่อคู่ประลอง"></div>
       <div class="panel" id="detail"></div>
     </div>
-    <section class="panel logbox" id="logbox" aria-labelledby="log-h"><h2 id="log-h">สมุดบันทึกผล</h2><div id="log-body"></div></section>
+    <p class="logline"><button class="linkbtn" id="to-log" type="button">ดูสมุดบันทึกผล</button></p>
     <div class="friend panel" style="flex-direction:row;flex-wrap:wrap;align-items:center">
       <h3>เล่นกับเพื่อนบนเครื่องเดียวกัน</h3>
       <div class="seg" id="friend-size" role="group" aria-label="ขนาดกระดานเล่นกับเพื่อน"></div>
@@ -317,6 +377,21 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
     </div>
     <section class="panel review" id="review" hidden aria-live="polite"></section>
   </div>
+</section>
+<section id="v-me" hidden>
+  <button class="back" id="me-back" type="button">← กลับ</button>
+  <div class="col" id="me-top" style="gap:20px"></div>
+  <section class="panel logbox" id="logbox" aria-labelledby="log-h"><h2 id="log-h">สมุดบันทึกผล</h2><div id="log-body"></div></section>
+  <section class="panel col" id="backup" aria-labelledby="bk-h" style="margin-top:20px">
+    <h2 id="bk-h">สำรองข้อมูล</h2>
+    <textarea id="bk-code" class="codebox" readonly rows="4" aria-label="รหัสสำรองข้อมูล"></textarea>
+    <div class="btns"><button class="btn" id="bk-copy" type="button">คัดลอกรหัส</button></div>
+    <h2>กู้คืนข้อมูล</h2>
+    <textarea id="rs-code" class="codebox" rows="3" aria-label="วางรหัสสำรองที่นี่" placeholder="วางรหัสสำรองที่นี่"></textarea>
+    <p class="small" id="rs-msg" role="status"></p>
+    <div class="btns" id="rs-btns"><button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button></div>
+    <p class="small">ข้อมูลอยู่ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ถ้าล้างข้อมูลเบราว์เซอร์หรือเปลี่ยนเครื่อง ให้ใช้รหัสสำรอง บน iPad และ iPhone แนะนำให้เพิ่มเว็บนี้ไว้ที่หน้าจอโฮม</p>
+  </section>
 </section>
 <section id="v-masters" hidden>
   <div class="intro"><h1>คลังเซียน</h1><p class="lede">แนวคิดของผู้เล่นที่เปลี่ยนวิธีเล่นหมากล้อม พร้อมวิธีฝึกตาม</p></div>
@@ -666,7 +741,7 @@ const Srv = {
 };
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } } };
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
 let done = store.get('go-done', {});
 const STARS = { 9: [2, 4, 6], 13: [3, 6, 9], 19: [3, 9, 15] };
 const C = 30, M = 28;
@@ -799,23 +874,6 @@ function openLesson(id) {
   const L = LESSONS.find(l => l.id === id); if (!L) return;
   showTab('learn'); $('#path-view').hidden = true; $('#lesson-view').hidden = false; lessonPlayer.open(L); window.scrollTo(0, 0);
 }
-function showPath() {
-  $('#lesson-view').hidden = true; $('#path-view').hidden = false;
-  const nDone = LESSONS.filter(l => done[l.id]).length, tot = LESSONS.length, next = LESSONS.find(l => !done[l.id]), pr = playerRank();
-  $('#resume').innerHTML = `<div class="col"><span class="eyebrow">${next ? 'บทถัดไปของคุณ' : 'เรียนครบแล้ว'}</span>
-    <h2>${next ? esc(next.title) : 'คุณเรียนครบทุกบทที่เปิดอยู่แล้ว'}</h2>
-    <div class="bar" role="progressbar" aria-label="ความคืบหน้าการเรียน" aria-valuemin="0" aria-valuemax="${tot}" aria-valuenow="${nDone}"><i style="width:${Math.round(nDone / tot * 100)}%"></i></div>
-    <p>เรียนแล้ว ${nDone} จาก ${tot} บท</p>
-    <div class="btns">${next ? '<button class="btn primary" id="r-next">เรียนต่อ</button>' : '<button class="btn primary" id="r-puz">ไปฝึกโจทย์</button>'}<button class="btn" id="r-play">เล่นทันที</button></div>
-    <p class="small">ไม่ต้องสมัครสมาชิก</p></div>
-    <div class="rankbox"><span class="eyebrow">ระดับของคุณ</span><b>${pr ? esc(pr.rank) : 'ยังไม่มีระดับ'}</b><p class="small">${pr ? 'จากการชนะ' + esc(pr.name) + ' ชนะคู่ประลองที่แข็งขึ้นเพื่อเลื่อนระดับ' : 'ชนะคู่ประลองสักคนในแท็บประลองเพื่อรับระดับแรก'}</p></div>`;
-  if (next) $('#r-next').onclick = () => openLesson(next.id); else $('#r-puz').onclick = () => showTab('puzzles');
-  $('#r-play').onclick = () => showTab('play');
-  $('#path').innerHTML = STAGES.map(s => `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)}</h2>${s.open
-    ? `<div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div>`
-    : `<p class="soon">${esc(s.topics)} · กำลังจัดทำ</p>`}</div></li>`).join('');
-}
-$('#path').onclick = e => { const b = e.target.closest('.lesson'); if (b) openLesson(b.dataset.id); };
 $('#lesson-back').onclick = showPath;
 
 // ---------- หน้าโจทย์ ----------
@@ -844,8 +902,14 @@ function avatar(s, px) {
     case 'cat': back = tri(13, 30, 14, 5, 30, 16, f) + tri(51, 30, 50, 5, 34, 16, f) + tri(17, 24, 17, 12, 26, 17, '#5A3B4C') + tri(47, 24, 47, 12, 38, 17, '#5A3B4C'); front = `<ellipse cx="32" cy="41" rx="2.4" ry="1.8" fill="#E78F9A"/><path d="M8 40l12 2M8 46l12-2M56 40l-12 2M56 46l-12-2" stroke="#C9C9D0" stroke-width="1.2" stroke-linecap="round"/>`; break;
     case 'crane': back = ''; front = `<path d="M22 17q10-9 20 0q-10 4-20 0z" fill="#C5382C"/><path d="M29.5 39l2.5 17 2.5-17z" fill="#E7B84A" stroke="${ln}"/><path d="M16 36q2-3 5-2M48 36q-2-3-5-2" stroke="${ln}" fill="none"/>`; smile = false; break;
     case 'dragon': back = tri(19, 20, 12, 3, 28, 13, '#F1E6C8') + tri(45, 20, 52, 3, 36, 13, '#F1E6C8'); front = `<circle cx="22" cy="43" r="2" fill="#ffffff55"/><circle cx="42" cy="43" r="2" fill="#ffffff55"/><circle cx="29.5" cy="40.5" r="1.3" fill="${ink}"/><circle cx="34.5" cy="40.5" r="1.3" fill="${ink}"/><path d="M27 47l1.5 4 1.5-4M34 47l1.5 4 1.5-4" fill="#fff" stroke="${ln}"/>`; smile = false; break;
+    case 'dog': back = `<ellipse cx="13" cy="28" rx="7" ry="13" transform="rotate(14 13 28)" fill="#6B4A2F" stroke="${ln}"/><ellipse cx="51" cy="28" rx="7" ry="13" transform="rotate(-14 51 28)" fill="#6B4A2F" stroke="${ln}"/>`; front = `<ellipse cx="32" cy="44" rx="10" ry="7.5" fill="#F7E6CC"/><ellipse cx="32" cy="41" rx="3.2" ry="2.4" fill="${ink}"/>`; break;
+    case 'panda': back = `<circle cx="16" cy="15" r="7.5" fill="#26262b" stroke="${ln}"/><circle cx="48" cy="15" r="7.5" fill="#26262b" stroke="${ln}"/>`; front = `<ellipse cx="24" cy="34" rx="6" ry="7.5" transform="rotate(20 24 34)" fill="#26262b"/><ellipse cx="40" cy="34" rx="6" ry="7.5" transform="rotate(-20 40 34)" fill="#26262b"/><ellipse cx="32" cy="41" rx="2.8" ry="2" fill="#26262b"/>`; break;
+    case 'monkey': back = `<circle cx="11" cy="33" r="8" fill="${f}" stroke="${ln}"/><circle cx="53" cy="33" r="8" fill="${f}" stroke="${ln}"/><circle cx="11" cy="33" r="4.5" fill="#F2B8A0"/><circle cx="53" cy="33" r="4.5" fill="#F2B8A0"/>`; front = `<path d="M19 33Q32 22 45 33Q51 46 32 53Q13 46 19 33Z" fill="#F3D3B0"/><circle cx="30.5" cy="41" r="1" fill="${ln}"/><circle cx="33.5" cy="41" r="1" fill="${ln}"/>`; break;
+    case 'elephant': back = `<ellipse cx="10" cy="34" rx="9" ry="14" fill="${f}" stroke="${ln}"/><ellipse cx="54" cy="34" rx="9" ry="14" fill="${f}" stroke="${ln}"/><ellipse cx="10" cy="35" rx="4.5" ry="9" fill="#E9B7B7"/><ellipse cx="54" cy="35" rx="4.5" ry="9" fill="#E9B7B7"/>`; front = `<path d="M26 41Q25 52 30 56Q36 59 38 53L37 41Z" fill="${f}" stroke="${ln}"/><path d="M28 47h8M28.5 51h7.5" stroke="${ln}" stroke-width="1" fill="none"/>`; smile = false; break;
+    case 'frog': back = `<circle cx="21" cy="15" r="8.5" fill="${f}" stroke="${ln}"/><circle cx="43" cy="15" r="8.5" fill="${f}" stroke="${ln}"/><circle cx="21" cy="15" r="4.5" fill="#5FA94F"/><circle cx="43" cy="15" r="4.5" fill="#5FA94F"/>`; front = `<path d="M16 42Q32 54 48 42" stroke="${ink}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="18" cy="42" r="3.2" fill="#F29C7A" opacity=".6"/><circle cx="46" cy="42" r="3.2" fill="#F29C7A" opacity=".6"/><circle cx="30" cy="39" r=".9" fill="${ln}"/><circle cx="34" cy="39" r=".9" fill="${ln}"/>`; smile = false; break;
+    case 'bear': back = `<circle cx="15" cy="17" r="7.5" fill="${f}" stroke="${ln}"/><circle cx="49" cy="17" r="7.5" fill="${f}" stroke="${ln}"/><circle cx="15" cy="17" r="3.8" fill="#D9A877"/><circle cx="49" cy="17" r="3.8" fill="#D9A877"/>`; front = `<ellipse cx="32" cy="43" rx="9.5" ry="7" fill="#E8C9A0"/><ellipse cx="32" cy="40.5" rx="3" ry="2.2" fill="${ink}"/>`; break;
   }
-  const eye = x => k === 'cat'
+  const eye = x => k === 'panda' ? `<circle cx="${x}" cy="34" r="2.8" fill="#fff"/><circle cx="${x + .5}" cy="34.4" r="1.3" fill="#111"/>` : k === 'cat'
     ? `<ellipse cx="${x}" cy="34" rx="4" ry="4.2" fill="#E9E58A"/><ellipse cx="${x}" cy="34" rx="1.3" ry="3.4" fill="#111"/>`
     : `<circle cx="${x}" cy="34" r="${k === 'owl' ? 3.8 : 3}" fill="${ink}"/><circle cx="${x + 1}" cy="33" r="1" fill="#fff"/>`;
   const mouth = smile ? `<path d="M28 ${k === 'cat' || k === 'fox' ? 45 : 44}q4 3 8 0" stroke="${ink}" stroke-width="1.6" fill="none" stroke-linecap="round"/>` : '';
@@ -867,9 +931,10 @@ function renderLobby() {
   renderDetail();
   clearTimeout(bTimer); bTimer = setTimeout(banterTick, 1200);
   $('#friend-size').innerHTML = sizeBtns([9, 13, 19], friendSize, 'fs');
-  renderLog();
+  paintResume();
   Srv.check().then(() => { if (!$('#lobby').hidden) { renderRoster(recId()); renderDetail(); } });
 }
+const approx = s => /^\d+ (คิว|ดั้ง)/.test(s.rank) ? 'ประมาณ ' + s.rank : s.rank;
 const srvChip = () => `<span class="srv${Srv.online ? ' on' : ''}">${Srv.online ? 'ออนไลน์' : Srv.checked ? 'ออฟไลน์' : 'กำลังตรวจ'}</span>`;
 function renderRoster(rid) {
   $('#roster').innerHTML = SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 };
@@ -878,17 +943,16 @@ function renderRoster(rid) {
 }
 function renderDetail() {
   const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online;
-  $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(s.rank)}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
+  $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(approx(s))}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
     <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
     <div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${selCol === 1}">ดำ เดินก่อน</button><button data-col="2" aria-pressed="${selCol === 2}">ขาว</button></div></div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
 }
 function renderExplain() {
-  $('#explain').innerHTML = `<p>ระดับในหมากล้อมนับเป็นคิวและดั้ง คิวนับถอยหลัง เริ่มที่ 30 คิวสำหรับผู้เริ่มต้น แล้วลดลงจนถึง 1 คิว จากนั้นเป็นดั้งที่นับขึ้นตั้งแต่ 1 ดั้งไปถึงราว 7 ดั้งในระดับสมัครเล่น นักหมากล้อมอาชีพมีระดับดั้งของตัวเองตั้งแต่ 1 ถึง 9 ดั้ง</p>
+  $('#explain').innerHTML = `<p>ระดับนับเป็นคิวและดั้ง คิวนับถอยหลังจาก 30 ลงไปถึง 1 แล้วจึงเป็นดั้งที่นับขึ้น สมัครเล่นไปถึงราว 7 ดั้ง ส่วนอาชีพมี 1 ถึง 9 ดั้งของตัวเอง</p>
     <div class="ladder">${LADDER.map(([a, b, c]) => `<div style="background:${c};color:${lum(c) > 150 ? '#16211D' : '#fff'}"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('')}</div>
-    <p>สายสีในแอปนี้เป็นการเปรียบเทียบแบบศิลปะต่อสู้ เพื่อให้จำง่าย ไม่ใช่ระบบสายของหมากล้อมจริง</p>
-    <p>การสอบวัดระดับของสมาคมกีฬาหมากล้อมแห่งประเทศไทยครอบคลุมตั้งแต่ระดับคิวถึง 1 ดั้ง และนักกีฬาแนวหน้าของไทยอยู่ราว 5–6 ดั้ง</p>
+    <p>สายสีในแอปเป็นการเปรียบเทียบแบบศิลปะต่อสู้ เพื่อให้จำง่าย ไม่ใช่ระบบสายของหมากล้อมจริง</p>
     <p>ระดับของคู่ประลองในแอปเป็นค่าประมาณ ยังไม่ได้เทียบกับผู้เล่นจริง</p>`;
 }
 // ---------- ลานสำนัก (ฉากประลอง) ----------
@@ -1052,16 +1116,17 @@ function srvDrop() {
 }
 const botToMove = () => !!S && G.turn !== human;
 
-async function startGame(s, n, col) {
+async function startGame(s, n, col, res) {
   const my = ++token;
-  S = s; human = s ? col : 1; G = new Go(n, n === 19 ? 7.5 : 6.5);
+  S = s; human = s ? col : 1; G = new Go(n, res ? res.komi : n === 19 ? 7.5 : 6.5);
   over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; review = null; degraded = false; kataOK = false; retry = false;
+  if (res) replayInto(res); else clearGame();
   GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
   $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
-  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs คุณ (ถือ${cname(human)})</span></div>`
+  $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})</span></div>`
     : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
-    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="small" id="gline" style="flex-basis:100%"></div>`;
-  tutor(usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเสียกี่แต้มและควรเดินจุดไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
+    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
+  tutor(res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
     : n <= 9 ? 'เริ่มได้เลย ลองเปิดใกล้จุดกลางหรือจุดดาว แล้วดูลมหายใจของหมากทุกตา' : 'เริ่มได้เลย ช่วงเปิดเกมให้จับมุมก่อน แล้วขยายไปข้าง เส้นที่ 3 และ 4 คุ้มที่สุด');
   gfb('');
   if (S && S.eng === 'server') {
@@ -1078,7 +1143,8 @@ async function startGame(s, n, col) {
     if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `เครื่องนี้โหลดเอนจินระดับสูงไม่สำเร็จ เกมนี้จึงเล่นต่อด้วยคอมพื้นฐาน ${S.name}กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
   }
   renderGame();
-  if (botToMove()) botTurn();
+  if (res && G.passes >= 2) return endScoring();
+  if (botToMove()) botTurn(); else if (res) startPre();
 }
 function gameTitle() { return !over ? `ตาที่ ${G.moves.length + 1} · ${cname(G.turn)}เดิน${S ? (G.turn === human ? ' (คุณ)' : '') : ''}` : ''; }
 function renderGame() {
@@ -1105,6 +1171,7 @@ function renderGame() {
   const hb = $('#b-hint'); hb.hidden = !(usesAI(S) && !degraded); $('#b-retry').hidden = !retry; hb.disabled = !myTurn || !kataOK;
   const fb = $('#b-final'); fb.hidden = !(over && over.type === 'score' && !over.final); fb.disabled = !!(over && over.pending);
   GB._redraw = renderGame;
+  saveGame();
 }
 function ruleLines(f, name, warnOnly) {
   const out = [];
@@ -1119,14 +1186,27 @@ function ruleLines(f, name, warnOnly) {
   if (!out.length) out.push(f.moveNo < G.n ? 'ตานี้ไม่มีจุดอันตราย ช่วงเปิดเกมให้กระจายหมากไปยังมุมและข้างที่ยังว่าง' : 'ตานี้ไม่มีกลุ่มไหนเสี่ยงโดนกินทันที ลองมองหาจุดตัดของคู่แข่งหรือจุดที่ขยายพื้นที่ได้กว้าง');
   return out;
 }
-const tutorSay = (f, name) => tutor(ruleLines(f, name).slice(0, 2).join(' '));
+const tutorSay = (f, name) => tutor(ruleLines(f, name).slice(0, 1).join(' '));
+const kyuS = () => !!S && /คิว/.test(S.rank) && S.eng !== 'server';
+const PRAISE = ['ตานี้ดีมาก เดินได้ตรงจุด', 'เดินได้ดี รักษาแต้มไว้ครบ', 'จุดนี้เหมาะเลย', 'ตานี้เยี่ยม ไปต่อได้เลย'];
+const SAME = ['ตรงกับที่เซนเซเลือกเลย เยี่ยมมาก', 'เซนเซเลือกจุดเดียวกับคุณ', 'เป็นตาที่เซนเซก็จะเดิน ยอดเยี่ยม'];
+const lossWord = l => l < 4 ? 'พอใช้' : l < 10 ? 'พลาดเล็ก' : 'พลาดใหญ่';
+function reasonOf(f) {
+  if (!f) return '';
+  if (f.selfAtari) return 'เพราะหมากเหลือลมหายใจเดียว';
+  if (f.ownAtari.length) return 'เพราะกลุ่มของคุณยังโดนอาตาริ';
+  if (f.eyeFill && !f.captured) return 'เพราะถมตาของตัวเอง';
+  return '';
+}
 function kataTutor(t) {
-  const x = Math.round(t.loss); let s;
-  if (t.loss < 1.5) s = 'ตานี้ดี แทบไม่เสียแต้ม';
-  else if (t.loss < 4) s = `ตานี้พอใช้ เสียราว ${x} แต้ม`;
-  else { s = `ตานี้เสียราว ${x} แต้ม`; if (t.best >= 0 && t.best !== t.idx) s += ` เซนเซมองว่า ${G.name(t.best)} ดีกว่า`; if (t.loss >= 10) s = 'พลาดใหญ่ ' + s; }
-  const w = t.facts ? ruleLines(t.facts, G.name(t.idx), true) : [];
-  tutor(s + (w.length ? ' ' + w[0] : ''));
+  const better = t.best >= 0 && t.best !== t.idx, r = reasonOf(t.facts); let s;
+  if (t.loss < 1.5) s = t.best === t.idx ? SAME[t.no % SAME.length] : PRAISE[t.no % PRAISE.length];
+  else {
+    s = kyuS() ? lossWord(t.loss) : `ตานี้เสียราว ${Math.round(t.loss)} แต้ม`;
+    if (better) s += ` จุดที่ดีกว่าคือ ${G.name(t.best)}`;
+    if (r) s += ' ' + r;
+  }
+  tutor(s);
 }
 function startPre() {
   if (!isKata() || over || G.turn !== human) return;
@@ -1209,7 +1289,7 @@ function finish() {
     const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
-  o.res = { won, margin, text };
+  o.res = { won, margin, text }; clearGame();
   if (S) {
     const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 };
     if (won) { if (!degraded) r.w++; } else r.l++;
@@ -1223,8 +1303,8 @@ function finish() {
 // ---------- สมุดบันทึกผล ----------
 let matchLog = store.get('go-log', []);
 function buildSgf(re) {
-  const L = 'abcdefghijklmnopqrstuvwxyz', n = G.n, pn = 'ผู้เล่น';
-  let t = `(;GM[1]FF[4]CA[UTF-8]SZ[${n}]KM[${G.komi}]RU[Chinese]PB[${human === 1 ? pn : S.name}]PW[${human === 2 ? pn : S.name}]DT[${new Date().toISOString().slice(0, 10)}]RE[${re}]`;
+  const L = 'abcdefghijklmnopqrstuvwxyz', n = G.n, me = pn().replace(/[\]\\]/g, '\\$&');
+  let t = `(;GM[1]FF[4]CA[UTF-8]SZ[${n}]KM[${G.komi}]RU[Chinese]PB[${human === 1 ? me : S.name}]PW[${human === 2 ? me : S.name}]DT[${new Date().toISOString().slice(0, 10)}]RE[${re}]`;
   G.moves.forEach((m, k) => { t += `;${k % 2 ? 'W' : 'B'}[${m < 0 ? '' : L[m % n] + L[(m / n) | 0]}]`; });
   return t + ')';
 }
@@ -1271,7 +1351,7 @@ $('#log-body').onclick = e => {
   else if (b.id === 'log-copy') {
     const lines = logSummary().map(x => `${x.name}: ชนะ ${x.w} แพ้ ${x.l}${x.mc ? ` แต้มต่างเฉลี่ย ${x.m / x.mc >= 0 ? '+' : ''}${(x.m / x.mc).toFixed(1)}` : ''}`);
     const games = logRows().slice(0, 20).map(r => `${r.t.slice(0, 10)} ${r.sname} ${r.n}x${r.n} ${logRes(r)}${r.avgLoss == null ? '' : ' เสียเฉลี่ย ' + r.avgLoss.toFixed(1)}`);
-    copyText(['สรุปผลสำนักหมากล้อม', ...lines, '', 'เกมล่าสุด', ...games].join('\n'), b, host);
+    copyText(['สรุปผลสำนักหมากล้อม', 'ผู้เล่น: ' + pn(), ...lines, '', 'เกมล่าสุด', ...games].join('\n'), b, host);
   } else if (b.id === 'log-clear') {
     b.outerHTML = '<span class="small">ล้างทั้งหมดและย้อนกลับไม่ได้</span> <button class="btn" id="log-clear-yes">ยืนยันล้าง</button><button class="btn" id="log-clear-no">ยกเลิก</button>';
   } else if (b.id === 'log-clear-yes') { matchLog = []; store.set('go-log', matchLog); renderLog(); }
@@ -1288,7 +1368,7 @@ function renderReview() {
   const n = G.n, lost = !res.won, idx = SENSEI.indexOf(S), prev = SENSEI[idx - 1], next = SENSEI[idx + 1] && SENSEI[idx + 1].eng !== 'server' ? SENSEI[idx + 1] : null, blocks = [], links = new Set();
   if (isKata()) {
     const bad = rec.filter(t => t.loss != null && t.loss >= 2).sort((a, b) => b.loss - a.loss).slice(0, lost ? 3 : 1);
-    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · เสียราว ${Math.round(t.loss)} แต้ม${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>');
+    blocks.push(bad.length ? `<h3>ตาที่เสียแต้มมากที่สุด</h3><div class="rv">${bad.map(t => `<button class="btn" data-turn="${t.no}">ตาที่ ${t.no} · ${G.name(t.idx)} · ${kyuS() ? lossWord(t.loss) + ' <small>(เสียราว ' + Math.round(t.loss) + ' แต้ม)</small>' : 'เสียราว ' + Math.round(t.loss) + ' แต้ม'}${t.best >= 0 && t.best !== t.idx ? ' · ควรเดิน ' + G.name(t.best) : t.best < 0 && t.lead0 != null ? ' · เซนเซเลือกผ่าน' : ''}</button>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่เซนเซแนะ</p>` : (kyuS() ? '<p>ไม่มีตาไหนพลาดชัด ตลอดเกมคุณเดินได้นิ่งมาก</p>' : '<p>ไม่มีตาไหนเสียเกิน 2 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>'));
     const ph = [[], [], []], o1 = n * n / 7, o2 = n * n * 0.42;
     rec.forEach(t => { if (t.loss != null) ph[t.no <= o1 ? 0 : t.no <= o2 ? 1 : 2].push(t.loss); });
     let bi = -1, bv = 1.5; ph.forEach((a, k) => { if (a.length) { const m = a.reduce((x, y) => x + y, 0) / a.length; if (m > bv) { bv = m; bi = k; } } });
@@ -1318,7 +1398,13 @@ $('#review').onclick = e => {
   else if (b.dataset.act === 'lobby') toLobby();
 };
 function toLobby() { token++; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
-$('#ghead').onclick = e => { if (e.target.closest('#g-back')) toLobby(); };
+$('#ghead').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'g-back') { if ((over && over.final) || !G.moves.length) return toLobby(); $('#leave-ask').hidden = false; $('#ask-later').focus(); }
+  else if (b.id === 'ask-later') { saveGame(); toLobby(); }
+  else if (b.id === 'ask-resign') { $('#leave-ask').hidden = true; if (!over || !over.final) { over = { type: 'resign', loser: S ? human : G.turn }; finish(); } }
+  else if (b.id === 'ask-cancel') { $('#leave-ask').hidden = true; $('#g-back').focus(); }
+};
 
 $('#b-pass').onclick = () => { if (busy) return; G.pass(); fresh = -1; hintIdx = -1; gfb(`${cname(3 - G.turn)}ผ่าน`); afterMove(); };
 $('#b-undo').onclick = () => {
@@ -1355,9 +1441,11 @@ $('#mlist').onclick = e => { const b = e.target.closest('button'); if (b) openMa
 
 // ---------- แท็บ ----------
 const TABS = ['learn', 'puzzles', 'play', 'masters'];
+let lastTab = 'learn';
 function showTab(t) {
-  if (!TABS.includes(t)) t = 'learn';
-  TABS.forEach(k => { $('#v-' + k).hidden = k !== t; });
+  if (![...TABS, 'me'].includes(t)) t = 'learn';
+  [...TABS, 'me'].forEach(k => { $('#v-' + k).hidden = k !== t; });
+  if (t !== 'me') lastTab = t; else renderProfile();
   document.querySelectorAll('#tabs button').forEach(b => b.dataset.tab === t ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
   if (t === 'learn' && $('#lesson-view').hidden) showPath();
   if (t === 'play' && !$('#lobby').hidden) renderLobby();
@@ -1365,8 +1453,215 @@ function showTab(t) {
 }
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };
 window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
-showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); showTab(location.hash.slice(1));
 try { if (location.protocol === 'https:' && window.top === window.self && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { }
+// ---------- โปรไฟล์ในเครื่องนี้ ----------
+const ANIMALS = [
+  { kind: 'dog', fur: '#D9A066', label: 'หมา' }, { kind: 'panda', fur: '#F4F4F0', label: 'แพนด้า' }, { kind: 'monkey', fur: '#8A5A3A', label: 'ลิง' },
+  { kind: 'elephant', fur: '#A9B4C2', label: 'ช้าง' }, { kind: 'frog', fur: '#7CC46A', label: 'กบ' }, { kind: 'bear', fur: '#9A6B45', label: 'หมี' }
+];
+const cleanName = v => String(v || '').replace(/\s+/g, ' ').trim().slice(0, 16);
+let profile = store.get('go-profile', null);
+if (!(profile && typeof profile.name === 'string' && cleanName(profile.name) && ANIMALS.some(a => a.kind === profile.animal))) profile = null;
+const pn = () => profile ? profile.name : 'นักหมาก';
+const animalOf = k => ANIMALS.find(a => a.kind === k) || ANIMALS[0];
+const pav = (px, kind) => { const a = animalOf(kind || (profile && profile.animal)); return avatar({ kind: a.kind, fur: a.fur, bc: '#274690' }, px); };
+const animalBtns = pick => ANIMALS.map(a => `<button type="button" data-k="${a.kind}" aria-pressed="${a.kind === pick}" aria-label="${a.label}">${pav(40, a.kind)}<small>${a.label}</small></button>`).join('');
+function pickAnimal(e) { const b = e.target.closest('button[data-k]'); if (!b) return; b.parentNode.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); }
+function renderChip() { const b = $('#pchip'); b.innerHTML = pav(32) + `<span>${esc(pn())}</span>`; b.setAttribute('aria-label', 'โปรไฟล์ของ ' + pn()); }
+$('#pchip').onclick = () => { showTab('me'); window.scrollTo(0, 0); };
+let justJoined = false;
+
+function showWelcome() {
+  if ($('#welcome')) return;
+  const w = document.createElement('div'); w.className = 'sheet-wrap'; w.id = 'welcome';
+  w.innerHTML = `<form class="sheet" role="dialog" aria-modal="true" aria-labelledby="wl-h"><h2 id="wl-h">ยินดีต้อนรับสู่สำนักหมากล้อม</h2>
+    <div><label for="player-name" class="lab">ตั้งชื่อนักหมากของคุณ</label><input id="player-name" class="field" maxlength="16" autocomplete="off"></div>
+    <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(ANIMALS[0].kind)}</div>
+    <div class="btns"><button class="btn primary" type="submit">เข้าสำนัก</button><button class="btn" type="button" id="wl-skip">ไว้ทีหลัง</button></div>
+    <p class="small">ชื่อและผลการเรียนเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครสมาชิก</p></form>`;
+  document.body.appendChild(w);
+  $('.wrap').inert = true;
+  const form = $('form', w);
+  const close = skip => {
+    const picked = $('.animals [aria-pressed="true"]', w), nm = skip ? '' : cleanName($('#player-name').value);
+    profile = { name: nm || 'นักหมาก', animal: picked ? picked.dataset.k : ANIMALS[0].kind, created: Date.now() };
+    store.set('go-profile', profile); justJoined = true;
+    $('.wrap').inert = false; w.remove(); renderChip(); showPath();
+  };
+  form.onsubmit = e => { e.preventDefault(); close(false); };
+  $('.animals', w).onclick = pickAnimal;
+  $('#wl-skip').onclick = () => close(true);
+  w.addEventListener('keydown', e => { if (e.key === 'Escape') close(true); });
+  $('#player-name').focus();
+}
+
+// ---------- สถิติ ----------
+const nLessons = () => LESSONS.filter(l => done[l.id]).length;
+const nPuzzles = () => PUZZLES.filter(p => done[p.id]).length;
+const nBeaten = () => SENSEI.filter(s => wins(s.id) >= 1).length;
+const tiles = () => `<div class="tiles"><div class="tile"><b>${nLessons()}</b><span>บทเรียนที่จบ</span></div><div class="tile"><b>${nPuzzles()}</b><span>โจทย์ที่ผ่าน</span></div><div class="tile"><b>${nBeaten()}/${SENSEI.length}</b><span>คู่ประลองที่ชนะแล้ว</span></div></div>`;
+const dayNo = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
+const TIPS = SENSEI.flatMap(s => [2, 3].map(k => [s.id, BANTER[s.id][k]]));
+
+function goPlay(id) {
+  if (!$('#game').hidden) { showTab('play'); return; }
+  sel = id; selSize = bySid(id).n; showTab('play'); window.scrollTo(0, 0);
+  const d = $('#detail'); if (d && matchMedia('(max-width:820px)').matches) d.scrollIntoView({ block: 'start' });
+}
+
+// ---------- หน้าแรก (แท็บเรียน) ----------
+function boardDeco() {
+  let g = ''; for (let k = 0; k < 7; k++) { const p = 45 + k * 23.3; g += `M${p.toFixed(1)} 45V185M45 ${p.toFixed(1)}H185`; }
+  return `<svg class="deco" viewBox="0 0 230 230" aria-hidden="true" focusable="false"><g transform="rotate(-12 115 115)"><rect x="20" y="20" width="190" height="190" rx="12" fill="#E3BC6E" opacity=".4"/><path d="${g}" stroke="currentColor" stroke-width="1.2" opacity=".3" fill="none"/></g>
+    <circle cx="96" cy="96" r="14" fill="#1c1c1f"/><circle cx="142" cy="112" r="14" fill="#f4f2ec" stroke="#0005"/><circle cx="119" cy="146" r="14" fill="#1c1c1f"/></svg>`;
+}
+function showPath() {
+  $('#lesson-view').hidden = true; $('#path-view').hidden = false;
+  const tot = LESSONS.length, nd = nLessons(), next = LESSONS.find(l => !done[l.id]), rs = bySid(recId() || 's9'), top = playerRank();
+  const Cc = 2 * Math.PI * 34, off = Cc * (1 - nd / tot);
+  const ring = `<svg class="ring" viewBox="0 0 84 84" role="img" aria-label="เรียนแล้ว ${nd} จาก ${tot} บท"><circle cx="42" cy="42" r="40" fill="var(--surface)"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="42" cy="42" r="34" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${Cc.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 42 42)"/><text x="42" y="48" text-anchor="middle" font-size="18" font-weight="500" style="font-family:var(--mono)">${nd}/${tot}</text></svg>`;
+  const hero = next
+    ? `<div class="col" style="gap:6px"><span class="eyebrow">เรียนต่อ</span><h2>${esc(next.title)}</h2><p class="small">ขั้น ${next.stage} · ${esc((STAGES.find(s => s.n === next.stage) || {}).title || '')}</p></div>${ring}<div class="go"><button class="btn primary" data-continue="${next.id}">เรียนต่อ</button></div>`
+    : `<div class="col" style="gap:6px"><span class="eyebrow">เรียนครบแล้ว</span><h2>ลองลงสนามจริงกับ${esc(rs.name)}</h2><p class="small">${esc(rs.rank)} กำลังรออยู่</p></div>${ring}<div class="go"><button class="btn primary" data-play="${rs.id}">ประลองกับ${esc(rs.name)}</button></div>`;
+  const tip = TIPS[dayNo() % TIPS.length], ts = bySid(tip[0]), pk = dayNo() % PUZZLES.length, pz = PUZZLES[pk];
+  const stages = STAGES.filter(s => LESSONS.some(l => l.stage === s.n));
+  $('#home').innerHTML = `<div class="h-greet"><h1>สวัสดี ${esc(pn())}</h1>${justJoined ? `<div class="tipbox">${avatar(bySid('s2'), 48)}<p class="bubble">ยินดีที่ได้รู้จัก ${esc(pn())} เริ่มจากบทแรกได้เลย</p></div>` : ''}</div>
+    <div class="rs-slot"></div>
+    <div class="h-grid"><div class="h-col"><div class="hero">${boardDeco()}${hero}</div>${tiles()}${top ? `<p class="small">ชนะถึง: ${esc(top.name)}</p>` : ''}</div>
+    <div class="h-col"><section class="hsec"><h2>เคล็ดลับวันนี้</h2><div class="tipbox">${avatar(ts, 48)}<p class="bubble">${esc(tip[1])}</p></div></section>
+    <section class="hsec"><h2>โจทย์ประจำวัน</h2><div class="daily"><div class="board static thumb" id="daily-b"></div><div class="col"><b>${esc(pz.title)}</b><span class="small">ระดับ ${esc(pz.level)}${done[pz.id] ? ' · ผ่านแล้ว' : ''}</span><div><button class="btn" data-daily="${pk}">ลองโจทย์นี้</button></div></div></div></section>
+    <section class="hsec"><h2>ประลองเร็ว</h2><div class="quick">${avatar(rs, 56)}<div class="col"><b>${esc(rs.name)}</b><span class="small">${esc(rs.rank)}</span><div><button class="btn" data-play="${rs.id}">ประลองเลย</button></div></div></div></section></div></div>
+    <section class="hsec"><h2 class="path-h">เส้นทางเรียน</h2><ol class="path">${stages.map(s => `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)}</h2><div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div></div></li>`).join('')}</ol>
+    <p class="soon">ขั้นถัดไปกำลังเขียนร่วมกับครูผู้สอน</p></section>`;
+  const p = parseRows(pz.steps[0].rows); drawBoard($('#daily-b'), { n: p.g.n, grid: p.g.grid });
+  paintResume();
+}
+$('#home').onclick = e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.continue) { justJoined = false; openLesson(b.dataset.continue); }
+  else if (b.dataset.id) { justJoined = false; openLesson(b.dataset.id); }
+  else if (b.dataset.play) goPlay(b.dataset.play);
+  else if (b.dataset.daily) { showTab('puzzles'); openPuzzle(+b.dataset.daily); window.scrollTo(0, 0); }
+};
+
+// ---------- เกมค้าง ----------
+const GKEY = 'go-game';
+function saveGame() {
+  if (!G || !G.moves.length || (over && over.final)) return;
+  store.set(GKEY, { v: 1, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
+}
+const clearGame = () => store.del(GKEY);
+function readGame() {
+  const d = store.get(GKEY, null); if (!d || typeof d !== 'object') return null;
+  const s = d.sid == null ? null : bySid(d.sid);
+  if (d.sid != null && !s) return null;
+  if (![7, 9, 13, 19].includes(d.n) || ![1, 2].includes(d.col) || !Array.isArray(d.moves) || !d.moves.length || d.moves.length > 1500 || typeof d.komi !== 'number') return null;
+  const g = new Go(d.n, d.komi);
+  for (const m of d.moves) { if (!Number.isInteger(m) || m < -1 || m >= d.n * d.n) return null; if (m < 0) g.pass(); else if (!g.play(m).ok) return null; }
+  return { s, n: d.n, col: d.col, komi: d.komi, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
+}
+function replayInto(res) {
+  const sv = new Map(res.rec.filter(t => t && typeof t === 'object').map(t => [t.no, t]));
+  for (const m of res.moves) {
+    if (m < 0) { G.pass(); continue; }
+    const who = G.turn, before = G.grid.slice(), no = G.moves.length + 1, f = moveFacts(G, m);
+    if (!G.play(m).ok) break;
+    if (S && who === human) {
+      const t = sv.get(no) || {}, loss = typeof t.loss === 'number' ? t.loss : null;
+      if (usesAI(S) && loss == null) continue;
+      rec.push({ no, idx: m, before, facts: f, preP: null, loss, best: typeof t.best === 'number' ? t.best : -1 });
+    }
+  }
+  fresh = G.last;
+}
+function paintResume() {
+  const d = $('#game').hidden ? readGame() : null;
+  document.querySelectorAll('.rs-slot').forEach(el => {
+    if (!d) { el.innerHTML = ''; return; }
+    el.innerHTML = `<div class="resume-banner"><p>มีเกมค้างอยู่กับ <b>${d.s ? esc(d.s.name) : 'เพื่อน'}</b> ตาที่ ${d.moves.length + 1}</p><div class="btns"><button class="btn primary" data-rs="go">เล่นต่อ</button><button class="btn" data-rs="drop">ทิ้งเกมนี้</button></div></div>`;
+  });
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-rs]'); if (!b) return;
+  const slot = b.closest('.rs-slot');
+  if (b.dataset.rs === 'go') {
+    const d = readGame(); if (!d) { clearGame(); return paintResume(); }
+    showTab('play'); startGame(d.s, d.n, d.col, d);
+  } else if (b.dataset.rs === 'drop') {
+    slot.querySelector('.btns').innerHTML = '<span class="small">ทิ้งเกมนี้แล้วจะเอากลับไม่ได้</span> <button class="btn" data-rs="yes">ยืนยันทิ้ง</button><button class="btn" data-rs="no">ยกเลิก</button>';
+  } else if (b.dataset.rs === 'yes') { clearGame(); paintResume(); }
+  else if (b.dataset.rs === 'no') paintResume();
+});
+$('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.scrollIntoView({ block: 'start' }); };
+
+// ---------- หน้าโปรไฟล์ ----------
+const b64 = s => btoa(unescape(encodeURIComponent(s)));
+const unb64 = s => decodeURIComponent(escape(atob(s)));
+const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog }));
+function renderProfile() {
+  const top = playerRank();
+  $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
+    ${tiles()}
+    <section class="hsec"><h2>ผลกับคู่ประลอง</h2><ul class="recs">${SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 }; return `<li>${avatar(s, 32)}<span>${esc(s.name)}</span><span>ชนะ ${r.w} แพ้ ${r.l}</span></li>`; }).join('')}</ul></section>
+    <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div>
+    <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(profile ? profile.animal : ANIMALS[0].kind)}</div>
+    <div class="btns"><button class="btn primary" type="submit">บันทึก</button></div><p class="small" id="me-msg" role="status"></p></form>`;
+  renderLog();
+  $('#bk-code').value = makeCode(); $('#rs-code').value = ''; $('#rs-msg').textContent = ''; $('#rs-msg').className = 'small';
+  $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>';
+}
+$('#me-top').addEventListener('click', pickAnimal);
+$('#me-top').addEventListener('submit', e => {
+  e.preventDefault();
+  const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
+  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now() };
+  store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
+  $('#me-msg').textContent = 'บันทึกแล้ว';
+});
+$('#me-back').onclick = () => { showTab(lastTab); window.scrollTo(0, 0); };
+$('#bk-copy').onclick = e => copyText($('#bk-code').value, e.target, $('#backup'));
+
+function parseCode(text) {
+  const t = String(text).replace(/\s+/g, '');
+  if (!t || t.length > 3e6 || !/^[A-Za-z0-9+/=]+$/.test(t)) return null;
+  let o; try { o = JSON.parse(unb64(t)); } catch (e) { return null; }
+  if (!o || typeof o !== 'object' || o.v !== 1 || !o.done || typeof o.done !== 'object' || !o.rec || typeof o.rec !== 'object' || !Array.isArray(o.log) || o.log.length > 400) return null;
+  const ids = new Set([...LESSONS, ...PUZZLES].map(x => x.id)), dn = {}, rc = {}, lg = [];
+  for (const k of Object.keys(o.done)) if (ids.has(k) && o.done[k]) dn[k] = 1;
+  const cnt = v => Number.isInteger(v) && v >= 0 && v < 1e6;
+  for (const s of SENSEI) { const r = o.rec[s.id]; if (r) { if (!cnt(r.w) || !cnt(r.l)) return null; rc[s.id] = { w: r.w, l: r.l }; } }
+  const str = (v, m) => typeof v === 'string' && v.length <= m;
+  const numN = v => v == null || (typeof v === 'number' && isFinite(v));
+  for (const r of o.log.slice(-200)) {
+    if (!r || typeof r !== 'object' || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
+    lg.push({ t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
+  }
+  let pr = null;
+  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; }
+  return { profile: pr, done: dn, rec: rc, log: lg };
+}
+let pendingRestore = null;
+$('#backup').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const msg = $('#rs-msg');
+  if (b.id === 'rs-go') {
+    const r = parseCode($('#rs-code').value);
+    if (!r) { msg.textContent = 'รหัสนี้ใช้ไม่ได้ ตรวจดูว่าคัดลอกมาครบทั้งหมด'; msg.className = 'small bad-t'; return; }
+    pendingRestore = r; msg.className = 'small'; msg.textContent = 'ข้อมูลเดิมในเครื่องนี้จะถูกแทนที่ทั้งหมด';
+    $('#rs-btns').innerHTML = '<button class="btn primary" id="rs-yes" type="button">ยืนยันกู้คืน</button><button class="btn" id="rs-no" type="button">ยกเลิก</button>';
+  } else if (b.id === 'rs-no') { pendingRestore = null; msg.textContent = ''; $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>'; }
+  else if (b.id === 'rs-yes' && pendingRestore) {
+    const r = pendingRestore; pendingRestore = null;
+    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog);
+    if (r.profile) { profile = r.profile; store.set('go-profile', profile); }
+    clearGame(); renderChip(); renderProfile(); showPath(); openPuzzle(pzCur);
+    msg.textContent = 'กู้คืนข้อมูลแล้ว'; msg.className = 'small good-t';
+  }
+});
+
+// ---------- เริ่มต้น ----------
+renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); showTab(location.hash.slice(1));
+if (!profile) showWelcome();
 
 </script>
 </body>
