@@ -1,7 +1,7 @@
 {
  "started": "2026-10-11T16:01:36.605Z",
- "updated": "2026-10-11T16:09:36.170Z",
- "done": false,
+ "updated": "2026-10-11T16:09:53.800Z",
+ "done": true,
  "gamesPerSensei": 14,
  "note": "anchor = KataGo Human SL (b18c384nbt-humanv0) sampled from humanPolicy T=0.85; 19x19 komi 7.5; staircase",
  "sensei": {
@@ -523,10 +523,17 @@
      "win": false,
      "lead": -50.7,
      "moves": 300
+    },
+    {
+     "r": "15k",
+     "black": false,
+     "win": true,
+     "lead": -14.5,
+     "moves": 413
     }
    ],
    "estimate": "14k",
-   "tailWins": "5/9"
+   "tailWins": "6/10"
   },
   "s6": {
    "name": "ครูเสือ",
@@ -622,10 +629,17 @@
      "win": true,
      "lead": 37.9,
      "moves": 80
+    },
+    {
+     "r": "8k",
+     "black": false,
+     "win": false,
+     "lead": 1.4,
+     "moves": 389
     }
    ],
-   "estimate": "10k",
-   "tailWins": "6/9"
+   "estimate": "9k",
+   "tailWins": "6/10"
   },
   "s7": {
    "name": "เซนเซแมวดำ",
@@ -933,10 +947,17 @@
      "win": false,
      "lead": -43.4,
      "moves": 120
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": true,
+     "lead": -24.5,
+     "moves": 385
     }
    ],
    "estimate": "7d",
-   "tailWins": "6/9"
+   "tailWins": "7/10"
   }
  },
  "errors": []
