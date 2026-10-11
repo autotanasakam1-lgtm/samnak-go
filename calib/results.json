@@ -1,6 +1,6 @@
 {
  "started": "2026-10-11T15:02:11.220Z",
- "updated": "2026-10-11T15:06:10.661Z",
+ "updated": "2026-10-11T15:10:03.396Z",
  "done": false,
  "gamesPerSensei": 14,
  "note": "anchor = KataGo Human SL (b18c384nbt-humanv0) sampled from humanPolicy T=0.85; 19x19 komi 7.5; staircase",
@@ -283,10 +283,45 @@
      "win": false,
      "lead": -42.9,
      "moves": 160
+    },
+    {
+     "r": "15k",
+     "black": false,
+     "win": false,
+     "lead": 85.3,
+     "moves": 160
+    },
+    {
+     "r": "16k",
+     "black": true,
+     "win": false,
+     "lead": -43.9,
+     "moves": 140
+    },
+    {
+     "r": "17k",
+     "black": false,
+     "win": false,
+     "lead": 47.1,
+     "moves": 180
+    },
+    {
+     "r": "18k",
+     "black": true,
+     "win": true,
+     "lead": 39.6,
+     "moves": 160
+    },
+    {
+     "r": "17k",
+     "black": false,
+     "win": false,
+     "lead": 71.7,
+     "moves": 220
     }
    ],
-   "estimate": "13k",
-   "tailWins": "2/5"
+   "estimate": "15k",
+   "tailWins": "3/10"
   },
   "s4": {
    "name": "ครูจิ้งจอก",
@@ -333,10 +368,66 @@
      "win": false,
      "lead": 39.3,
      "moves": 220
+    },
+    {
+     "r": "11k",
+     "black": true,
+     "win": false,
+     "lead": -53.2,
+     "moves": 300
+    },
+    {
+     "r": "12k",
+     "black": false,
+     "win": false,
+     "lead": 109.7,
+     "moves": 280
+    },
+    {
+     "r": "13k",
+     "black": true,
+     "win": true,
+     "lead": 38,
+     "moves": 120
+    },
+    {
+     "r": "12k",
+     "black": false,
+     "win": false,
+     "lead": 58.9,
+     "moves": 360
+    },
+    {
+     "r": "13k",
+     "black": true,
+     "win": false,
+     "lead": -35.3,
+     "moves": 80
+    },
+    {
+     "r": "14k",
+     "black": false,
+     "win": true,
+     "lead": -36.2,
+     "moves": 100
+    },
+    {
+     "r": "13k",
+     "black": true,
+     "win": true,
+     "lead": 56.9,
+     "moves": 100
+    },
+    {
+     "r": "12k",
+     "black": false,
+     "win": false,
+     "lead": 37.3,
+     "moves": 100
     }
    ],
-   "estimate": "9k",
-   "tailWins": "0/2"
+   "estimate": "12k",
+   "tailWins": "3/10"
   },
   "s5": {
    "name": "ครูนกฮูก",
@@ -369,9 +460,80 @@
      "win": true,
      "lead": -16.4,
      "moves": 420
+    },
+    {
+     "r": "10k",
+     "black": true,
+     "win": false,
+     "lead": -45.9,
+     "moves": 200
+    },
+    {
+     "r": "11k",
+     "black": false,
+     "win": true,
+     "lead": -40.5,
+     "moves": 100
+    },
+    {
+     "r": "10k",
+     "black": true,
+     "win": true,
+     "lead": 38.7,
+     "moves": 140
+    },
+    {
+     "r": "9k",
+     "black": false,
+     "win": false,
+     "lead": 57.7,
+     "moves": 300
+    },
+    {
+     "r": "10k",
+     "black": true,
+     "win": true,
+     "lead": 49.7,
+     "moves": 100
+    },
+    {
+     "r": "9k",
+     "black": false,
+     "win": false,
+     "lead": 58.3,
+     "moves": 240
+    },
+    {
+     "r": "10k",
+     "black": true,
+     "win": true,
+     "lead": 62.8,
+     "moves": 140
+    },
+    {
+     "r": "9k",
+     "black": false,
+     "win": true,
+     "lead": -36.7,
+     "moves": 120
+    },
+    {
+     "r": "8k",
+     "black": true,
+     "win": false,
+     "lead": -51.2,
+     "moves": 220
+    },
+    {
+     "r": "9k",
+     "black": false,
+     "win": false,
+     "lead": 49.6,
+     "moves": 260
     }
    ],
-   "estimate": null
+   "estimate": "9k",
+   "tailWins": "5/10"
   },
   "s6": {
    "name": "ครูเสือ",
@@ -404,9 +566,73 @@
      "win": false,
      "lead": 80.4,
      "moves": 320
+    },
+    {
+     "r": "5k",
+     "black": true,
+     "win": false,
+     "lead": -105.1,
+     "moves": 340
+    },
+    {
+     "r": "6k",
+     "black": false,
+     "win": false,
+     "lead": 46.4,
+     "moves": 280
+    },
+    {
+     "r": "7k",
+     "black": true,
+     "win": true,
+     "lead": 65.8,
+     "moves": 100
+    },
+    {
+     "r": "6k",
+     "black": false,
+     "win": true,
+     "lead": -40,
+     "moves": 80
+    },
+    {
+     "r": "5k",
+     "black": true,
+     "win": false,
+     "lead": -35,
+     "moves": 180
+    },
+    {
+     "r": "6k",
+     "black": false,
+     "win": true,
+     "lead": -35.8,
+     "moves": 220
+    },
+    {
+     "r": "5k",
+     "black": true,
+     "win": false,
+     "lead": -41.9,
+     "moves": 280
+    },
+    {
+     "r": "6k",
+     "black": false,
+     "win": false,
+     "lead": 74.5,
+     "moves": 220
+    },
+    {
+     "r": "7k",
+     "black": true,
+     "win": false,
+     "lead": -71.6,
+     "moves": 340
     }
    ],
-   "estimate": null
+   "estimate": "6k",
+   "tailWins": "3/9"
   },
   "s7": {
    "name": "เซนเซแมวดำ",
@@ -446,10 +672,66 @@
      "win": false,
      "lead": -64.5,
      "moves": 100
+    },
+    {
+     "r": "1k",
+     "black": false,
+     "win": false,
+     "lead": 44.5,
+     "moves": 220
+    },
+    {
+     "r": "2k",
+     "black": true,
+     "win": true,
+     "lead": 42.7,
+     "moves": 120
+    },
+    {
+     "r": "1k",
+     "black": false,
+     "win": false,
+     "lead": 35.1,
+     "moves": 80
+    },
+    {
+     "r": "2k",
+     "black": true,
+     "win": true,
+     "lead": 23.5,
+     "moves": 420
+    },
+    {
+     "r": "1k",
+     "black": false,
+     "win": false,
+     "lead": 65.7,
+     "moves": 160
+    },
+    {
+     "r": "2k",
+     "black": true,
+     "win": false,
+     "lead": -47.4,
+     "moves": 280
+    },
+    {
+     "r": "3k",
+     "black": false,
+     "win": false,
+     "lead": 68.7,
+     "moves": 240
+    },
+    {
+     "r": "4k",
+     "black": true,
+     "win": false,
+     "lead": -35.4,
+     "moves": 140
     }
    ],
-   "estimate": "1d",
-   "tailWins": "0/1"
+   "estimate": "2k",
+   "tailWins": "2/9"
   },
   "s8": {
    "name": "อาจารย์กระเรียน",
@@ -475,9 +757,59 @@
      "win": true,
      "lead": 35.1,
      "moves": 200
+    },
+    {
+     "r": "6d",
+     "black": false,
+     "win": true,
+     "lead": -14.3,
+     "moves": 355
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": false,
+     "lead": -16.3,
+     "moves": 346
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": true,
+     "lead": -10.3,
+     "moves": 287
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": false,
+     "lead": -44.8,
+     "moves": 180
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": false,
+     "lead": 35.2,
+     "moves": 100
+    },
+    {
+     "r": "7d",
+     "black": true,
+     "win": true,
+     "lead": 53.1,
+     "moves": 160
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": true,
+     "lead": -36.4,
+     "moves": 260
     }
    ],
-   "estimate": null
+   "estimate": "8d",
+   "tailWins": "3/6"
   },
   "s9": {
    "name": "ปรมาจารย์มังกร",
@@ -489,6 +821,20 @@
      "win": true,
      "lead": 59.6,
      "moves": 240
+    },
+    {
+     "r": "8d",
+     "black": false,
+     "win": true,
+     "lead": -47.2,
+     "moves": 200
+    },
+    {
+     "r": "9d",
+     "black": true,
+     "win": false,
+     "lead": -57.9,
+     "moves": 200
     }
    ],
    "estimate": null
