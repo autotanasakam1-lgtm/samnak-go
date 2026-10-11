@@ -214,6 +214,50 @@ table.logt{border-collapse:collapse;width:100%;font-size:.9rem;white-space:nowra
 .logt th{font-weight:600;color:var(--muted);border-top:0}
 .logt .btn{min-height:44px;padding:4px 12px;font-size:.85rem}
 textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+
+/* ---------- ลานสำนัก ---------- */
+:root{--c-skyA:#BFE3F0;--c-skyB:#F6EBCB;--c-hill:#A9C7A0;--c-hill2:#8DB38B;--c-leaf:#4F9A57;--c-leaf2:#7BBF6A;--c-grass:#A8D08D;--c-dirt:#D9C39A;--c-stone:#BDB7AA;--c-stone2:#9C968A;--c-wood:#A9794B;--c-wood2:#6E4A2B;--c-roof:#B5543C;--c-roof2:#8E3F2E;--c-wall:#F1E3C6;--c-red:#C5382C;--c-lant:#E85D3A;--c-glow:0;--c-sign:#E9C77C;--c-signink:#3A2711;--c-robe1:#6FA8A0;--c-robe2:#C98A5B;--c-robe3:#4A4F6E;--c-robe4:#7B5FA8;--c-board:#D9A85E;--c-cloud:#FFFFFF;--c-mount:#8FA3B8;--c-mount2:#6E849D;--c-snow:#F4F7FA;--c-tile:#3A3A48;--c-tile2:#2A2A36;--c-tagbg:#FFF8E8;--c-tagink:#2A2118;--c-bub:#FFFFFF;--c-bubink:#2A2118}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--c-skyA:#1E2147;--c-skyB:#D98A5B;--c-hill:#2F4A45;--c-hill2:#243B3A;--c-leaf:#2F6B45;--c-leaf2:#3E8A55;--c-grass:#2C4A36;--c-dirt:#5A4A3A;--c-stone:#6B6872;--c-stone2:#4F4C58;--c-wood:#7A5535;--c-wood2:#3E2A18;--c-roof:#8A3A33;--c-roof2:#5E2A27;--c-wall:#6A5A4A;--c-red:#D4493B;--c-lant:#FFB347;--c-glow:.55;--c-sign:#8E6A2F;--c-signink:#FFF1D0;--c-robe1:#3F7870;--c-robe2:#94603A;--c-robe3:#5A5F8E;--c-robe4:#7F63B0;--c-board:#B58642;--c-cloud:#6D5A82;--c-mount:#4A4F7A;--c-mount2:#353A63;--c-snow:#C9C6E0;--c-tile:#23232E;--c-tile2:#17171F;--c-tagbg:#2A2230;--c-tagink:#F4E9D8;--c-bub:#F4E9D8;--c-bubink:#1E1824} }
+:root[data-theme="dark"]{--c-skyA:#1E2147;--c-skyB:#D98A5B;--c-hill:#2F4A45;--c-hill2:#243B3A;--c-leaf:#2F6B45;--c-leaf2:#3E8A55;--c-grass:#2C4A36;--c-dirt:#5A4A3A;--c-stone:#6B6872;--c-stone2:#4F4C58;--c-wood:#7A5535;--c-wood2:#3E2A18;--c-roof:#8A3A33;--c-roof2:#5E2A27;--c-wall:#6A5A4A;--c-red:#D4493B;--c-lant:#FFB347;--c-glow:.55;--c-sign:#8E6A2F;--c-signink:#FFF1D0;--c-robe1:#3F7870;--c-robe2:#94603A;--c-robe3:#5A5F8E;--c-robe4:#7F63B0;--c-board:#B58642;--c-cloud:#6D5A82;--c-mount:#4A4F7A;--c-mount2:#353A63;--c-snow:#C9C6E0;--c-tile:#23232E;--c-tile2:#17171F;--c-tagbg:#2A2230;--c-tagink:#F4E9D8;--c-bub:#F4E9D8;--c-bubink:#1E1824}
+.intro #view-toggle{align-self:flex-start;min-height:44px}
+.court{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.zone{display:flex;flex-direction:column;min-width:0;border:2px solid var(--c-wood2);border-radius:14px;overflow:hidden;background:var(--surface)}
+.zsign{display:flex;align-items:center;justify-content:space-between;gap:6px 10px;flex-wrap:wrap;padding:8px 14px;background:var(--c-sign);color:var(--c-signink);border-bottom:3px solid var(--c-wood2)}
+.zsign h2{margin:0;font-family:var(--display);font-size:1.0625rem;line-height:1.4;font-weight:400}
+.zsign .rng{font-size:.8125rem;font-weight:600;line-height:1.4;padding:1px 10px;border:1.5px solid currentColor;border-radius:999px}
+.scene{position:relative;height:270px;overflow:hidden;isolation:isolate}
+.scene>.bg{position:absolute;inset:0;width:100%;height:100%}
+.ch{position:absolute;width:110px;min-height:44px;display:flex;flex-direction:column;align-items:center;margin:0;padding:0;background:none;border:0;border-radius:10px;box-shadow:none;color:inherit;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ch:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ch .av{position:relative;z-index:1;margin-bottom:-10px;filter:drop-shadow(0 1px 1px #0005)}
+.ch .bd{position:relative}
+.tg{position:relative;display:flex;flex-direction:column;align-items:center;gap:0;width:max-content;max-width:122px;margin-bottom:3px;padding:2px 7px;text-align:center;font-size:.75rem;line-height:1.3;background:var(--c-tagbg);color:var(--c-tagink);border:1.5px solid var(--c-wood2);border-radius:8px}
+.tg b{font-weight:600;font-size:.75rem}
+.tg .rk{display:inline-flex;align-items:center;gap:4px}
+.tg .dot{flex:none;width:9px;height:9px;border-radius:50%;border:1px solid #0009}
+.tsrv{font-size:.75rem;font-weight:600;color:var(--bad)}
+.tsrv.on{color:var(--good)}
+.ch:hover .tg,.ch[aria-pressed="true"] .tg{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ch[aria-pressed="true"] .tsrv,.ch:hover .tsrv{color:inherit}
+.rec{position:absolute;left:50%;bottom:calc(100% + 5px);width:56px;margin-left:-28px;padding:0 4px;border-radius:999px;background:var(--bad);color:#fff;font-size:.75rem;line-height:1.4;font-weight:600;animation:recbob 1.4s ease-in-out infinite}
+.rec::after{content:"";position:absolute;left:50%;top:100%;margin-left:-4px;border:4px solid transparent;border-top-color:var(--bad);border-bottom:0}
+.bub{position:absolute;top:6px;z-index:300;max-width:min(250px,calc(100% - 12px));padding:6px 10px;font-size:.8125rem;line-height:1.4;background:var(--c-bub);color:var(--c-bubink);border:1.5px solid var(--c-wood2);border-radius:12px;pointer-events:none;opacity:0;transition:opacity .25s}
+.bub.show{opacity:1}
+.bub::after{content:"";position:absolute;left:var(--tx,50%);bottom:-7px;margin-left:-6px;border:6px solid transparent;border-top-color:var(--c-wood2);border-bottom:0}
+.ch.ps-walk{animation:strollx var(--t) ease-in-out infinite alternate}
+.ch.talk{animation-play-state:paused}
+.cup{animation:sip 7s ease-in-out infinite}
+.steam{animation:steam 3.2s ease-out infinite}
+.court.paused *{animation-play-state:paused!important}
+@keyframes strollx{from{transform:translateX(0)}to{transform:translateX(var(--d))}}
+@keyframes sip{0%,52%,100%{transform:translateY(0)}64%,80%{transform:translateY(-9px)}}
+@keyframes steam{0%{opacity:0;transform:translateY(3px)}40%{opacity:.85}100%{opacity:0;transform:translateY(-7px)}}
+@keyframes recbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.lobby.scene-mode,#lobby.scene-mode .lobby{grid-template-columns:minmax(0,1fr)}
+#lobby.scene-mode .roster{display:none}
+#lobby.scene-mode #detail{max-width:760px}
+#detail{scroll-margin-bottom:80px}
+@media (max-width:700px){.court{grid-template-columns:minmax(0,1fr)}}
 </style>
 <div class="wrap">
 <div class="topbar">
@@ -241,7 +285,8 @@ textarea.manual{width:100%;min-height:110px;font:inherit;font-size:.85rem;backgr
 </section>
 <section id="v-play" hidden>
   <div id="lobby">
-    <div class="intro"><h1>ประลอง</h1><p class="lede">เลือกคู่ประลองที่ใกล้ฝีมือคุณ ไม่มีด่านล็อก เลือกใครก็ได้ ผลแพ้ชนะเก็บไว้ในเครื่องนี้</p></div>
+    <div class="intro"><h1>ลานสำนัก</h1><p class="lede">แตะใครก็ได้เพื่อชวนประลอง ไม่มีด่านล็อก เลือกได้ตามใจ ผลแพ้ชนะเก็บไว้ในเครื่องนี้</p><button class="btn" id="view-toggle" type="button">ดูแบบรายชื่อ</button></div>
+    <div class="court paused-off" id="courtyard" aria-label="ลานสำนัก"></div>
     <div class="lobby">
       <div class="roster" id="roster" role="group" aria-label="รายชื่อคู่ประลอง"></div>
       <div class="panel" id="detail"></div>
@@ -817,8 +862,10 @@ const sizeBtns = (list, cur, attr) => list.map(n => `<button data-${attr}="${n}"
 function renderLobby() {
   const rid = recId();
   if (!sel) { sel = rid || SENSEI[0].id; selSize = bySid(sel).n; }
+  renderScene(); applyView();
   renderRoster(rid);
   renderDetail();
+  clearTimeout(bTimer); bTimer = setTimeout(banterTick, 1200);
   $('#friend-size').innerHTML = sizeBtns([9, 13, 19], friendSize, 'fs');
   renderLog();
   Srv.check().then(() => { if (!$('#lobby').hidden) { renderRoster(recId()); renderDetail(); } });
@@ -827,6 +874,7 @@ const srvChip = () => `<span class="srv${Srv.online ? ' on' : ''}">${Srv.online 
 function renderRoster(rid) {
   $('#roster').innerHTML = SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 };
     return `<button class="scard" data-id="${s.id}" aria-pressed="${s.id === sel}">${avatar(s, 48)}<span class="nm">${esc(s.name)}${s.id === rid ? '<span class="tag">แนะนำ</span>' : ''}</span><span class="rk">${esc(s.rank)} ${belt(s)}</span><span class="rec">ชนะ ${r.w} แพ้ ${r.l}${s.eng === 'server' ? ' ' + srvChip() : ''}</span></button>`; }).join('');
+  paintScene(rid);
 }
 function renderDetail() {
   const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online;
@@ -843,11 +891,139 @@ function renderExplain() {
     <p>การสอบวัดระดับของสมาคมกีฬาหมากล้อมแห่งประเทศไทยครอบคลุมตั้งแต่ระดับคิวถึง 1 ดั้ง และนักกีฬาแนวหน้าของไทยอยู่ราว 5–6 ดั้ง</p>
     <p>ระดับของคู่ประลองในแอปเป็นค่าประมาณ ยังไม่ได้เทียบกับผู้เล่นจริง</p>`;
 }
+// ---------- ลานสำนัก (ฉากประลอง) ----------
+const ZONES = [
+  { id: 'bamboo', name: 'ศาลาไผ่ร่มเย็น', range: '30–21 คิว', ids: ['s1', 's2'] },
+  { id: 'tea', name: 'เรือนชาใบเมี่ยง', range: '20–10 คิว', ids: ['s3', 's4', 's5'] },
+  { id: 'hall', name: 'หอกระเบื้องดำ', range: '5 คิว – 3 ดั้ง', ids: ['s6', 's7', 's8'] },
+  { id: 'shrine', name: 'ศาลเจ้าเขาเมฆา', range: '5 ดั้งขึ้นไป', ids: ['s9', 's10'] }
+];
+// p: ท่า (walk เดินเล่น, tea ดื่มชา, board นั่งหน้ากระดาน) x: ตำแหน่งแนวนอน % b: ระยะจากพื้นฉาก d: ระยะเดิน t: วินาทีต่อรอบ
+const POSE = {
+  s1: { p: 'walk', x: 28, b: 14, d: 30, t: 9 }, s2: { p: 'tea', x: 72, b: 34 },
+  s3: { p: 'walk', x: 18, b: 10, d: 14, t: 18 }, s4: { p: 'tea', x: 50, b: 46 }, s5: { p: 'board', x: 82, b: 10 },
+  s6: { p: 'walk', x: 18, b: 10, d: 16, t: 8 }, s7: { p: 'tea', x: 50, b: 46 }, s8: { p: 'board', x: 82, b: 10 },
+  s9: { p: 'tea', x: 30, b: 30 }, s10: { p: 'walk', x: 68, b: 14, d: 20, t: 11 }
+};
+const BANTER = {
+  s1: ['ลมหายใจคืออะไรนะ เมื่อกี้ยังเห็นอยู่เลย', 'หมากของหนูหายไปไหน อ้าว โดนกินไปแล้ว', 'หมากหนึ่งเม็ดมีลมหายใจได้มากสุดสี่จุด คือจุดว่างที่ติดกัน', 'ลมหายใจเหลือหนึ่งเรียกว่าอาตาริ ต้องรีบหนีหรือรีบต่อ'],
+  s2: ['เห็นอาตาริปุ๊บ กระโดดหนีปั๊บ ตามประสากระต่าย', 'เดินเร็วจนลืมคิด ขอย้อนตานึงได้ไหม', 'ก่อนไล่กิน นับลมหายใจของทั้งสองฝ่ายก่อนเสมอ', 'หมากที่ถูกอาตาริ ไม่ต้องหนีเสมอไป บางทีต่อออกมาได้'],
+  s3: ['ช้า ๆ ได้พร้าเล่มงาม แต่ชาเย็นหมดแล้ว', 'ตานี้ขอคิดหน่อย... ขอเวลาอีกสามนาที', 'เปิดเกมให้เล่นมุมก่อน แล้วค่อยข้าง แล้วค่อยกลางกระดาน', 'อย่าวางเส้นที่หนึ่งเร็วเกินไป ตอนต้นเกมได้แต้มน้อยมาก'],
+  s4: ['เห็นช่องให้ตัด หางก็กระดิกเอง ห้ามไม่อยู่', 'ตัดแล้วตัดอีก เส้นกระดานจะบางหมดแล้วนะ', 'จุดสำคัญของคู่ต่อสู้ ก็คือจุดสำคัญของเราด้วย', 'ก่อนไล่บันได ดูก่อนว่าทางข้างหน้าโล่ง ไม่มีหมากฝ่ายหนีขวางอยู่'],
+  s5: ['ฮู้ ๆ คิดมาดีแล้ว ว่าตานี้ควรไปนอน', 'ตากลมก็จริง แต่ยังมองไม่เห็นหมากตัวเองที่กำลังจะตาย', 'มุมก่อน ข้างต่อ กลางสุดท้าย เพราะมุมใช้หมากน้อยแต่ได้ที่มาก', 'อย่าเดินตามคู่ต่อสู้ไปทุกตา ให้เดินตามแผนของตัวเอง'],
+  s6: ['คำรามทีเดียว คู่ต่อสู้ใจสั่น ส่วนฉันก็ใจสั่นด้วย', 'โจมตีทุกตาจนลืมไปว่าหมากตัวเองยังไม่ต่อ', 'กลุ่มหมากต้องมีสองตา จึงจะอยู่ได้แน่นอน', 'ก่อนสู้ นับลมหายใจให้ครบ ใครน้อยกว่าคนนั้นเสียเปรียบ'],
+  s7: ['...ไม่ได้ไม่สนใจนะ แค่ไม่แสดงออก', 'เคาะกระดานได้ แต่อย่าลูบหัวฉัน', 'ก่อนวางทุกตา ถามตัวเองว่า ตานี้ใหญ่ที่สุดแล้วหรือยัง', 'ไม่รู้จะเดินตรงไหน ลองดูว่าคู่ต่อสู้อยากเดินตรงไหนที่สุด'],
+  s8: ['ยืนขาเดียวคิดมาสิบนาที ขาชาแล้วแต่ยังไม่ถึงตาเดิน', 'บินได้นะ แต่ชอบนั่งอ่านเกมมากกว่า', 'สองตาจริงที่แยกจากกัน คือหัวใจของการอยู่รอด', 'นำอยู่ให้เล่นเรียบง่าย ตามอยู่ค่อยเสี่ยง แต่ต้องนับแต้มให้เป็นก่อน'],
+  s9: ['ไฟไหม้ศาลา เหรอ ช่างเถอะ ชายังอุ่นอยู่', 'เมื่อวานแพ้ วันนี้อาจแพ้ แต่ชาอร่อยเหมือนเดิม', 'หมากเล็กที่ช่วยไม่ได้ ทิ้งไปแล้วเอาตาใหญ่แทนได้', 'แพ้ไม่ใช่เรื่องใหญ่ ทบทวนกระดานแล้วจะเก่งขึ้นทุกครั้ง'],
+  s10: ['ฉันอยู่บนเครื่องของสำนัก ถ้าฉันหลับ แปลว่าปลั๊กหลุด', 'คิดได้เป็นล้านทางแต่ยังชอบชาธรรมดา', 'จบเกมแล้วอย่าลืมทบทวน ดูว่าตาไหนเสียแต้มมากที่สุด', 'กระดานใหญ่ยังมีที่ว่างเยอะ อย่ารีบปิดเกมเร็วเกินไป']
+};
+const F = v => `style="fill:var(--c-${v})"`;
+function bodySvg(s, pose, zi, dl) {
+  const robe = `style="fill:var(--c-robe${zi})"`, dk = 'stroke="#00000055" stroke-width="1"';
+  const sash = (x, y, w) => `<rect x="${x}" y="${y}" width="${w}" height="5" rx="1.5" fill="${s.bc}" ${dk}/>` + (s.bc2 ? `<rect x="${x + w * .62}" y="${y}" width="${w * .38}" height="5" fill="${s.bc2}"/>` : '');
+  const open = w => `<svg class="bd" width="${w}" height="${w === 46 ? 42 : 46}" viewBox="0 0 ${w} ${w === 46 ? 42 : 46}" aria-hidden="true" focusable="false">`;
+  if (pose === 'walk') return open(46) + `<ellipse cx="8" cy="25" rx="4.5" ry="9" ${robe} ${dk}/><ellipse cx="38" cy="25" rx="4.5" ry="9" ${robe} ${dk}/><path d="M9 42L13 8Q23 1 33 8L37 42Z" ${robe} ${dk}/>${sash(13, 22, 20)}<rect x="19" y="27" width="4" height="9" rx="1" fill="${s.bc}" ${dk}/></svg>`;
+  let g = open(84) + `<path d="M18 42Q16 12 42 6Q68 12 66 42Z" ${robe} ${dk}/>${sash(26, 22, 32)}`;
+  if (pose === 'tea') g += `<rect x="6" y="32" width="72" height="6" rx="2" ${F('wood')} ${dk}/><rect x="12" y="38" width="5" height="8" ${F('wood2')}/><rect x="67" y="38" width="5" height="8" ${F('wood2')}/>`
+    + `<ellipse cx="24" cy="29" rx="6" ry="4" ${F('red')} ${dk}/><path d="M29 27l5-3" stroke="var(--c-red)" stroke-width="2" stroke-linecap="round"/>`
+    + (s.id === 's7' ? '' : `<g class="steam" style="animation-delay:${dl}s"><path d="M55 20q-3-3 0-6t0-6M60 20q-3-3 0-6" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".85"/></g>`)
+    + `<g class="cup" style="animation-delay:${dl}s"><rect x="52" y="24" width="11" height="8" rx="2" fill="#F5F1E8" ${dk}/><path d="M63 26q4 0 0 4" fill="none" stroke="#F5F1E8" stroke-width="1.6"/><ellipse cx="58" cy="22" rx="7" ry="4.5" ${robe} ${dk}/></g>`;
+  else g += `<path d="M8 42L16 29H68L76 42Z" ${F('board')} ${dk}/><path d="M13 35H71M10 38.5H74M26 29L22 42M42 29V42M58 29L62 42" stroke="#0006" stroke-width=".7" fill="none"/>`
+    + `<circle cx="33" cy="33" r="2.4" fill="#1b1b1e"/><circle cx="43" cy="37" r="2.4" fill="#fff" ${dk}/><circle cx="52" cy="32" r="2.4" fill="#1b1b1e"/><circle cx="37" cy="39" r="2.4" fill="#fff" ${dk}/><ellipse cx="28" cy="27" rx="6" ry="4" ${robe} ${dk}/><ellipse cx="56" cy="27" rx="6" ry="4" ${robe} ${dk}/>`;
+  return g + '</svg>';
+}
+function zoneArt(id) {
+  const st = (v) => `style="stroke:var(--c-${v})"`;
+  let o = `<defs><linearGradient id="sk-${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--c-skyA)"/><stop offset="1" style="stop-color:var(--c-skyB)"/></linearGradient></defs><rect x="-100" y="-200" width="600" height="380" fill="url(#sk-${id})"/>`;
+  const lamp = (x, y) => `<circle cx="${x}" cy="${y + 8}" r="26" style="fill:var(--c-lant);opacity:var(--c-glow)"/><path d="M${x} ${y - 14}V${y}" ${st('wood2')} stroke-width="1.5"/><ellipse cx="${x}" cy="${y + 8}" rx="8" ry="10" ${F('lant')} stroke="#0004"/><path d="M${x - 5} ${y + 1}h10M${x - 6} ${y + 8}h12M${x - 5} ${y + 15}h10" stroke="#0004" stroke-width=".8"/>`;
+  if (id === 'bamboo') {
+    o += `<path d="M-100 170Q60 112 180 150T500 138V175H-100Z" ${F('hill')}/><path d="M-100 175Q100 138 260 162T500 152V180H-100Z" ${F('hill2')}/><rect x="-100" y="162" width="600" height="140" ${F('grass')}/><ellipse cx="200" cy="232" rx="175" ry="30" ${F('dirt')}/>`
+      + `<rect x="94" y="150" width="212" height="10" rx="2" ${F('wood2')}/><rect x="104" y="88" width="9" height="62" ${F('wood')}/><rect x="287" y="88" width="9" height="62" ${F('wood')}/><rect x="98" y="86" width="204" height="7" ${F('wood2')}/>`
+      + `<path d="M76 92L200 46L324 92Q200 80 76 92Z" ${F('roof')}/><path d="M76 92Q200 80 324 92V99Q200 88 76 99Z" ${F('roof2')}/>` + lamp(200, 104);
+    [16, 38, 362, 384].forEach((x, i) => { o += `<rect x="${x}" y="-20" width="7" height="200" rx="3" ${F('leaf')}/>`; [24, 70, 116, 160].forEach(y => { o += `<rect x="${x - 1}" y="${y}" width="9" height="2.5" ${F('leaf2')}/>`; });
+      o += `<ellipse cx="${x + (i < 2 ? 18 : -18)}" cy="${50 + i * 14}" rx="14" ry="3.5" transform="rotate(${i < 2 ? 22 : -22} ${x} ${50 + i * 14})" ${F('leaf2')}/><ellipse cx="${x + (i < 2 ? 16 : -16)}" cy="${108 - i * 8}" rx="13" ry="3.5" transform="rotate(${i < 2 ? -18 : 18} ${x} ${108 - i * 8})" ${F('leaf2')}/>`; });
+  } else if (id === 'tea') {
+    o += `<path d="M-100 160Q80 110 220 150T500 140V170H-100Z" ${F('hill')}/><rect x="-100" y="164" width="600" height="140" ${F('dirt')}/>`
+      + `<rect x="20" y="72" width="360" height="98" ${F('wall')}/><path d="M-6 82L52 36H348L406 82Q200 70 -6 82Z" ${F('roof')}/><path d="M-6 82Q200 70 406 82V90Q200 78 -6 90Z" ${F('roof2')}/>`
+      + `<rect x="20" y="88" width="8" height="82" ${F('wood')}/><rect x="372" y="88" width="8" height="82" ${F('wood')}/><rect x="190" y="88" width="8" height="82" ${F('wood')}/>`;
+    [[40, 'cloud'], [300, 'cloud']].forEach(([x, c]) => { o += `<rect x="${x}" y="104" width="62" height="52" ${F(c)} opacity=".85"/><path d="M${x + 31} 104V156M${x} 130H${x + 62}" ${st('wood')} stroke-width="2"/>`; });
+    o += `<rect x="110" y="88" width="70" height="40" ${F('red')} opacity=".95"/><path d="M127 88V128M144 88V128M162 88V128" stroke="#0004"/><rect x="210" y="88" width="70" height="40" ${F('red')} opacity=".95"/><path d="M227 88V128M244 88V128M262 88V128" stroke="#0004"/>`
+      + lamp(70, 96) + lamp(330, 96)
+      + [[80, 214], [135, 232], [190, 246], [250, 232], [310, 214]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="22" ry="6" ${F('stone')}/>`).join('')
+      + `<circle cx="380" cy="168" r="20" ${F('leaf')}/><circle cx="362" cy="178" r="16" ${F('leaf2')}/><circle cx="14" cy="176" r="18" ${F('leaf')}/>`;
+  } else if (id === 'hall') {
+    o += `<rect x="-100" y="164" width="600" height="140" ${F('stone')}/><path d="M200 164L-60 270M200 164L60 270M200 164L200 270M200 164L340 270M200 164L460 270M-100 190H500M-100 222H500" stroke="#0003" stroke-width="1" fill="none"/>`
+      + `<rect x="-10" y="70" width="420" height="96" ${F('tile2')}/><path d="M-12 84L38 28H362L412 84Z" ${F('tile')}/><path d="M60 28L40 84M100 28L90 84M140 28L130 84M180 28L172 84M220 28L228 84M260 28L270 84M300 28L310 84M340 28L360 84" stroke="#0006" stroke-width="1.4"/><path d="M-12 84H412V92H-12Z" ${F('roof2')}/>`
+      + [40, 150, 250, 360].map(x => `<rect x="${x - 6}" y="92" width="12" height="76" ${F('red')}/>`).join('')
+      + `<rect x="170" y="102" width="60" height="66" fill="#0009"/><path d="M200 102V168" stroke="#0007"/><rect x="164" y="94" width="72" height="9" rx="2" ${F('wood')}/>` + lamp(98, 100) + lamp(302, 100);
+  } else {
+    o += `<path d="M-60 170L60 62L130 126L226 36L330 128L384 86L470 170Z" ${F('mount')}/><path d="M-60 176L20 110L90 150L160 100L250 150L330 120L470 176Z" ${F('mount2')}/><path d="M226 36L204 62L220 58L232 68L246 56Z M60 62L46 78L58 74L66 82L74 74Z" ${F('snow')}/>`
+      + `<ellipse cx="90" cy="60" rx="34" ry="8" ${F('cloud')} opacity=".8"/><ellipse cx="116" cy="54" rx="22" ry="7" ${F('cloud')} opacity=".8"/><ellipse cx="320" cy="48" rx="30" ry="7" ${F('cloud')} opacity=".8"/>`
+      + `<rect x="-100" y="164" width="600" height="140" ${F('stone')}/><path d="M120 270L150 200H250L280 270Z" ${F('stone2')}/><path d="M138 232H262M130 252H270" stroke="#0004"/>`
+      + `<rect x="132" y="76" width="9" height="96" ${F('red')}/><rect x="259" y="76" width="9" height="96" ${F('red')}/><path d="M114 72Q200 62 286 72L282 84Q200 74 118 84Z" ${F('red')}/><rect x="126" y="98" width="148" height="7" ${F('red')}/>`
+      + `<rect x="352" y="140" width="8" height="34" ${F('wood2')}/><path d="M356 96L334 130H378ZM356 114L328 150H384Z" ${F('leaf')}/>`
+      + `<rect x="46" y="146" width="12" height="26" ${F('stone2')}/><rect x="42" y="138" width="20" height="9" ${F('stone2')}/><rect x="48" y="130" width="8" height="8" style="fill:var(--c-lant)"/>`
+      + `<circle cx="52" cy="134" r="22" style="fill:var(--c-lant);opacity:var(--c-glow)"/>`;
+  }
+  return `<svg class="bg" viewBox="0 0 400 270" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${o}</svg>`;
+}
+function charBtn(s, zi, n) {
+  const P = POSE[s.id], walk = P.p === 'walk', srv = s.eng === 'server';
+  return `<button class="ch ps-${P.p}" data-id="${s.id}" aria-pressed="false" aria-label="${esc(s.name)} ${esc(s.rank)}" style="left:calc(${P.x}% - 55px);bottom:${P.b}px;z-index:${100 - P.b}${walk ? `;--d:${P.d}px;--t:${P.t}s` : ''}">
+    <span class="tg"><span class="rec" hidden>แนะนำ</span><b>${esc(s.name)}</b><span class="rk"><i class="dot" style="background:${beltCss(s)}"></i>${esc(s.rank)}</span>${srv ? '<span class="tsrv"></span>' : ''}</span>
+    ${avatar(s, 52)}${bodySvg(s, P.p, zi, (n * 1.7).toFixed(1))}</button>`;
+}
+function renderScene() {
+  let n = 0;
+  $('#courtyard').innerHTML = ZONES.map((z, i) => `<section class="zone" aria-labelledby="zn-${z.id}"><header class="zsign"><h2 id="zn-${z.id}">${esc(z.name)}</h2><span class="rng">${esc(z.range)}</span></header>
+    <div class="scene">${zoneArt(z.id)}${z.ids.map(id => charBtn(bySid(id), i + 1, n++)).join('')}</div></section>`).join('');
+}
+function paintScene(rid) {
+  if (rid === undefined) rid = recId();
+  document.querySelectorAll('#courtyard .ch').forEach(b => { b.setAttribute('aria-pressed', String(b.dataset.id === sel)); b.querySelector('.rec').hidden = b.dataset.id !== rid; });
+  const t = document.querySelector('#courtyard .tsrv');
+  if (t) { t.className = 'tsrv' + (Srv.online ? ' on' : ''); t.textContent = Srv.online ? 'ออนไลน์' : Srv.checked ? 'ออฟไลน์' : 'กำลังตรวจ'; }
+}
+let lobbyView = store.get('go-lobbyview', 'scene') === 'list' ? 'list' : 'scene';
+function applyView() {
+  $('#lobby').classList.toggle('scene-mode', lobbyView === 'scene');
+  $('#courtyard').hidden = lobbyView !== 'scene';
+  $('#view-toggle').textContent = lobbyView === 'scene' ? 'ดูแบบรายชื่อ' : 'ดูแบบลานสำนัก';
+}
+$('#view-toggle').onclick = () => { lobbyView = lobbyView === 'scene' ? 'list' : 'scene'; store.set('go-lobbyview', lobbyView); applyView(); };
+$('#courtyard').onclick = e => {
+  const b = e.target.closest('.ch'); if (!b) return;
+  sel = b.dataset.id; selSize = bySid(sel).n; paintScene(); renderDetail();
+  if (innerWidth <= 820 || innerHeight <= 520) $('#detail').scrollIntoView({ block: 'nearest', behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth' });
+};
+// คำพูดลอยเหนือหัว: ทีละคน ราว 4 วินาที
+let bTimer = 0, bHide = 0, bLast = '', bLine = '', bubEl = null;
+function banterTick() {
+  clearTimeout(bTimer);
+  const lob = $('#lobby'), pv = $('#v-play');
+  if (lob && !lob.hidden && pv && !pv.hidden && !document.hidden && lobbyView === 'scene') banterSay();
+  bTimer = setTimeout(banterTick, 5400);
+}
+function banterSay() {
+  const all = [...document.querySelectorAll('#courtyard .ch')].filter(b => b.dataset.id !== bLast);
+  if (!all.length) return;
+  const b = all[Math.floor(Math.random() * all.length)], id = b.dataset.id, lines = BANTER[id].filter(l => l !== bLine);
+  const line = lines[Math.floor(Math.random() * lines.length)], zone = b.closest('.scene');
+  document.querySelectorAll('#courtyard .ch.talk').forEach(x => x.classList.remove('talk'));
+  if (!bubEl) { bubEl = document.createElement('div'); bubEl.className = 'bub'; bubEl.setAttribute('aria-hidden', 'true'); }
+  zone.appendChild(bubEl); bubEl.classList.remove('show'); bubEl.textContent = line; bubEl.style.left = '0px';
+  const zr = zone.getBoundingClientRect(), br = b.getBoundingClientRect(), cx = br.left + br.width / 2 - zr.left, w = bubEl.offsetWidth;
+  const left = Math.max(6, Math.min(cx - w / 2, zr.width - w - 6));
+  bubEl.style.left = left + 'px'; bubEl.style.setProperty('--tx', Math.max(14, Math.min(cx - left, w - 14)) + 'px');
+  bubEl.classList.add('show'); b.classList.add('talk'); bLast = id; bLine = line;
+  clearTimeout(bHide); bHide = setTimeout(() => { bubEl.classList.remove('show'); b.classList.remove('talk'); }, 4200);
+}
+document.addEventListener('visibilitychange', () => { $('#courtyard').classList.toggle('paused', document.hidden); });
 $('#roster').onclick = e => {
   const b = e.target.closest('.scard'); if (!b) return;
   sel = b.dataset.id; selSize = bySid(sel).n;
   document.querySelectorAll('#roster .scard').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
-  renderDetail();
+  paintScene(); renderDetail();
 };
 $('#detail').onclick = e => {
   const t = e.target.closest('button'); if (!t) return;
