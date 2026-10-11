@@ -1,7 +1,7 @@
 {
  "started": "2026-10-11T15:02:11.220Z",
- "updated": "2026-10-11T15:13:57.497Z",
- "done": false,
+ "updated": "2026-10-11T15:14:43.116Z",
+ "done": true,
  "gamesPerSensei": 14,
  "note": "anchor = KataGo Human SL (b18c384nbt-humanv0) sampled from humanPolicy T=0.85; 19x19 komi 7.5; staircase",
  "sensei": {
@@ -940,10 +940,24 @@
      "win": true,
      "lead": -44.1,
      "moves": 120
+    },
+    {
+     "r": "8d",
+     "black": true,
+     "win": true,
+     "lead": 17.5,
+     "moves": 295
+    },
+    {
+     "r": "9d",
+     "black": false,
+     "win": false,
+     "lead": 36.8,
+     "moves": 120
     }
    ],
    "estimate": "8d",
-   "tailWins": "5/8"
+   "tailWins": "6/10"
   }
  },
  "errors": []
