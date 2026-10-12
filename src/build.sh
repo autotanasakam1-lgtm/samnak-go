@@ -1,7 +1,8 @@
 #!/bin/sh
 # สร้าง samnak-go.html (เนื้อหาอย่างเดียว) และ site/index.html (เอกสารเต็ม)
 cd "$(dirname "$0")" || exit 1
-{ cat head.html; echo '<script>'; cat engine.js data.js kata.js app.js deep.js home.js report.js; echo; echo '</script>'; } > samnak-go.html
+mkdir -p site
+{ cat head.html; echo '<script>'; cat engine.js data.js kata.js record-logic.js app.js deep.js report.js record-hooks.js records.js home.js; echo; echo '</script>'; } > samnak-go.html
 {
 cat <<'HEAD'
 <!doctype html>
@@ -19,4 +20,6 @@ HEAD
 cat samnak-go.html
 printf '</body>\n</html>\n'
 } > site/index.html
+mkdir -p site/records
+cp ../records/bot-games.json site/records/bot-games.json
 echo built

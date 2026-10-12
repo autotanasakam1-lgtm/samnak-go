@@ -123,7 +123,8 @@ const GKEY = 'go-game';
 function saveGame() {
   if (!G || prac || (over && over.final)) return;
   if (G.moves.length <= hcN()) return clearGame();
-  store.set(GKEY, { v: 1, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
+  recordSync();
+  store.set(GKEY, { audit:recordAudit, v: 2, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
 }
 const clearGame = () => store.del(GKEY);
 function readGame() {
@@ -135,7 +136,7 @@ function readGame() {
   if (d.hc && !hc) return null;
   const g = new Go(d.n, d.komi);
   for (const m of d.moves) { if (!Number.isInteger(m) || m < -1 || m >= d.n * d.n) return null; if (m < 0) g.pass(); else if (!g.play(m).ok) return null; }
-  return { s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
+  return { audit:d.audit, s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
 }
 function replayInto(res) {
   const sv = new Map(res.rec.filter(t => t && typeof t === 'object').map(t => [t.no, t]));
@@ -168,7 +169,7 @@ document.addEventListener('click', e => {
     showTab('play'); startGame(d.s, d.n, d.col, d);
   } else if (b.dataset.rs === 'drop') {
     slot.querySelector('.btns').innerHTML = '<span class="small">ทิ้งเกมนี้แล้วจะเอากลับไม่ได้</span> <button class="btn" data-rs="yes">ยืนยันทิ้ง</button><button class="btn" data-rs="no">ยกเลิก</button>';
-  } else if (b.dataset.rs === 'yes') { clearGame(); paintResume(); }
+  } else if (b.dataset.rs === 'yes') { const d=readGame(); if(d) { startGame(d.s,d.n,d.col,d).then(()=>{recordSave(true);clearGame();toLobby();paintResume();}); return; } clearGame(); paintResume(); }
   else if (b.dataset.rs === 'no') paintResume();
 });
 $('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.scrollIntoView({ block: 'start' }); };
@@ -176,7 +177,7 @@ $('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.s
 // ---------- หน้าโปรไฟล์ ----------
 const b64 = s => btoa(unescape(encodeURIComponent(s)));
 const unb64 = s => decodeURIComponent(escape(atob(s)));
-const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog }));
+const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog, records:store.get('go-records',[]) }));
 function renderProfile() {
   const top = playerRank();
   $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
@@ -223,11 +224,12 @@ function parseCode(text) {
     if (!r || typeof r !== 'object' || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
     const hcv = Number.isInteger(r.handicap) && r.handicap >= 2 && r.handicap <= 9 ? r.handicap : 0;
     const dp = r.deep && typeof r.deep === 'object' && numN(r.deep.avg) && r.deep.avg != null && cnt(r.deep.big) && Number.isInteger(r.deep.weak) && r.deep.weak >= -1 && r.deep.weak <= 2 ? { avg: r.deep.avg, big: r.deep.big, weak: r.deep.weak } : null;
-    lg.push({ handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
+    lg.push({ recordId:r.recordId, handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
   if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
-  return { profile: pr, done: dn, rec: rc, log: lg };
+  const records=Array.isArray(o.records)?o.records.filter(r=>r && typeof r.id==='string' && [7,9,13,19].includes(r.n) && Array.isArray(r.sequence) && r.sequence.length<=1500):[];
+  return { profile: pr, done: dn, rec: rc, log: lg, records };
 }
 let pendingRestore = null;
 $('#backup').addEventListener('click', e => {
@@ -241,7 +243,7 @@ $('#backup').addEventListener('click', e => {
   } else if (b.id === 'rs-no') { pendingRestore = null; msg.textContent = ''; $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>'; }
   else if (b.id === 'rs-yes' && pendingRestore) {
     const r = pendingRestore; pendingRestore = null;
-    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog);
+    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog); store.set('go-records',r.records || []);
     if (r.profile) { profile = r.profile; store.set('go-profile', profile); }
     clearGame(); renderChip(); renderProfile(); showPath(); openPuzzle(pzCur);
     msg.textContent = 'กู้คืนข้อมูลแล้ว'; msg.className = 'small good-t';

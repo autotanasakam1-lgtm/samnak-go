@@ -1,6 +1,6 @@
 // ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
 // ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
-const REPORT_URL = 'https://script.google.com/macros/s/AKfycby55KS5jKtfLGoHeswXyi9z6JZrDoQaiDMSIYpWTPqsI5F3KuDks4P4DJRk_n9QPO3F/exec';
+const REPORT_URL = '';
 const Rep = (() => {
   const K = { on: 'go-rep-on', q: 'go-rep-q', id: 'go-rep-id', sent: 'go-rep-sent', ask: 'go-rep-ask' };
   const g = (k, d) => store.get(k, d), s = (k, v) => store.set(k, v);
@@ -41,7 +41,7 @@ const Rep = (() => {
     const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
     const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
     box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>แบ่งปันผลการเล่นให้ผู้ดูแลสำนัก</span></label>
-      <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (SGF) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
+      <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (บันทึกตาเดิน) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
     bk.parentNode.insertBefore(box, bk);
     box.querySelector('input').onchange = e => set(e.target.checked);
     ui();

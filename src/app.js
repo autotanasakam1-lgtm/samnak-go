@@ -216,7 +216,7 @@ function renderDetail() {
   $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(approx(s))}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
     <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
-    ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ โคมิ 0.5</p>' : ''}</div>
+    ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ แต้มชดเชยให้ขาว 0.5</p>' : ''}</div>
     <div><p class="lab">โหมดการเล่น</p><div class="seg" id="md-seg" role="group" aria-label="โหมดการเล่น"><button data-md="teach" aria-pressed="${selMode === 'teach'}">โหมดสอน</button><button data-md="real" aria-pressed="${selMode === 'real'}">โหมดประลองจริง</button></div><p class="small">${selMode === 'teach' ? 'มีคำใบ้สองขั้น ถอยตาได้ ติวเตอร์คอยบอก และถ้าพลาดใหญ่จะเสนอให้ลองตานั้นใหม่ ชัยชนะนับแยกต่างหาก' : 'ไม่มีคำใบ้ ไม่มีถอยตา ไม่มีติวเตอร์ เหมือนแข่งจริง ชัยชนะนับเป็น \u2018ชนะแล้ว\u2019 ของคู่ประลอง'}</p></div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
   try { const hb = document.createElement('section'); hb.id = 'hall-box'; hb.className = 'hall'; hb.hidden = true; $('#detail').appendChild(hb); Rep.paintHall(s.id, s.name); } catch (e) { }
@@ -246,16 +246,16 @@ function rulerSvg() {
   top.forEach((s, i) => { const x = px(PRO), y = AY - 20 - 4 * 22; g += `<line x1="${x}" y1="${y + 4}" x2="${x}" y2="${AY}" stroke="${mu}" stroke-dasharray="2 2"/><circle cx="${x}" cy="${AY}" r="6" fill="${s.fur}" stroke="${ink}" stroke-width="1.5"/><text x="${x}" y="${y}" text-anchor="end" font-size="12" fill="${ink}">${esc(s.name)} (เหนือโปร)</text>`; });
   const me = youPos();
   if (me != null) { const x = px(me.p); g += `<path d="M${x} ${AY + 8}l-7 12h14z" fill="var(--accent)"/><text x="${x}" y="${AY + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">คุณ</text>`; }
-  MASTERS.forEach((m, i) => {
+  [].forEach((m, i) => {
     const x = px(PRO), y = AY + 58 + i * 20;
     g += `<path d="M${x} ${y - 7}l6 6l-6 6l-6 -6z" fill="var(--bad)" stroke="${ink}" stroke-width="1"/><text x="${x - 12}" y="${y + 4}" text-anchor="end" font-size="12" fill="${ink}">${esc(m.name)}</text>`;
   });
-  return `<svg viewBox="0 0 ${W} ${AY + 58 + MASTERS.length * 20 + 6}" width="${W}" role="img" aria-labelledby="rl-t rl-d" focusable="false"><title id="rl-t">ไม้บรรทัดระดับ</title><desc id="rl-d">แกนจาก 30 คิวถึงสมัครเล่น 7 ดั้ง แล้วต่อด้วยโซนมืออาชีพ 9 ดั้ง พร้อมตำแหน่งคู่ประลองและเซียน รายละเอียดอยู่ในรายการด้านล่าง</desc>${g}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${AY + 58 + MASTERS.length * 20 + 6}" width="${W}" role="img" aria-labelledby="rl-t rl-d" focusable="false"><title id="rl-t">ไม้บรรทัดระดับ</title><desc id="rl-d">แกนจาก 30 คิวถึงสมัครเล่น 7 ดั้ง แล้วต่อด้วยโซนมืออาชีพ 9 ดั้ง พร้อมตำแหน่งคู่ประลอง รายละเอียดอยู่ในรายการด้านล่าง</desc>${g}</svg>`;
 }
 // ระดับโดยประมาณของผู้เล่น: ใช้เฉพาะเมื่อโปรไฟล์มีระดับจริง (ตอนนี้แบบวัดความรู้ไม่เก็บระดับ จึงไม่แสดงเครื่องหมาย)
 function youPos() { const r = typeof profile !== 'undefined' && profile && profile.skill; return r && typeof r.rank === 'string' && rankPos(r.rank) != null ? { p: rankPos(r.rank) } : null; }
 function rulerBlock() {
-  const li = SENSEI.map(s => `<li>${esc(s.name)}: ${esc(s.rank)}</li>`).join('') + MASTERS.map(m => `<li>${esc(m.name)}: ${m.id === 'ai' ? 'โปรแกรม (AlphaGo ได้ 9 ดั้งกิตติมศักดิ์จากสมาคมหมากล้อมจีน)' : 'มืออาชีพ 9 ดั้ง'}</li>`).join('');
+  const li = SENSEI.map(s => `<li>${esc(s.name)}: ${esc(s.rank)}</li>`).join('') + [].map(m => `<li>${esc(m.name)}: ${m.id === 'ai' ? 'โปรแกรม (AlphaGo ได้ 9 ดั้งกิตติมศักดิ์จากสมาคมหมากล้อมจีน)' : 'มืออาชีพ 9 ดั้ง'}</li>`).join('');
   return `<h3>ไม้บรรทัดระดับ</h3><div class="ruler" tabindex="0" role="group" aria-label="ไม้บรรทัดระดับ เลื่อนซ้ายขวาได้">${rulerSvg()}</div>
     <details class="rl-alt"><summary>อ่านเป็นรายการ</summary><ul>${li}</ul></details>
     <p class="small rl-note">การแปลงคะแนนเป็นระดับเป็นค่าประมาณ ระบบคะแนนของสหพันธ์หมากล้อมยุโรป (EGF) กำหนดให้ห่างกันระดับละ 100 คะแนน และ 1 ดั้งอยู่ราว 2100 ระบบอื่นไม่เท่ากันทุกแห่ง ตำแหน่งของคู่ประลองมาจากป้ายระดับในแอป ซึ่งเป็นค่าประมาณ ยังไม่ได้ยืนยันกับผู้เล่นจริง ส่วนโปรทุกคนอยู่ในโซนเดียวกัน ไม่ได้เรียงตามฝีมือ <a href="https://www.europeangodatabase.eu/EGD/EGF_rating_system.php" target="_blank" rel="noopener">แหล่งที่มา: europeangodatabase.eu/EGD/EGF_rating_system.php</a></p>`;
@@ -445,6 +445,7 @@ function srvDrop() {
 const botToMove = () => !!S && G.turn !== human;
 
 async function startGame(s, n, col, res, opt = {}) {
+  if(!res && !opt.prac && G && recordAudit && !prac && !over?.final && mno()>0) recordSave(true);
   const my = ++token;
   if (deep) deep.run++;
   prac = opt.prac || null;
@@ -459,12 +460,13 @@ async function startGame(s, n, col, res, opt = {}) {
   if (res) replayInto(res);
   else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
   else { if (HC) setupHandicap(G, HC); clearGame(); }
+  recordAudit = prac ? null : RecordLogic.begin(G,hcN(),res?.audit); recordSync();
   $('#pbanner').hidden = !prac;
   GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
   $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
   $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})${HC ? ' · ต่อ ' + HC + ' เม็ด' : ''}</span>${prac ? '' : modeTag(gmode)}</div>`
     : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
-    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
+    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><button class="btn" id="g-restart">เริ่มเกมใหม่</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
   tutor(prac ? 'ลองเดินใหม่จากตำแหน่งนี้ แล้วติวเตอร์จะบอกว่าดีกว่าตาเดิมในเกมจริงหรือไม่' : res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
     : n <= 9 ? 'เริ่มได้เลย ลองเปิดใกล้จุดกลางหรือจุดดาว แล้วดูลมหายใจของหมากทุกตา' : 'เริ่มได้เลย ช่วงเปิดเกมให้จับมุมก่อน แล้วขยายไปข้าง เส้นที่ 3 และ 4 คุ้มที่สุด');
   gfb('');
@@ -495,7 +497,7 @@ function renderGame() {
   } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], area: hintStage === 1 && hintPt >= 0 ? hintArea(hintPt) : null, terr: sc && sc.terr, dead: sc ? dead : null });
   const myTurn = !over && !busy && !review && (!S || G.turn === human), canTap = myTurn || (!!over && over.type === 'score' && !over.pending && !over.final && !review);
   GB.classList.toggle('static', !canTap);
-  $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · โคมิ ${G.komi}`;
+  $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · แต้มชดเชยให้ขาว ${G.komi}`;
   const t = $('#turn');
   if (review) t.textContent = review.label || `กำลังดูตำแหน่งก่อนตาที่ ${review.no}`;
   else if (over && over.res) t.textContent = 'จบเกม ' + over.res.text;
@@ -503,8 +505,8 @@ function renderGame() {
   else if (busy && S) t.textContent = `${S.name}กำลังคิด`;
   else t.innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}"></span>${esc(gameTitle())}`;
   $('#tally').innerHTML = sc
-    ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมโคมิ ${G.komi})</td><td>${sc.w}</td></tr>`
-    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>โคมิให้ขาว</td><td>${G.komi}</td></tr>`;
+    ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมแต้มชดเชยให้ขาว ${G.komi})</td><td>${sc.w}</td></tr>`
+    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>แต้มชดเชยให้ขาว</td><td>${G.komi}</td></tr>`;
   const fin = !!over && !!over.final;
   $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
   const ub = $('#b-undo'); ub.hidden = gmode === 'real'; ub.disabled = G.moves.length <= undoBase() || busy || fin;
@@ -583,6 +585,7 @@ async function botTurn() {
   renderGame(); startPre();
 }
 function afterMove() {
+  recordSync();
   if (G.passes >= 2) return endScoring();
   renderGame();
   if (botToMove()) botTurn();
@@ -630,7 +633,7 @@ function finish() {
     const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
-  o.res = { won, margin, text }; if (!prac) clearGame();
+  o.res = { won, margin, text }; if(!prac) recordSave(); if (!prac) clearGame();
   $('#tutor-act').hidden = true;
   if (S && !prac) {
     const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 }, tm = gmode === 'teach';
@@ -657,9 +660,9 @@ function logGame(o, won, margin) {
   const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
   const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
     margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC, mode: gmode,
-    avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
+    recordId: recordAudit?.id, undoCount: recordAudit?.undos.length || 0, undos: recordAudit?.undos || [], restarted:false, avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
   matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
-  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
+  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, undoCount:r.undoCount, undos:r.undos, restarted:r.restarted, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
   return sgf;
 }
 function clearManual() { document.querySelectorAll('textarea.manual, .manual-hint').forEach(e => e.remove()); }
@@ -716,7 +719,7 @@ function renderLog() {
   const rows = logRows().slice(0, 20);
   box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}${b.tw || b.tl ? ` <small>(โหมดสอน ชนะ ${b.tw} แพ้ ${b.tl})</small>` : ''}</p>`).join('')}</div>
     <div class="logscroll"><table class="logt"><thead><tr><th>วันที่</th><th>คู่ประลอง</th><th>กระดาน</th><th>ผล</th><th>แต้มเสียเฉลี่ยต่อตา</th><th></th></tr></thead><tbody>${rows.map((r, k) =>
-      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))} ${logTag(r)}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
+      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))} ${logTag(r)}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอกบันทึกตาเดิน</button></td></tr>`).join('')}</tbody></table></div>
     <div class="btns"><button class="btn" id="log-copy">คัดลอกสรุปผล</button><button class="btn" id="log-clear">ล้างสมุดบันทึก</button></div></div>`;
 }
 $('#log-body').onclick = e => {
@@ -773,7 +776,7 @@ function renderReview() {
   if (sug) { close += ` ลองให้ต่อ ${sug} เม็ดดู เกมจะสูสีขึ้น`; selHc = sug; }
   const sum = summaryHtml({ lost, res, phaseTxt, sa, ef, lostStones, links, momentsHtml, idx });
   R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b> ${modeTag(gmode)}</p>${sum}<div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>${deepBoxHtml()}
-    <div class="btns"><button class="btn primary" data-act="again" data-md="${gmode}" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-md="${gmode}" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+    <div class="btns"><button class="btn primary" data-act="again" data-md="${gmode}" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-md="${gmode}" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอกบันทึกตาเดิน</button>${[...links].map(lessonBtn).join('')}</div>`;
   deepBoxRefresh();
 }
 // ---------- สรุปหลังจบเกม ----------
@@ -847,7 +850,8 @@ $('#review').onclick = e => {
 function toLobby() { clearManual(); token++; if (deep) deep.run++; deep = null; deepShown = false; prac = null; pracSaved = null; $('#pbanner').hidden = true; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
 $('#ghead').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.id === 'g-back') { if ((over && over.final) || prac || G.moves.length <= hcN()) return toLobby(); showAsk(false); }
+  if(b.id === 'g-restart') { if(confirm('เริ่มใหม่และเก็บเกมนี้ไว้ในประวัติใช่ไหม')) recordRestart(); }
+  else if (b.id === 'g-back') { if ((over && over.final) || prac || G.moves.length <= hcN()) return toLobby(); showAsk(false); }
   else if (b.id === 'ask-later') { saveGame(); toLobby(); }
   else if (b.id === 'ask-resign') { $('#leave-ask').hidden = true; if (!over || !over.final) { token++; busy = false; over = { type: 'resign', loser: S ? human : G.turn }; finish(); } }
   else if (b.id === 'ask-cancel') closeAsk();
@@ -866,6 +870,7 @@ $('#b-undo').onclick = () => {
   if (gmode === 'real') return;
   token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true; hintStage = 0; hintPt = -1; $('#tutor-act').hidden = true;
   G.undo(); if (S && G.turn !== human && G.moves.length > undoBase()) G.undo();
+  if(recordAudit && !prac) RecordLogic.undo(recordAudit,G,undoBefore,undoSide); saveGame();
   if (prac) { prac.moved = false; prac.lock = false; }
   retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= mno()); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
   tutor('ถอยกลับมาแล้ว ลองเดินใหม่ได้เลย'); renderGame(); startPre(); if (botToMove()) botTurn();
@@ -912,15 +917,17 @@ function openMaster(id) {
 $('#mlist').onclick = e => { const b = e.target.closest('button'); if (b) openMaster(b.dataset.id); };
 
 // ---------- แท็บ ----------
-const TABS = ['learn', 'puzzles', 'play', 'masters'];
+const TABS = ['learn', 'puzzles', 'play', 'masters', 'records'];
 let lastTab = 'learn';
 function showTab(t) {
+  if(typeof Records !== 'undefined') Records.stop();
   if (![...TABS, 'me'].includes(t)) t = 'learn';
   [...TABS, 'me'].forEach(k => { $('#v-' + k).hidden = k !== t; });
   if (t !== 'me') lastTab = t; else renderProfile();
   document.querySelectorAll('#tabs button').forEach(b => b.dataset.tab === t ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
   if (t === 'learn' && $('#lesson-view').hidden) showPath();
   if (t === 'play' && !$('#lobby').hidden) renderLobby();
+  if(t === 'records' && typeof Records !== 'undefined') Records.mount();
   try { history.replaceState(null, '', '#' + t); } catch (e) { }
 }
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };

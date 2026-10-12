@@ -1,5 +1,5 @@
 // Service worker for สำนักหมากล้อม. Works from any subfolder: all paths are resolved against the registration scope.
-const VERSION = 'v1';
+const VERSION = 'v2-records';
 const SHELL_CACHE = `samnak-shell-${VERSION}`;
 const ASSET_CACHE = `samnak-assets-${VERSION}`;
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];

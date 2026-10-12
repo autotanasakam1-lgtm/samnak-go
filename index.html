@@ -183,7 +183,7 @@ table.tally{width:100%;border-collapse:collapse;font-variant-numeric:tabular-num
   .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
   .topbar{padding-block:10px;margin-bottom:16px}
   .brand{font-size:1.2rem}
-  nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
   nav button{flex-direction:column;gap:0;min-height:56px;border-radius:0;padding:6px 2px;font-size:.875rem;line-height:1.4}
   nav button[aria-current="page"]{background:none;color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
   nav svg{display:block}
@@ -202,7 +202,7 @@ table.tally{width:100%;border-collapse:collapse;font-variant-numeric:tabular-num
   .wrap{padding-block:16px;padding-inline:calc(var(--rail) + 16px + env(safe-area-inset-left)) 16px}
   .topbar{display:block;padding:0;margin:0;border:0}
   .brand{display:none}
-  nav{position:fixed;top:48px;bottom:0;left:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));z-index:20;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(4,minmax(44px,1fr));background:var(--surface);border-top:0;border-right:1px solid var(--line);padding:0 0 0 env(safe-area-inset-left)}
+  nav{position:fixed;top:48px;bottom:0;left:0;right:auto;width:calc(var(--rail) + env(safe-area-inset-left));z-index:20;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(5,minmax(44px,1fr));background:var(--surface);border-top:0;border-right:1px solid var(--line);padding:0 0 0 env(safe-area-inset-left)}
   nav button{flex-direction:column;gap:0;min-height:44px;border-radius:0;padding:2px;font-size:.8rem;line-height:1.3}
   nav button[aria-current="page"]{background:none;color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
   nav svg{display:block;width:22px;height:22px}
@@ -375,7 +375,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
 .msrc{overflow-wrap:anywhere}.msrc a,.rl-note a{color:var(--accent)}
 .mbody .col li{overflow-wrap:anywhere}
 /* === จบ === */
-.rep-sw{display:flex;gap:10px;align-items:center;font-weight:600}.rep-sw input{width:22px;height:22px}.rep-nudge{position:fixed;left:16px;right:16px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:60;max-width:460px;margin:0 auto;background:var(--panel,#fff);color:var(--ink,#222);border:1px solid var(--line,#ccc);border-radius:14px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25)}.rep-nudge p{margin:0 0 10px}.hall{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line,#ccc)}.hall h3{margin:0 0 6px}.hall-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.hall-list li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 10px;border-radius:10px;background:var(--panel2,rgba(127,127,127,.08))}.hall-list .hn{font-weight:700;overflow-wrap:anywhere}.hall-list .hr{font-weight:700;text-align:right}.hall-list .hr.win{color:var(--ok,#1d7a46)}.hall-list .hr.loss{color:var(--bad,#b3392c)}.hall-list .hm{grid-column:1/-1;font-size:.85em;opacity:.8}</style>
+.rep-sw{display:flex;gap:10px;align-items:center;font-weight:600}.rep-sw input{width:22px;height:22px}.rep-nudge{position:fixed;left:16px;right:16px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:60;max-width:460px;margin:0 auto;background:var(--panel,#fff);color:var(--ink,#222);border:1px solid var(--line,#ccc);border-radius:14px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25)}.rep-nudge p{margin:0 0 10px}.hall{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line,#ccc)}.hall h3{margin:0 0 6px}.hall-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}.hall-list li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 10px;border-radius:10px;background:var(--panel2,rgba(127,127,127,.08))}.hall-list .hn{font-weight:700;overflow-wrap:anywhere}.hall-list .hr{font-weight:700;text-align:right}.hall-list .hr.win{color:var(--ok,#1d7a46)}.hall-list .hr.loss{color:var(--bad,#b3392c)}.hall-list .hm{grid-column:1/-1;font-size:.85em;opacity:.8}.record-badge{padding:4px 10px;border-radius:8px;align-self:flex-start}.record-badge.green{background:#d5eedc;color:#18542d}.record-badge.amber{background:#fff0c9;color:#714600}#record-list{margin-top:18px}#record-view .board{width:100%;max-width:620px}#record-view .btn{min-height:44px}#record-view aside{min-width:0}#record-undo .btn{text-align:left;overflow-wrap:anywhere}#tabs{overflow:auto}#tabs button{flex-shrink:0}</style>
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><i></i>สำนักหมากล้อม</div>
@@ -383,8 +383,8 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
     <button data-tab="learn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v15H5.5A1.5 1.5 0 0 0 4 20.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v15h5.5a1.5 1.5 0 0 1 1.5 1.5z"/></svg><span>เรียน</span></button>
     <button data-tab="puzzles"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>โจทย์</span></button>
     <button data-tab="play"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M10 4v16M14 4v16M4 10h16M4 14h16"/></svg><span>ประลอง</span></button>
-    <button data-tab="masters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>คลังเซียน</span></button>
-  </nav>
+    <button data-tab="masters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg><span>แนวคิดฝึก</span></button>
+  <button data-tab="records"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM8 7h8M8 12h8M8 17h5"/></svg><span>ประวัติ</span></button></nav>
   <button class="pchip" id="pchip" type="button"></button>
 </div>
 <main>
@@ -433,6 +433,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
     <section class="panel review" id="review" hidden aria-live="polite"></section>
   </div>
 </section>
+<section id="v-records" hidden></section>
 <section id="v-me" hidden>
   <button class="back" id="me-back" type="button">← กลับ</button>
   <div class="col" id="me-top" style="gap:20px"></div>
@@ -450,7 +451,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
   </section>
 </section>
 <section id="v-masters" hidden>
-  <div class="intro"><h1>คลังเซียน</h1><p class="lede">แนวคิดของผู้เล่นที่เปลี่ยนวิธีเล่นหมากล้อม พร้อมวิธีฝึกตาม</p></div>
+  <div class="intro"><h1>คลังเซียน</h1><p class="lede">แนวคิดหมากล้อมสำหรับฝึกด้วยตัวเอง</p></div>
   <div class="masters"><div class="mlist" id="mlist"></div><div class="mbody" id="mbody"></div></div>
 </section>
 </main>
@@ -461,6 +462,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
   <radialGradient id="gW" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eeebe2"/><stop offset="1" stop-color="#c9c4b6"/></radialGradient>
   <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E3BC6E"/><stop offset="1" stop-color="#D3A552"/></linearGradient>
 </defs></svg>
+
 <script>
 const BLACK = 1, WHITE = 2;
 const LET = 'ABCDEFGHJKLMNOPQRST';
@@ -589,6 +591,7 @@ function aiMove(g, noise = 1.5) {
   if (g.passes > 0 && bestS < 1.2) return -1;
   return best;
 }
+
 // แผนภาพ: X ดำ, O ขาว, . ว่าง, * คำตอบ, + จุดที่ชี้ให้ดู
 function B(start, lines, n = 9) {
   const r = []; for (let i = 0; i < n; i++) r.push('.'.repeat(n));
@@ -625,8 +628,8 @@ const LESSONS = [
     { t: 'illegal', turn: 2, pre: [[4, 4]], answers: [[3, 4]], rows: B(3, ['...XO', '..XO.O', '...XO']), text: 'ตอนนี้คุณเป็นฝ่ายขาว หมากดำที่เพิ่งกินเหลือลมหายใจเดียว ลองกินกลับทันทีที่จุดที่ขาวเพิ่งโดนกิน', ok: 'กินกลับทันทีไม่ได้ กติกาโคะบังคับให้ขาวไปเดินที่อื่นก่อนหนึ่งตา ไม่อย่างนั้นเกมจะวนไม่จบ' } ] },
   { id: 'l7', stage: 1, title: 'จบเกมและนับแต้ม', steps: [
     { t: 'info', terr: true, rows: Array(9).fill('....XO...'), text: 'เมื่อไม่มีจุดไหนเดินแล้วได้ประโยชน์ ให้กดผ่าน ผ่านติดกันสองครั้งเกมจบ แต้มของแต่ละฝ่ายคือจำนวนหมากบนกระดานรวมกับจุดว่างที่ล้อมไว้ได้ (สี่เหลี่ยมเล็กในภาพ)' },
-    { t: 'choice', terr: true, rows: Array(9).fill('....XO...'), text: 'ดำมีหมาก 9 เม็ด ล้อมได้ 36 จุด รวม 45 แต้ม ขาวมีหมาก 9 เม็ด ล้อมได้ 27 จุด และได้โคมิ 6.5 แต้มชดเชยที่เดินทีหลัง รวม 42.5 แต้ม ใครชนะ',
-      choices: [{ label: 'ดำชนะ 2.5 แต้ม', right: true }, { label: 'ขาวชนะ 2.5 แต้ม' }, { label: 'เสมอ' }], ok: 'ถูกต้อง 45 ลบ 42.5 เหลือ 2.5 โคมิที่มีเศษครึ่งแต้มทำให้เกมไม่มีเสมอ' } ] },
+    { t: 'choice', terr: true, rows: Array(9).fill('....XO...'), text: 'ดำมีหมาก 9 เม็ด ล้อมได้ 36 จุด รวม 45 แต้ม ขาวมีหมาก 9 เม็ด ล้อมได้ 27 จุด และได้แต้มชดเชยให้ขาว 6.5 แต้มชดเชยที่เดินทีหลัง รวม 42.5 แต้ม ใครชนะ',
+      choices: [{ label: 'ดำชนะ 2.5 แต้ม', right: true }, { label: 'ขาวชนะ 2.5 แต้ม' }, { label: 'เสมอ' }], ok: 'ถูกต้อง 45 ลบ 42.5 เหลือ 2.5 แต้มชดเชยให้ขาวที่มีเศษครึ่งแต้มทำให้เกมไม่มีเสมอ' } ] },
   { id: 'l8', stage: 2, title: 'ต่อและตัด', steps: [
     { t: 'point', rows: B(3, ['...XO', '..O*X']), text: 'หมากดำสองเม็ดนี้ยังไม่ต่อกัน ถ้าขาวได้เดินจุดนั้นก่อน ดำจะถูกตัดเป็นสองกลุ่มที่อ่อนแอ ต่อหมากให้เป็นกลุ่มเดียว', ok: 'ต่อแล้ว กลุ่มเดียวที่แข็งแรงดูแลง่ายกว่าสองกลุ่มที่ต้องหนีพร้อมกัน' },
     { t: 'point', rows: B(3, ['...OX', '..X*O']), text: 'หมากขาวมีจุดอ่อนแบบเดียวกัน วางดำเพื่อตัดขาวออกเป็นสองส่วน', ok: 'ตัดขาด ขาวต้องดูแลสองกลุ่ม ส่วนคุณได้เลือกว่าจะโจมตีกลุ่มไหน' } ] },
@@ -680,60 +683,108 @@ const PUZZLES = [
   { id: 'p30', level: '8 คิว', title: 'สโนว์แบ็กที่มุม', steps: [{ t: 'point', rows: B(0, ['OOOX', '*.X', 'OX', 'O']), text: 'ดำเดิน ขาวสามเม็ดบนมุมดูมีลมหายใจสองจุด หาตาที่กินได้ทั้งกลุ่ม', ok: 'วางทิ้งไว้ติดหมากขาว ขาวกินได้เม็ดเดียวแต่กลุ่มเหลือลมหายใจเดียว ดำกินคืนได้สี่เม็ด', no: 'ถ้าอาตาริตรง ๆ ขาวต่อหนีได้ ลองวางหมากทิ้ง' }] },
 ];
 const MASTERS = [
-  { id: 'go', name: 'โกะ เซเก็น', years: '1914–2014', tag: 'ผู้ปฏิวัติการเปิดเกม',
-    body: 'เกิดที่จีนและเล่นอาชีพในญี่ปุ่น ร่วมกับคิทานิ มิโนรุ เสนอแนวเปิดเกมใหม่ในปี 1933 ที่ให้น้ำหนักกับความเร็วและอิทธิพลกลางกระดาน แทนการยึดมุมตามตำราเดิม',
-    facts: ['เกิด 12 มิถุนายน 1914 ที่มณฑลฝูเจี้ยน ประเทศจีน เสียชีวิตปี 2014 ย้ายไปญี่ปุ่นปี 1928', 'เป็นมืออาชีพปี 1929 ได้ 9 ดั้งปี 1950', 'ชนะรายการโอไต 6 ครั้ง และรายการ Japan Saikyo ปี 1958 กับ 1961', 'ปี 1933 พัฒนาแนวเปิดเกมใหม่ (ชินฟูเซกิ) ร่วมกับคิทานิ มิโนรุ'],
-    style: 'เล่นเร็ว ตัดสินชะตากลุ่มหมากไว แย่งจุดใหญ่ตั้งแต่ต้น และใช้ความหนากับการแลกขนาดใหญ่',
-    lesson: 'ถามเสมอว่าจุดไหนใหญ่ที่สุดตอนนี้ ก่อนจะจมอยู่กับการต่อสู้จุดเล็ก',
-    src: [['Wikipedia: Go Seigen', 'https://en.wikipedia.org/wiki/Go_Seigen']],
-    ideas: ['เดินจุดเดียวจบมุม เช่น จุดดาวหรือจุด 3-3 แล้วรีบไปจุดใหญ่อื่น', 'ยอมแลกหมากบางส่วนเพื่อได้ตาเดินก่อนในที่ที่ใหญ่กว่า', 'มองทั้งกระดานก่อนมองการต่อสู้เฉพาะจุด'],
-    drill: 'ก่อนเดินทุกตาในช่วงเปิดเกม ถามตัวเองว่าจุดที่ใหญ่ที่สุดบนกระดานตอนนี้อยู่ไหน',
-    n: 19, stones: [[16, 2, 1, '1'], [15, 15, 1, '3'], [9, 9, 1, '5']], cap: 'ภาพประกอบ: จุด 3-3 จุดดาว และจุดกลางกระดาน เป็นตัวอย่างความคิดแบบเปิดเกมใหม่ (จัดวางเพื่ออธิบาย ไม่ใช่บันทึกเกมจริง)' },
-  { id: 'tk', name: 'ทาเคมิยะ มาซากิ', years: 'เกิด 1951', tag: 'สไตล์จักรวาล',
-    body: 'มืออาชีพ 9 ดั้งชาวญี่ปุ่น ขึ้นชื่อเรื่องสไตล์ "จักรวาล" ที่สร้างโครงพื้นที่ขนาดใหญ่กลางกระดาน แทนการเก็บแต้มริมและมุมแบบที่คนส่วนใหญ่ทำ',
-    facts: ['เกิด 1 มกราคม 1951 ที่ญี่ปุ่น สังกัดนิฮงคิอิน เป็นมืออาชีพ 9 ดั้ง', 'ชนะรายการฮนินโบ 6 ครั้ง (1976, 1980 และ 1985–1988)', 'ชนะรายการเมจิน 1 ครั้ง (1995)'],
-    style: 'สร้างโมโยขนาดใหญ่กลางกระดาน เปิดด้วยจุดดาวสามจุดเรียงกัน (ซันเร็นเซ) ซึ่งนำไปสู่การต่อสู้มาก',
-    lesson: 'อย่ากลัวการเดินห่างขอบ กำแพงที่หันเข้ากลางกระดานให้พื้นที่ได้มากกว่าที่เห็น',
-    src: [['Wikipedia: Takemiya Masaki', 'https://en.wikipedia.org/wiki/Takemiya_Masaki']],
-    ideas: ['เปิดด้วยจุดดาวสามจุดเรียงด้านเดียวกัน (ซันเร็นเซ)', 'ใช้กำแพงหนาหันเข้ากลางกระดาน', 'ชวนคู่แข่งบุกเข้ามา แล้วได้กำไรจากการโจมตี'],
-    drill: 'ลองเล่นสิบเกมโดยเปิดด้วยจุดดาวทุกตา และห้ามเดินต่ำกว่าเส้นที่ 4 ในยี่สิบตาแรก',
-    n: 19, stones: [[15, 3, 1, '1'], [15, 15, 1, '3'], [15, 9, 1, '5'], [3, 3, 2, ''], [3, 15, 2, '']], cap: 'ภาพประกอบ: ซันเร็นเซ ดำวางจุดดาวสามจุดเรียงด้านขวา' },
-  { id: 'ch', name: 'อี ชางโฮ', years: 'เกิด 1975', tag: 'พระพุทธรูปหิน',
-    body: 'มืออาชีพชาวเกาหลีใต้ ได้ฉาย "พระพุทธรูปหิน" จากท่าทีนิ่งสงบที่กระดาน เล่นแบบรัดกุม เลือกเส้นทางที่ปลอดภัยที่สุดไปสู่ชัยชนะ แม้จะชนะเพียงครึ่งแต้ม',
-    facts: ['เกิด 29 กรกฎาคม 1975 ที่เกาหลีใต้ เป็นมืออาชีพตั้งแต่ปี 1986 อายุ 11 ปี และเป็นมืออาชีพ 9 ดั้ง', 'วิกิพีเดียระบุว่าเป็นอันดับ 1 ด้านจำนวนแชมป์ระดับนานาชาติ'],
-    style: 'เล่นช้าและมั่นคง ต่อกลุ่มตัวเองให้แน่นก่อนโจมตี และเล่นให้ปลอดภัยที่สุดแม้ชนะน้อย',
-    lesson: 'ชนะครึ่งแต้มก็ชนะ เลือกตาที่ปลอดภัยเมื่อนำอยู่',
-    src: [['Wikipedia: Lee Changho', 'https://en.wikipedia.org/wiki/Lee_Changho'], ['Go Magic: Lee Changho, the Stone Buddha', 'https://gomagic.org/lee-changho-the-stone-buddha/']],
-    ideas: ['เลือกทางที่ชนะแน่นอนแม้ได้น้อย แทนทางที่ได้มากแต่เสี่ยง', 'นับแต้มทั้งกระดานตลอดเกม', 'ต่อหมากกลุ่มตัวเองให้มั่นคงก่อนไปโจมตีคู่แข่ง'],
-    drill: 'หลังจบทุกเกม ลองนับว่าช่วงปิดเกมเสียไปกี่แต้มเทียบกับตาที่ดีที่สุด',
-    cap: 'สไตล์นี้อยู่ที่การนับ ไม่ได้อยู่ที่รูปร่างหมาก จึงไม่มีภาพตำแหน่ง' },
-  { id: 'sd', name: 'อี เซดล', years: 'เกิด 1983', tag: 'ผู้ชนะ AlphaGo หนึ่งกระดาน',
-    body: 'มืออาชีพ 9 ดั้งชาวเกาหลีใต้ ปี 2016 แพ้ AlphaGo 1–4 แต่ชนะกระดานที่ 4 โดยตาขาวที่ 78 ซึ่งวิกิพีเดียเรียกว่าเทสุจิยอดเยี่ยม',
-    facts: ['เกิด 2 มีนาคม 1983 ที่เกาหลีใต้ ได้ 9 ดั้งปี 2003', 'มี 50 แชมป์ (ข้อมูล 1 มกราคม 2019) เป็นรายการในประเทศ 30 ระดับทวีป 2 และนานาชาติ 18', 'ปี 2016 แพ้ AlphaGo 1–4 และประกาศเลิกเล่นอาชีพปี 2019', 'ฉายา "The Strong Stone"'],
-    style: 'แหล่งที่ตรวจไม่ได้ระบุสไตล์ไว้ จึงไม่สรุปให้ (เขาเองเคยบอกว่าการเปิดเกมของตนอ่อน)',
-    lesson: 'แม้ตามหลัง ก็ยังมีโอกาสพลิกด้วยเทสุจิที่คู่แข่งมองไม่เห็น อย่ายอมแพ้ง่าย',
-    src: [['Wikipedia: Lee Sedol', 'https://en.wikipedia.org/wiki/Lee_Sedol'], ['Wikipedia: AlphaGo', 'https://en.wikipedia.org/wiki/AlphaGo']],
-    ideas: ['เมื่อตามหลัง ลองหาตาที่คู่แข่งอาจมองข้าม', 'ฝึกเทสุจิ เพราะหมากเดียวเปลี่ยนผลทั้งเกมได้', 'อ่านให้ชัดก่อนเสี่ยง'],
-    drill: 'ทำโจทย์เทสุจิวันละสิบข้อ โดยมองหาตาที่ดูไม่น่าเดินได้ก่อน',
-    n: 19, stones: [[8, 9, 1, ''], [10, 9, 1, ''], [9, 9, 2, '△']], cap: 'ภาพประกอบ: หมากแทรก คือการวางลงระหว่างหมากคู่แข่งสองเม็ดที่ห่างกันหนึ่งช่อง (ตัวอย่างเทคนิคทั่วไป ไม่ใช่ตำแหน่งจริงจากเกม)' },
-  { id: 'sj', name: 'เคอ เจี๋ย และ ชิน จินซอ', years: 'เกิด 1997 และ 2000', tag: 'รุ่นที่เรียนกับ AI',
-    body: 'เคอ เจี๋ย จากจีน แพ้ AlphaGo 0–3 ในปี 2017 แล้วศึกษาเกมของ AlphaGo และนำแนวคิดมาปรับการเปิดเกมของตน ชิน จินซอ จากเกาหลีใต้ เป็นมือหนึ่งของประเทศตามอันดับสมาคมเกาหลีติดต่อกันตั้งแต่ปี 2020',
-    facts: ['เคอ เจี๋ย: เกิด 2 สิงหาคม 1997 ที่จีน ได้ 9 ดั้งปี 2015 ชนะรายการระดับโลกใหญ่ 8 รายการ', 'เคอ เจี๋ย แพ้ AlphaGo 0–3 ปี 2017 (เกมแรกแพ้ครึ่งแต้ม) และเปลี่ยนมาเล่นเน้นพื้นที่หลังจากศึกษาเกมของ AI', 'ชิน จินซอ: เกิด 17 มีนาคม 2000 ที่เกาหลีใต้ เป็นมืออาชีพปี 2012 ได้ 9 ดั้งปี 2018', 'ชิน จินซอ: ชนะรายการนานาชาติใหญ่ 9 รายการ (เช่น LG Cup 2020, 2022, 2024) และอันดับ 1 ของเกาหลีต่อเนื่องตั้งแต่มกราคม 2020'],
-    style: 'เคอ เจี๋ยบอกว่าเรียนรู้ "ปรัชญาเชิงกลยุทธ์" ของ AI ไม่ใช่แค่ยุทธวิธี',
-    lesson: 'ใช้ AI เป็นครูทบทวนเกม และเรียนที่เหตุผลของตาเดิน ไม่ใช่จำรูปอย่างเดียว',
-    src: [['Wikipedia: Ke Jie', 'https://en.wikipedia.org/wiki/Ke_Jie'], ['Wikipedia: Shin Jinseo', 'https://en.wikipedia.org/wiki/Shin_Jinseo']],
-    ideas: ['ศึกษาเกมของ AI เพื่อเข้าใจเหตุผลของแต่ละตา', 'ไม่ยึดติดรูปในตำรา ทบทวนว่าตาไหนคุ้มจริงทั้งกระดาน', 'ทบทวนทุกเกมกับ AI เพื่อหาตาที่เสียแต้ม'],
-    drill: 'ทบทวนเกมตัวเองกับ AI แล้วจดเฉพาะสามตาที่เสียแต้มมากที่สุด',
-    n: 19, stones: [[15, 3, 1, ''], [16, 2, 2, '△']], cap: 'ภาพประกอบ: ขาวบุกจุด 3-3 ใต้หมากจุดดาวของดำ (ตัวอย่างเทคนิคทั่วไป ไม่ใช่เกมจริงของทั้งสองคน)' },
-  { id: 'ai', name: 'AlphaGo และ KataGo', years: '2015 ถึงปัจจุบัน', tag: 'เครื่องที่เปลี่ยนตำรา',
-    body: 'AlphaGo ของ DeepMind เป็นโปรแกรมแรกที่ชนะมืออาชีพบนกระดานเต็มโดยไม่รับหมากต่อ ส่วน KataGo เป็นโปรแกรมโอเพนซอร์สที่ทุกคนนำมาใช้ทบทวนเกมได้',
-    facts: ['ตุลาคม 2015 AlphaGo ชนะฟาน ฮุย (โปร 2 ดั้ง แชมป์ยุโรป) 5–0', 'มีนาคม 2016 ชนะอี เซดล 9 ดั้ง 4–1 ที่โซล (กฎจีน โคมิ 7.5)', 'พฤษภาคม 2017 รุ่น Master ชนะเคอ เจี๋ย 3–0 และสมาคมหมากล้อมจีนมอบ 9 ดั้ง', 'KataGo เป็นเอนจินโอเพนซอร์ส พัฒนาโดยผู้ใช้ GitHub ชื่อ lightvector มีโหมดวิเคราะห์ที่ใช้ผ่านโปรแกรมอื่น'],
-    style: 'ไม่มีรูปแบบเดียวที่ระบุไว้ในแหล่งที่ตรวจ จึงไม่สรุปให้',
-    lesson: 'ใช้เอนจินทบทวนเกมของตัวเอง แล้วถามว่าทำไมตาที่แนะนำจึงต่างจากตาที่เราเดิน',
-    src: [['Wikipedia: AlphaGo', 'https://en.wikipedia.org/wiki/AlphaGo'], ['GitHub: lightvector/KataGo', 'https://github.com/lightvector/KataGo']],
-    ideas: ['ใช้โปรแกรมวิเคราะห์ทบทวนเกมของตัวเอง', 'เทียบตาที่เราเดินกับตาที่โปรแกรมแนะ แล้วหาเหตุผลที่ต่างกัน', 'ลองคำนวณจริงบนกระดาน อย่าเชื่อสุภาษิตอย่างเดียว'],
-    drill: 'เมื่อ AI แนะนำตาที่ไม่เข้าใจ ให้เดินตามลำดับที่มันคาดไว้อีกห้าตาแล้วดูผลลัพธ์',
-    n: 19, stones: [[15, 9, 2, ''], [14, 8, 1, '△']], cap: 'ภาพประกอบ: หมากกดไหล่บนเส้นที่ 5 (ตัวอย่างเทคนิคทั่วไป ไม่ใช่ตำแหน่งจริงจากเกมใด)' },
+  {
+    "id": "concept0",
+    "name": "เปิดเกมให้ทั่วกระดาน",
+    "years": "แนวคิดสำหรับฝึก",
+    "tag": "ฝึกด้วยตัวเอง",
+    "body": "ลองคิดก่อนเดิน แล้วดูผลของตาที่เลือกบนกระดาน",
+    "facts": [
+      "ภาพนี้จัดวางเพื่ออธิบาย"
+    ],
+    "style": "มองทั้งกระดานก่อนเดิน",
+    "src": [],
+    "ideas": [
+      "ดูลมหายใจของหมาก",
+      "หาจุดที่ช่วยกลุ่มอ่อน",
+      "เปรียบเทียบพื้นที่ของทั้งสองฝ่าย"
+    ],
+    "drill": "ก่อนเดิน ลองถามว่าตานี้ช่วยอะไร",
+    "n": 9,
+    "stones": [
+      [
+        2,
+        2,
+        1,
+        "1"
+      ],
+      [
+        6,
+        6,
+        2,
+        "2"
+      ]
+    ],
+    "cap": "ภาพประกอบแนวคิด"
+  },
+  {
+    "id": "concept1",
+    "name": "รักษากลุ่มหมากให้แข็งแรง",
+    "years": "แนวคิดสำหรับฝึก",
+    "tag": "ฝึกด้วยตัวเอง",
+    "body": "ลองคิดก่อนเดิน แล้วดูผลของตาที่เลือกบนกระดาน",
+    "facts": [
+      "ภาพนี้จัดวางเพื่ออธิบาย"
+    ],
+    "style": "มองทั้งกระดานก่อนเดิน",
+    "src": [],
+    "ideas": [
+      "ดูลมหายใจของหมาก",
+      "หาจุดที่ช่วยกลุ่มอ่อน",
+      "เปรียบเทียบพื้นที่ของทั้งสองฝ่าย"
+    ],
+    "drill": "ก่อนเดิน ลองถามว่าตานี้ช่วยอะไร",
+    "n": 9,
+    "stones": [
+      [
+        2,
+        2,
+        1,
+        "1"
+      ],
+      [
+        6,
+        6,
+        2,
+        "2"
+      ]
+    ],
+    "cap": "ภาพประกอบแนวคิด"
+  },
+  {
+    "id": "concept2",
+    "name": "นับพื้นที่ก่อนตัดสินใจ",
+    "years": "แนวคิดสำหรับฝึก",
+    "tag": "ฝึกด้วยตัวเอง",
+    "body": "ลองคิดก่อนเดิน แล้วดูผลของตาที่เลือกบนกระดาน",
+    "facts": [
+      "ภาพนี้จัดวางเพื่ออธิบาย"
+    ],
+    "style": "มองทั้งกระดานก่อนเดิน",
+    "src": [],
+    "ideas": [
+      "ดูลมหายใจของหมาก",
+      "หาจุดที่ช่วยกลุ่มอ่อน",
+      "เปรียบเทียบพื้นที่ของทั้งสองฝ่าย"
+    ],
+    "drill": "ก่อนเดิน ลองถามว่าตานี้ช่วยอะไร",
+    "n": 9,
+    "stones": [
+      [
+        2,
+        2,
+        1,
+        "1"
+      ],
+      [
+        6,
+        6,
+        2,
+        "2"
+      ]
+    ],
+    "cap": "ภาพประกอบแนวคิด"
+  }
 ];
 // คู่ประลอง: ระดับวัดจากการแข่งกับ KataGo Human-SL (calib/results.json) เป็นค่าประมาณ รอการยืนยัน
 const SENSEI = [
@@ -759,6 +810,7 @@ const SENSEI = [
     exp: 'ใช้ KataGo รุ่นใหญ่ที่รันบนเครื่องของสำนัก', style: 'ระดับเดียวกับเอไอที่มืออาชีพใช้ซ้อม', fit: 'ครูและผู้เล่นระดับดั้งที่อยากวัดฝีมือกับของจริง', goal: 'ดูว่าเสียแต้มช่วงไหนของเกมมากที่สุด' },
 ];
 const LADDER = [['30–21 คิว', 'เริ่มต้น', '#F4F3EE'], ['20–11 คิว', 'รู้หลัก', '#EE8A2F'], ['10–1 คิว', 'เล่นเป็น', '#3C8FD0'], ['1–7 ดั้ง', 'สมัครเล่นระดับสูง', '#1B1B1E'], ['มืออาชีพ 1–9 ดั้ง', 'อาชีพ', '#C5382C']];
+
 // ตัวเชื่อม KataGo ในเบราว์เซอร์ (เอนจินจากโครงการ web-katrain สัญญาอนุญาต MIT, โครงข่าย g170-b6c96)
 const Kata = {
   w: null, ready: null, seq: 0, pend: new Map(), backend: '', chain: Promise.resolve(),
@@ -856,6 +908,44 @@ const Srv = {
     const p = this.chain.then(run, run); this.chain = p.catch(() => { }); return p;
   },
 };
+
+﻿/* Shared, dependency-free record logic. SGF names/comments are deliberately not imported. */
+(function(root) {
+  function parse(text) {
+    const nodes = []; let node = {}, depth = 0, i = 0;
+    while (i < text.length) {
+      const c = text[i++];
+      if (c === '(') { if (++depth > 1) throw Error('Variations are not supported'); }
+      else if (c === ')') depth--;
+      else if (c === ';') { node = {}; nodes.push(node); }
+      else if (/[A-Z]/.test(c)) {
+        let key = c; while (/[A-Z]/.test(text[i] || ' ')) key += text[i++];
+        while (/\s/.test(text[i] || 'x')) i++;
+        while (text[i] === '[') {
+          i++; let value = '';
+          while (i < text.length && text[i] !== ']') { let v = text[i++]; if (v === '\\') { v = text[i++]; if (v === '\r' || v === '\n') continue; } value += v || ''; }
+          if (text[i++] !== ']') throw Error('Unclosed value');
+          (node[key] ||= []).push(value);
+          while (/\s/.test(text[i] || 'x')) i++;
+        }
+      }
+    }
+    if (depth || !nodes.length) throw Error('Invalid game');
+    const r = nodes[0], n = Number(r.SZ?.[0] || 19);
+    if (![7,9,13,19].includes(n)) throw Error('Invalid size');
+    const coord = v => { if (!v || v === 'tt' && n <= 19) return -1; if (!/^[a-s]{2}$/.test(v)) throw Error('Invalid coordinate'); const x=v.charCodeAt(0)-97,y=v.charCodeAt(1)-97; if(x>=n||y>=n) throw Error('Outside board'); return y*n+x; };
+    const setup = [];
+    for (const [key,c] of [['AB',1],['AW',2]]) for (const v of r[key] || []) { const ends=v.split(':'); if(ends.length===1) setup.push([coord(v),c]); else { const a=coord(ends[0]),b=coord(ends[1]); for(let y=Math.floor(a/n);y<=Math.floor(b/n);y++) for(let x=a%n;x<=b%n;x++) setup.push([y*n+x,c]); } }
+    const moves=[]; for(const nd of nodes) for(const [key,c] of [['B',1],['W',2]]) if(nd[key]) moves.push([c,coord(nd[key][0])]);
+    const re=r.RE?.[0] || '', winner=/^B\+/.test(re)?1:/^W\+/.test(re)?2:0;
+    return {n,komi:Number(r.KM?.[0] || 0),handicap:Number(r.HA?.[0] || setup.filter(x=>x[1]===1).length),setup,sequence:moves,winner,margin:/^[BW]\+\d/.test(re)?Number(re.slice(2)):null,resign:/\+R(esign)?$/i.test(re),adjudicated:!!r.C?.some(c=>/adjudicat/i.test(c))};
+  }
+  function sync(a,g) { for(let k=a.cursor;k<g.moves.length;k++) a.events.push({type:'move',c:k%2?2:1,i:g.moves[k],no:k-a.base+1}); a.cursor=g.moves.length; }
+  function begin(g,base=0,saved) { return saved && Array.isArray(saved.events) ? {...saved,cursor:g.moves.length} : {base,cursor:base,events:[],undos:[],started:new Date().toISOString(),id:Date.now().toString(36)+Math.random().toString(36).slice(2)}; }
+  function undo(a,g,before,side) { const removed=before.slice(g.moves.length); if(!removed.length)return; const u={at:before.length-a.base,count:removed.length,side,removed:removed.map((i,k)=>[(g.moves.length+k)%2?2:1,i]),to:g.moves.length-a.base,event:a.events.length}; a.undos.push(u); a.events.push({type:'undo',...u}); a.cursor=g.moves.length; }
+  const api={parse,sync,begin,undo}; if(typeof module==='object') module.exports=api; else root.RecordLogic=api;
+})(typeof globalThis==='object'?globalThis:this);
+
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
@@ -1074,7 +1164,7 @@ function renderDetail() {
   $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(approx(s))}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
     <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
-    ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ โคมิ 0.5</p>' : ''}</div>
+    ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ แต้มชดเชยให้ขาว 0.5</p>' : ''}</div>
     <div><p class="lab">โหมดการเล่น</p><div class="seg" id="md-seg" role="group" aria-label="โหมดการเล่น"><button data-md="teach" aria-pressed="${selMode === 'teach'}">โหมดสอน</button><button data-md="real" aria-pressed="${selMode === 'real'}">โหมดประลองจริง</button></div><p class="small">${selMode === 'teach' ? 'มีคำใบ้สองขั้น ถอยตาได้ ติวเตอร์คอยบอก และถ้าพลาดใหญ่จะเสนอให้ลองตานั้นใหม่ ชัยชนะนับแยกต่างหาก' : 'ไม่มีคำใบ้ ไม่มีถอยตา ไม่มีติวเตอร์ เหมือนแข่งจริง ชัยชนะนับเป็น \u2018ชนะแล้ว\u2019 ของคู่ประลอง'}</p></div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
   try { const hb = document.createElement('section'); hb.id = 'hall-box'; hb.className = 'hall'; hb.hidden = true; $('#detail').appendChild(hb); Rep.paintHall(s.id, s.name); } catch (e) { }
@@ -1104,16 +1194,16 @@ function rulerSvg() {
   top.forEach((s, i) => { const x = px(PRO), y = AY - 20 - 4 * 22; g += `<line x1="${x}" y1="${y + 4}" x2="${x}" y2="${AY}" stroke="${mu}" stroke-dasharray="2 2"/><circle cx="${x}" cy="${AY}" r="6" fill="${s.fur}" stroke="${ink}" stroke-width="1.5"/><text x="${x}" y="${y}" text-anchor="end" font-size="12" fill="${ink}">${esc(s.name)} (เหนือโปร)</text>`; });
   const me = youPos();
   if (me != null) { const x = px(me.p); g += `<path d="M${x} ${AY + 8}l-7 12h14z" fill="var(--accent)"/><text x="${x}" y="${AY + 46}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--accent)">คุณ</text>`; }
-  MASTERS.forEach((m, i) => {
+  [].forEach((m, i) => {
     const x = px(PRO), y = AY + 58 + i * 20;
     g += `<path d="M${x} ${y - 7}l6 6l-6 6l-6 -6z" fill="var(--bad)" stroke="${ink}" stroke-width="1"/><text x="${x - 12}" y="${y + 4}" text-anchor="end" font-size="12" fill="${ink}">${esc(m.name)}</text>`;
   });
-  return `<svg viewBox="0 0 ${W} ${AY + 58 + MASTERS.length * 20 + 6}" width="${W}" role="img" aria-labelledby="rl-t rl-d" focusable="false"><title id="rl-t">ไม้บรรทัดระดับ</title><desc id="rl-d">แกนจาก 30 คิวถึงสมัครเล่น 7 ดั้ง แล้วต่อด้วยโซนมืออาชีพ 9 ดั้ง พร้อมตำแหน่งคู่ประลองและเซียน รายละเอียดอยู่ในรายการด้านล่าง</desc>${g}</svg>`;
+  return `<svg viewBox="0 0 ${W} ${AY + 58 + MASTERS.length * 20 + 6}" width="${W}" role="img" aria-labelledby="rl-t rl-d" focusable="false"><title id="rl-t">ไม้บรรทัดระดับ</title><desc id="rl-d">แกนจาก 30 คิวถึงสมัครเล่น 7 ดั้ง แล้วต่อด้วยโซนมืออาชีพ 9 ดั้ง พร้อมตำแหน่งคู่ประลอง รายละเอียดอยู่ในรายการด้านล่าง</desc>${g}</svg>`;
 }
 // ระดับโดยประมาณของผู้เล่น: ใช้เฉพาะเมื่อโปรไฟล์มีระดับจริง (ตอนนี้แบบวัดความรู้ไม่เก็บระดับ จึงไม่แสดงเครื่องหมาย)
 function youPos() { const r = typeof profile !== 'undefined' && profile && profile.skill; return r && typeof r.rank === 'string' && rankPos(r.rank) != null ? { p: rankPos(r.rank) } : null; }
 function rulerBlock() {
-  const li = SENSEI.map(s => `<li>${esc(s.name)}: ${esc(s.rank)}</li>`).join('') + MASTERS.map(m => `<li>${esc(m.name)}: ${m.id === 'ai' ? 'โปรแกรม (AlphaGo ได้ 9 ดั้งกิตติมศักดิ์จากสมาคมหมากล้อมจีน)' : 'มืออาชีพ 9 ดั้ง'}</li>`).join('');
+  const li = SENSEI.map(s => `<li>${esc(s.name)}: ${esc(s.rank)}</li>`).join('') + [].map(m => `<li>${esc(m.name)}: ${m.id === 'ai' ? 'โปรแกรม (AlphaGo ได้ 9 ดั้งกิตติมศักดิ์จากสมาคมหมากล้อมจีน)' : 'มืออาชีพ 9 ดั้ง'}</li>`).join('');
   return `<h3>ไม้บรรทัดระดับ</h3><div class="ruler" tabindex="0" role="group" aria-label="ไม้บรรทัดระดับ เลื่อนซ้ายขวาได้">${rulerSvg()}</div>
     <details class="rl-alt"><summary>อ่านเป็นรายการ</summary><ul>${li}</ul></details>
     <p class="small rl-note">การแปลงคะแนนเป็นระดับเป็นค่าประมาณ ระบบคะแนนของสหพันธ์หมากล้อมยุโรป (EGF) กำหนดให้ห่างกันระดับละ 100 คะแนน และ 1 ดั้งอยู่ราว 2100 ระบบอื่นไม่เท่ากันทุกแห่ง ตำแหน่งของคู่ประลองมาจากป้ายระดับในแอป ซึ่งเป็นค่าประมาณ ยังไม่ได้ยืนยันกับผู้เล่นจริง ส่วนโปรทุกคนอยู่ในโซนเดียวกัน ไม่ได้เรียงตามฝีมือ <a href="https://www.europeangodatabase.eu/EGD/EGF_rating_system.php" target="_blank" rel="noopener">แหล่งที่มา: europeangodatabase.eu/EGD/EGF_rating_system.php</a></p>`;
@@ -1303,6 +1393,7 @@ function srvDrop() {
 const botToMove = () => !!S && G.turn !== human;
 
 async function startGame(s, n, col, res, opt = {}) {
+  if(!res && !opt.prac && G && recordAudit && !prac && !over?.final && mno()>0) recordSave(true);
   const my = ++token;
   if (deep) deep.run++;
   prac = opt.prac || null;
@@ -1317,12 +1408,13 @@ async function startGame(s, n, col, res, opt = {}) {
   if (res) replayInto(res);
   else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
   else { if (HC) setupHandicap(G, HC); clearGame(); }
+  recordAudit = prac ? null : RecordLogic.begin(G,hcN(),res?.audit); recordSync();
   $('#pbanner').hidden = !prac;
   GB._cur = (n >> 1) * n + (n >> 1); GB._kb = false;
   $('#lobby').hidden = true; $('#game').hidden = false; $('#review').hidden = true; $('#gnote').hidden = true; window.scrollTo(0, 0);
   $('#ghead').innerHTML = (S ? `${avatar(S, 48)}<div class="who"><b>${esc(S.name)}</b><span class="small">${esc(S.rank)} vs ${esc(pn())} (ถือ${cname(human)})${HC ? ' · ต่อ ' + HC + ' เม็ด' : ''}</span>${prac ? '' : modeTag(gmode)}</div>`
     : `<div class="who"><b>เล่นกับเพื่อน</b><span class="small">ผลัดกันเดินบนเครื่องเดียวกัน</span></div>`)
-    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
+    + `<button class="btn" id="g-back">เลือกคู่อื่น</button><button class="btn" id="g-restart">เริ่มเกมใหม่</button><div class="ask" id="leave-ask" hidden><p>ออกจากเกมนี้ใช่ไหม</p><div class="btns"><button class="btn primary" id="ask-later">เล่นต่อภายหลัง</button><button class="btn" id="ask-resign">ยอมแพ้</button><button class="btn" id="ask-cancel">ยกเลิก</button></div></div><div class="small" id="gline" style="flex-basis:100%"></div>`;
   tutor(prac ? 'ลองเดินใหม่จากตำแหน่งนี้ แล้วติวเตอร์จะบอกว่าดีกว่าตาเดิมในเกมจริงหรือไม่' : res ? 'ต่อเกมที่ค้างไว้ได้เลย' : usesAI(S) ? 'เซนเซจะบอกว่าแต่ละตาเดินได้ดีแค่ไหน กดขอคำใบ้ได้เมื่อไม่แน่ใจ'
     : n <= 9 ? 'เริ่มได้เลย ลองเปิดใกล้จุดกลางหรือจุดดาว แล้วดูลมหายใจของหมากทุกตา' : 'เริ่มได้เลย ช่วงเปิดเกมให้จับมุมก่อน แล้วขยายไปข้าง เส้นที่ 3 และ 4 คุ้มที่สุด');
   gfb('');
@@ -1353,7 +1445,7 @@ function renderGame() {
   } else drawBoard(GB, { n: G.n, grid: G.grid, last: G.last, fresh, hints: hintIdx >= 0 ? [hintIdx] : [], area: hintStage === 1 && hintPt >= 0 ? hintArea(hintPt) : null, terr: sc && sc.terr, dead: sc ? dead : null });
   const myTurn = !over && !busy && !review && (!S || G.turn === human), canTap = myTurn || (!!over && over.type === 'score' && !over.pending && !over.final && !review);
   GB.classList.toggle('static', !canTap);
-  $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · โคมิ ${G.komi}`;
+  $('#gline').innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}" style="display:inline-block;vertical-align:middle;margin-right:6px"></span>${cname(G.turn)}เดิน · กินได้ ดำ ${G.caps[1]} ขาว ${G.caps[2]} · แต้มชดเชยให้ขาว ${G.komi}`;
   const t = $('#turn');
   if (review) t.textContent = review.label || `กำลังดูตำแหน่งก่อนตาที่ ${review.no}`;
   else if (over && over.res) t.textContent = 'จบเกม ' + over.res.text;
@@ -1361,8 +1453,8 @@ function renderGame() {
   else if (busy && S) t.textContent = `${S.name}กำลังคิด`;
   else t.innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}"></span>${esc(gameTitle())}`;
   $('#tally').innerHTML = sc
-    ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมโคมิ ${G.komi})</td><td>${sc.w}</td></tr>`
-    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>โคมิให้ขาว</td><td>${G.komi}</td></tr>`;
+    ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมแต้มชดเชยให้ขาว ${G.komi})</td><td>${sc.w}</td></tr>`
+    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>แต้มชดเชยให้ขาว</td><td>${G.komi}</td></tr>`;
   const fin = !!over && !!over.final;
   $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
   const ub = $('#b-undo'); ub.hidden = gmode === 'real'; ub.disabled = G.moves.length <= undoBase() || busy || fin;
@@ -1441,6 +1533,7 @@ async function botTurn() {
   renderGame(); startPre();
 }
 function afterMove() {
+  recordSync();
   if (G.passes >= 2) return endScoring();
   renderGame();
   if (botToMove()) botTurn();
@@ -1488,7 +1581,7 @@ function finish() {
     const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
-  o.res = { won, margin, text }; if (!prac) clearGame();
+  o.res = { won, margin, text }; if(!prac) recordSave(); if (!prac) clearGame();
   $('#tutor-act').hidden = true;
   if (S && !prac) {
     const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 }, tm = gmode === 'teach';
@@ -1515,9 +1608,9 @@ function logGame(o, won, margin) {
   const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
   const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
     margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC, mode: gmode,
-    avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
+    recordId: recordAudit?.id, undoCount: recordAudit?.undos.length || 0, undos: recordAudit?.undos || [], restarted:false, avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
   matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
-  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
+  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, undoCount:r.undoCount, undos:r.undos, restarted:r.restarted, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
   return sgf;
 }
 function clearManual() { document.querySelectorAll('textarea.manual, .manual-hint').forEach(e => e.remove()); }
@@ -1574,7 +1667,7 @@ function renderLog() {
   const rows = logRows().slice(0, 20);
   box.innerHTML = `<div class="col"><div class="col" style="gap:2px">${logSummary().map(b => `<p>${esc(b.name)}: ชนะ ${b.w} แพ้ ${b.l}${b.tw || b.tl ? ` <small>(โหมดสอน ชนะ ${b.tw} แพ้ ${b.tl})</small>` : ''}</p>`).join('')}</div>
     <div class="logscroll"><table class="logt"><thead><tr><th>วันที่</th><th>คู่ประลอง</th><th>กระดาน</th><th>ผล</th><th>แต้มเสียเฉลี่ยต่อตา</th><th></th></tr></thead><tbody>${rows.map((r, k) =>
-      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))} ${logTag(r)}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอก SGF</button></td></tr>`).join('')}</tbody></table></div>
+      `<tr><td>${esc(r.t.slice(0, 10))}</td><td>${esc(r.sname)}</td><td>${r.n} x ${r.n}${r.handicap ? ' · ต่อ ' + r.handicap + ' เม็ด' : ''}</td><td>${esc(logRes(r))} ${logTag(r)}</td><td>${logAvg(r) == null ? '-' : logAvg(r).toFixed(1)}${r.deep ? ' <small class="rvd">ทบทวนแล้ว</small>' : ''}</td><td><button class="btn" data-sgf="${k}">คัดลอกบันทึกตาเดิน</button></td></tr>`).join('')}</tbody></table></div>
     <div class="btns"><button class="btn" id="log-copy">คัดลอกสรุปผล</button><button class="btn" id="log-clear">ล้างสมุดบันทึก</button></div></div>`;
 }
 $('#log-body').onclick = e => {
@@ -1631,7 +1724,7 @@ function renderReview() {
   if (sug) { close += ` ลองให้ต่อ ${sug} เม็ดดู เกมจะสูสีขึ้น`; selHc = sug; }
   const sum = summaryHtml({ lost, res, phaseTxt, sa, ef, lostStones, links, momentsHtml, idx });
   R.innerHTML = `<h2>บทเรียนจากเกมนี้</h2><p><b>${esc(res.text)}</b> ${modeTag(gmode)}</p>${sum}<div class="tips">${blocks.join('')}<p>${esc(close)}</p></div>${deepBoxHtml()}
-    <div class="btns"><button class="btn primary" data-act="again" data-md="${gmode}" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-md="${gmode}" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button>${[...links].map(lessonBtn).join('')}</div>`;
+    <div class="btns"><button class="btn primary" data-act="again" data-md="${gmode}" data-hc="${again}">${again ? `ประลองอีกครั้ง ต่อ ${again} เม็ด` : 'ประลองอีกครั้ง'}</button>${sug ? '<button class="btn" data-act="again" data-md="${gmode}" data-hc="0">ประลองอีกครั้ง ไม่ต่อ</button>' : ''}<button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอกบันทึกตาเดิน</button>${[...links].map(lessonBtn).join('')}</div>`;
   deepBoxRefresh();
 }
 // ---------- สรุปหลังจบเกม ----------
@@ -1705,7 +1798,8 @@ $('#review').onclick = e => {
 function toLobby() { clearManual(); token++; if (deep) deep.run++; deep = null; deepShown = false; prac = null; pracSaved = null; $('#pbanner').hidden = true; busy = false; review = null; $('#game').hidden = true; $('#lobby').hidden = false; renderLobby(); window.scrollTo(0, 0); }
 $('#ghead').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
-  if (b.id === 'g-back') { if ((over && over.final) || prac || G.moves.length <= hcN()) return toLobby(); showAsk(false); }
+  if(b.id === 'g-restart') { if(confirm('เริ่มใหม่และเก็บเกมนี้ไว้ในประวัติใช่ไหม')) recordRestart(); }
+  else if (b.id === 'g-back') { if ((over && over.final) || prac || G.moves.length <= hcN()) return toLobby(); showAsk(false); }
   else if (b.id === 'ask-later') { saveGame(); toLobby(); }
   else if (b.id === 'ask-resign') { $('#leave-ask').hidden = true; if (!over || !over.final) { token++; busy = false; over = { type: 'resign', loser: S ? human : G.turn }; finish(); } }
   else if (b.id === 'ask-cancel') closeAsk();
@@ -1724,6 +1818,7 @@ $('#b-undo').onclick = () => {
   if (gmode === 'real') return;
   token++; review = null; over = null; dead = new Set(); busy = false; $('#review').hidden = true; hintStage = 0; hintPt = -1; $('#tutor-act').hidden = true;
   G.undo(); if (S && G.turn !== human && G.moves.length > undoBase()) G.undo();
+  if(recordAudit && !prac) RecordLogic.undo(recordAudit,G,undoBefore,undoSide); saveGame();
   if (prac) { prac.moved = false; prac.lock = false; }
   retry = false; $('#gnote').hidden = true; rec = rec.filter(t => t.no <= mno()); hintIdx = -1; fresh = -1; pre = null; gfb('ถอยแล้ว');
   tutor('ถอยกลับมาแล้ว ลองเดินใหม่ได้เลย'); renderGame(); startPre(); if (botToMove()) botTurn();
@@ -1770,20 +1865,23 @@ function openMaster(id) {
 $('#mlist').onclick = e => { const b = e.target.closest('button'); if (b) openMaster(b.dataset.id); };
 
 // ---------- แท็บ ----------
-const TABS = ['learn', 'puzzles', 'play', 'masters'];
+const TABS = ['learn', 'puzzles', 'play', 'masters', 'records'];
 let lastTab = 'learn';
 function showTab(t) {
+  if(typeof Records !== 'undefined') Records.stop();
   if (![...TABS, 'me'].includes(t)) t = 'learn';
   [...TABS, 'me'].forEach(k => { $('#v-' + k).hidden = k !== t; });
   if (t !== 'me') lastTab = t; else renderProfile();
   document.querySelectorAll('#tabs button').forEach(b => b.dataset.tab === t ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
   if (t === 'learn' && $('#lesson-view').hidden) showPath();
   if (t === 'play' && !$('#lobby').hidden) renderLobby();
+  if(t === 'records' && typeof Records !== 'undefined') Records.mount();
   try { history.replaceState(null, '', '#' + t); } catch (e) { }
 }
 $('#tabs').onclick = e => { const b = e.target.closest('button'); if (b) { if (b.dataset.tab === 'learn') { $('#lesson-view').hidden = true; } showTab(b.dataset.tab); window.scrollTo(0, 0); } };
 window.addEventListener('hashchange', () => { const h = location.hash; if (h.indexOf('#t=') === 0) handleTeacher(h); else showTab(h.slice(1)); });
 try { if (location.protocol === 'https:' && window.top === window.self && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { }
+
 // ---------- ทบทวนทั้งเกมด้วยรุ่นใหญ่ และโหมดฝึกเดินใหม่ ----------
 let deep = null, deepShown = false;
 const nmPt = x => x == null || x < 0 ? 'ผ่าน' : G.name(x);
@@ -1879,7 +1977,7 @@ function renderDeep() {
     <h3>ตาที่เสียแต้มมากที่สุด</h3>${d.top.length ? `<div class="rv">${d.top.map(t => `<div class="mk"><button class="btn" data-dg="${t.k}">ตาที่ ${t.no} · ${nmPt(d.mv[t.k])} · เสีย ${t.loss.toFixed(1)} แต้ม${d.best[t.k] != null && d.best[t.k] !== d.mv[t.k] ? ' · ควรเดิน ' + nmPt(d.best[t.k]) : ''}</button><button class="btn" data-pk="${t.k}" data-src="d">ลองเดินใหม่จากจุดนี้</button></div>`).join('')}</div><p class="small">แตะตาที่ต้องการเพื่อดูตำแหน่งบนกระดาน วงแดงคือตาที่คุณเดิน วงน้ำเงินคือจุดที่รุ่นใหญ่แนะ</p>` : '<p>ไม่มีตาไหนเสียเกิน 1 แต้ม ตลอดเกมคุณเดินได้นิ่งมาก</p>'}
     <h3>เสียแต้มเฉลี่ยแต่ละช่วง</h3><ul class="plist">${d.ph.map((p, i) => `<li>${PHASE_NAMES[i]}: ${p.c ? `เสียเฉลี่ย ${p.avg.toFixed(1)} แต้มต่อตา (${p.c} ตา)` : 'ไม่มีตาในช่วงนี้'}${i === d.weak ? ' <b>อ่อนสุด</b>' : ''}</li>`).join('')}</ul>
     <p>${d.weak >= 0 ? `ช่วงที่ควรฝึกมากที่สุดคือ${PHASE_NAMES[d.weak]}` : 'ไม่มีช่วงไหนเสียแต้มเด่นชัด'}</p></div>
-    <div class="btns"><button class="btn" data-act="deep-close">กลับไปดูบทเรียนแบบย่อ</button><button class="btn primary" data-act="again" data-hc="${again}">ประลองอีกครั้ง${again ? ` ต่อ ${again} เม็ด` : ''}</button><button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอก SGF</button></div>`;
+    <div class="btns"><button class="btn" data-act="deep-close">กลับไปดูบทเรียนแบบย่อ</button><button class="btn primary" data-act="again" data-hc="${again}">ประลองอีกครั้ง${again ? ` ต่อ ${again} เม็ด` : ''}</button><button class="btn" data-act="lobby">เลือกคู่ประลองอื่น</button><button class="btn" data-act="sgf">คัดลอกบันทึกตาเดิน</button></div>`;
   const box = $('#dv-chart');
   box.onclick = e => {
     const svg = box.firstElementChild; if (!svg) return;
@@ -1984,6 +2082,154 @@ async function pracJudge(i, gb, ga, my) {
     else say('ใกล้เคียงกับตาเดิม ' + tail);
   } catch (e) { say(fallback()); }
 }
+
+// ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
+// ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
+const REPORT_URL = '';
+const Rep = (() => {
+  const K = { on: 'go-rep-on', q: 'go-rep-q', id: 'go-rep-id', sent: 'go-rep-sent', ask: 'go-rep-ask' };
+  const g = (k, d) => store.get(k, d), s = (k, v) => store.set(k, v);
+  const uid = () => { let i = g(K.id, ''); if (!i) { i = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)); s(K.id, i); } return i; };
+  const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
+  let busy = false;
+  const enabled = () => !!REPORT_URL;
+  const on = () => enabled() && g(K.on, false) === true;
+  function add(ev) {
+    if (!on()) return;
+    const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
+    q.push(ev); s(K.q, q.slice(-200)); flush();
+  }
+  async function flush() {
+    if (busy || !on()) return; const q = g(K.q, []); if (!q.length) { ui(); return; }
+    if (!navigator.onLine) return;
+    busy = true;
+    try {
+      const batch = q.slice(0, 20);
+      const body = JSON.stringify({ v: 1, id: uid(), name: clip(typeof pn === 'function' ? pn() : '', 16), events: batch });
+      if (body.length > 60000) { s(K.q, q.slice(batch.length)); busy = false; return; }
+      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+      await fetch(REPORT_URL, { method: 'POST', mode: 'no-cors', keepalive: false, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, signal: ctl.signal });
+      clearTimeout(to);
+      const now = g(K.q, []); const ids = new Set(batch.map(e => e.eid)); s(K.q, now.filter(e => !ids.has(e.eid)));
+      s(K.sent, (g(K.sent, 0) || 0) + batch.length); busy = false; ui();
+      if (g(K.q, []).length) setTimeout(flush, 500);
+    } catch (e) { busy = false; ui(); }
+  }
+  function set(v) { s(K.on, !!v); if (!v) { s(K.q, []); } else flush(); ui(); }
+  function ui() {
+    const box = document.getElementById('rep-box'); if (!box) return;
+    box.hidden = !enabled(); if (!enabled()) return;
+    const c = box.querySelector('input'); c.checked = on();
+    box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ไม่มีการส่งข้อมูลใดๆ';
+  }
+  function mount() {
+    const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
+    const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
+    box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>แบ่งปันผลการเล่นให้ผู้ดูแลสำนัก</span></label>
+      <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (บันทึกตาเดิน) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
+    bk.parentNode.insertBefore(box, bk);
+    box.querySelector('input').onchange = e => set(e.target.checked);
+    ui();
+  }
+  function nudge() {
+    if (!enabled() || on() || g(K.ask, 0)) return; s(K.ask, 1);
+    const d = document.createElement('div'); d.className = 'rep-nudge'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'ขอความร่วมมือ');
+    d.innerHTML = `<p>ช่วยปรับระดับ AI ให้ตรงขึ้นไหม? แบ่งปันผลแพ้ชนะแบบใช้ชื่อที่ตั้งไว้ ปิดได้ทุกเมื่อในหน้าโปรไฟล์</p><div class="btns"><button class="btn primary" type="button" data-a="y">ได้เลย</button><button class="btn" type="button" data-a="n">ไม่เอา</button></div>`;
+    d.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.a === 'y') set(true); d.remove(); };
+    d.addEventListener('keydown', e => { if (e.key === 'Escape') d.remove(); });
+    document.body.appendChild(d);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) flush(); });
+  window.addEventListener('online', flush);
+  setTimeout(() => { mount(); flush(); }, 1500);
+  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
+  // ---------- สมุดบันทึกประลองของคู่ประลองแต่ละตัว (อ่านจากส่วนกลาง เฉพาะคนที่ยินยอมแบ่งปัน) ----------
+  let hallCache = null, hallAt = 0;
+  async function hall() {
+    if (hallCache && Date.now() - hallAt < 60000) return hallCache;
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; hallAt = Date.now(); return hallCache; }
+    finally { clearTimeout(to); }
+  }
+  const dstr = t => { try { return new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
+  const esc2 = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  async function paintHall(sid, sname) {
+    const box = document.getElementById('hall-box'); if (!box) return;
+    if (!enabled()) { box.hidden = true; return; }
+    box.hidden = false; box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">กำลังโหลด…</p>';
+    let h; try { h = await hall(); } catch (e) { if (document.getElementById('hall-box') === box) box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">โหลดไม่ได้ในตอนนี้ ลองใหม่ภายหลัง</p>'; return; }
+    if (document.getElementById('hall-box') !== box) return;
+    const d = h[sid];
+    if (!d || !d.recent || !d.recent.length) { box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">ยังไม่มีผู้ท้าชิงที่แบ่งปันผล เป็นคนแรกได้เลย</p>'; return; }
+    const tot = d.w + d.l, rate = tot ? Math.round(d.w / tot * 100) : null;
+    const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${esc2(r.name || 'นักหมาก')}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
+    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><p class="small">ผู้ท้าชิง ${esc2(d.players)} คน${rate != null ? ` · ผู้เล่นชนะ ${esc2(d.w)} แพ้ ${esc2(d.l)} (ชนะ ${rate}% ในโหมดประลองจริง)` : ''}<br>แสดงเฉพาะผู้ที่กดยินยอมแบ่งปันผล</p><ul class="hall-list">${rows}</ul>`;
+  }
+  return { add, flush, nudge, mount, on, enabled, paintHall };
+})();
+
+﻿let recordAudit=null;
+function recordSync() { if(G && recordAudit && !prac) RecordLogic.sync(recordAudit,G); }
+function recordSave(restarted=false) {
+  if(!recordAudit || prac)return; recordSync();
+  const sc=G.score(dead),winner=restarted?0:over.type==='resign'?3-over.loser:sc.b===sc.w?0:sc.b>sc.w?1:2;
+  const r={id:recordAudit.id,t:new Date().toISOString(),started:recordAudit.started,type:'human',sid:S?S.id:'friend',sname:S?S.name:'เพื่อน',black:S&&human===2?S.name:pn(),white:S&&human===1?S.name:'เพื่อน (ขาว)',n:G.n,komi:G.komi,handicap:HC,setup:HC?hcPoints(G.n,HC).map(i=>[i,1]):[],sequence:G.moves.slice(hcN()).map((i,k)=>[HC?(k%2?1:2):(k%2?2:1),i]),events:recordAudit.events,undos:recordAudit.undos,undoCount:recordAudit.undos.length,restarted,moveReached:mno(),winner,margin:restarted||over.type==='resign'?null:Math.abs(sc.b-sc.w),resign:!restarted&&over.type==='resign',leader:sc.b===sc.w?0:sc.b>sc.w?1:2,leadMargin:Math.abs(sc.b-sc.w),leadMethod:'area',mode:gmode};
+  if(restarted && recordAudit.evaluation) Object.assign(r,recordAudit.evaluation);
+  const all=store.get('go-records',[]); const rows=Array.isArray(all)?all:[]; const at=rows.findIndex(x=>x.id===r.id); if(at<0)rows.push(r);else rows[at]=r; store.set('go-records',rows);
+  try { Rep.add({k:'record',...r}); } catch(e) {}
+  return r;
+}
+async function recordRestart() {
+  if(!G||prac||busy||over?.final)return;
+  const my=token; busy=true;renderGame();
+  if(isKata()) { try { const a=await engine().analyze(G,preVis()); if(my!==token)return; if(Number.isFinite(a.lead))recordAudit.evaluation={leader:a.lead===0?0:a.lead>0?1:2,leadMargin:Math.abs(a.lead),leadMethod:'engine'}; } catch(e) {} }
+  if(my!==token)return; recordSave(true); await startGame(S,G.n,human,null,{hc:HC,mode:gmode});
+}
+// Preserve a paused game when a new game replaces it after a page reload.
+function recordArchivePending() {
+  const d=readGame(); if(!d)return;
+  const old={G,S,HC,human,recordAudit,prac,dead,gmode};
+  try {
+    G=new Go(d.n,d.komi);S=d.s;HC=d.hc;human=d.col;prac=null;dead=new Set();
+    for(const i of d.moves)i<0?G.pass():G.play(i);
+    recordAudit=RecordLogic.begin(G,hcN(),d.audit);recordSync();recordSave(true);
+  } finally { G=old.G;S=old.S;HC=old.HC;human=old.human;recordAudit=old.recordAudit;prac=old.prac;dead=old.dead;gmode=old.gmode; }
+}
+
+﻿const Records=(()=>{
+  let bots=null,loadError=false,timer=null,active=null,pos=0,frames=[];
+  const root=()=>$('#v-records');
+  function stop(){clearInterval(timer);timer=null;}
+  function legacy(r,k){try { const p=RecordLogic.parse(r.sgf);return {...p,id:'old-'+k,t:r.t,type:'human',sid:r.sid,sname:bySid(r.sid)?.name||'คู่ประลอง',black:r.color===1?pn():bySid(r.sid)?.name||'คู่ประลอง',white:r.color===2?pn():bySid(r.sid)?.name||'คู่ประลอง',undoCount:null,undos:[],legacy:true}; }catch(e){return {id:'old-'+k,t:r.t,type:'human',sid:r.sid,sname:bySid(r.sid)?.name||'คู่ประลอง',black:pn(),white:bySid(r.sid)?.name||'คู่ประลอง',n:r.n,handicap:r.handicap||0,sequence:[],moves:r.moves,legacy:true,undoCount:null,winner:r.result==='W'?r.color:3-r.color,margin:r.margin,resign:r.resign};}}
+  function all(){const saved=store.get('go-records',[]),own=Array.isArray(saved)?saved:[];const old=Array.isArray(matchLog)?matchLog.filter(r=>!r.recordId).map(legacy):[];return [...own,...old,...(bots?.records||[])].sort((a,b)=>String(b.t).localeCompare(String(a.t)));}
+  const side=c=>c===1?'ดำ':c===2?'ขาว':'เสมอ';
+  function result(r){if(r.valid===false)return 'ผลทดสอบยังไม่แน่นอน';if(r.restarted)return `เริ่มใหม่ก่อนจบ · ถึงตาที่ ${r.moveReached} · ${r.leader?side(r.leader)+'นำประมาณ '+r.leadMargin+' แต้ม':'แต้มเท่ากัน'} (${r.leadMethod==='engine'?'โปรแกรมประเมิน':'นับหมากและพื้นที่อย่างง่าย'})`;if(!r.winner)return 'เสมอหรือยังไม่มีผล';return `${r.winner===1?r.black:r.white}ชนะ${r.resign?' เพราะอีกฝ่ายยอมแพ้':r.margin!=null?' '+r.margin+' แต้ม':' ตามการตัดสินของโปรแกรม'}${r.adjudicated?' · โปรแกรมประเมินผลก่อนจบ':''}`;}
+  function badge(r){return r.restarted?'เริ่มใหม่ (ยังเล่นไม่จบ)':r.undoCount==null?'เกมเก่า ไม่มีข้อมูลการถอย':r.undoCount?'ถอย '+r.undoCount+' ครั้ง':'ไม่ถอยเลย เล่นจนจบ';}
+  async function mount(){stop();root().innerHTML='<h1>ประวัติการเล่นและดูย้อนหลัง</h1><p>เกมของคุณเก็บไว้ในเครื่องนี้</p><div class="btns"><label>ประเภท <select id="record-type" class="field"><option value="">ทั้งหมด</option><option value="human">เกมของผู้เล่น</option><option value="bot">เกมทดสอบคอม</option></select></label><label>คู่ประลอง <select id="record-opp" class="field"><option value="">ทั้งหมด</option></select></label></div><button class="btn" id="record-samples">ซ่อนหรือแสดงเกมตัวอย่าง</button><div id="record-summary"></div><div id="record-list" class="col"></div><div id="record-view" hidden></div>';
+    if(!bots){try{const r=await fetch('records/bot-games.json');if(!r.ok)throw Error();bots=await r.json();loadError=false;}catch(e){loadError=true;}}
+    if(root().hidden)return;
+    const sel=$('#record-opp');for(const [sid,name] of new Map(all().map(r=>[r.sid,r.sname]))) {const o=document.createElement('option');o.value=sid;o.textContent=name;sel.appendChild(o);}
+    $('#record-samples').onclick=()=>{store.set('go-hide-record-samples',!store.get('go-hide-record-samples',false));list();};$('#record-type').onchange=list;sel.onchange=list;list();
+  }
+  function list(){stop();$('#record-view').hidden=true;const type=$('#record-type').value,opp=$('#record-opp').value,rows=all().filter(r=>(!r.sample||!store.get('go-hide-record-samples',false))&&(!type||r.type===type)&&(!opp||r.sid===opp));
+    $('#record-summary').innerHTML=type==='human'?'':(bots?.summary||[]).filter(s=>!opp||s.sid===opp).map(s=>`<p class="panel">${esc(s.sname)} · ต่อ ${s.handicap} เม็ด · เล่น ${s.games} เกม · ชนะ ${s.wins} เกม (${s.winPercent}%)<br><small>นับเฉพาะเกมทดสอบที่ใช้ได้ ไม่รวมตัวอย่าง · ชัยชนะของคู่ประลองฝ่ายดำ</small></p>`).join('');
+    $('#record-list').innerHTML=(loadError?'<p>โหลดเกมทดสอบไม่ได้ ลองเปิดหน้านี้ใหม่เมื่อเชื่อมต่อได้</p>':'')+(rows.length?rows.map((r,k)=>`<article class="panel col"><b>${esc(r.black)} พบ ${esc(r.white)}${r.sample?' · เกมตัวอย่าง':''}</b><span>${esc(result(r))}</span><small>${r.n} × ${r.n} · ต่อ ${r.handicap||0} เม็ด · ${r.sequence?.length||r.moves||0} ตา · ${esc(new Date(r.t).toLocaleString('th-TH'))}</small><span class="record-badge ${r.undoCount||r.restarted?'amber':'green'}">${badge(r)}</span><button class="btn" data-replay="${k}">ดูย้อนหลัง</button></article>`).join(''):'<p>ยังไม่มีเกมในรายการนี้</p>');
+    $('#record-list').onclick=e=>{const b=e.target.closest('[data-replay]');if(b)open(rows[+b.dataset.replay]);};
+  }
+  function open(r){stop();active=r;pos=0;frames=[];const g=new Go(r.n,r.komi||0);for(const [i,c]of r.setup||[])g.grid[i]=c;
+    const snap=(label,no)=>frames.push({grid:g.grid.slice(),last:g.last,no,label});snap('เริ่มเกม',0);
+    if(r.events?.length){for(const e of r.events){if(e.type==='move'){g.turn=e.c;e.i<0?g.pass():g.play(e.i);snap('',e.no);}else {for(let k=0;k<e.count;k++)g.undo();snap(`ถอยที่ตา ${e.at} โดยฝ่าย${side(e.side)} · เอากลับ ${e.count} ตา: ${e.removed.map(([c,i])=>side(c)+' '+(i<0?'ผ่าน':g.name(i))).join(', ')}`,e.to);}}}
+    else for(const [c,i]of r.sequence||[]){g.turn=c;i<0?g.pass():g.play(i);snap('',g.moves.length);}
+    $('#record-view').hidden=false;$('#record-view').innerHTML=`<h2>${esc(r.black)} พบ ${esc(r.white)}</h2><p>${esc(result(r))}</p><div class="stage"><div class="board static" id="record-board"></div><aside class="panel col"><p id="record-position" aria-live="polite"></p><label>เลื่อนไปยังตาที่ต้องการ<input id="record-slider" type="range" min="0" max="${frames.length-1}" value="0" style="width:100%"></label><div class="btns"><button class="btn" data-step="start">เริ่ม</button><button class="btn" data-step="prev">ก่อนหน้า</button><button class="btn" data-step="next">ถัดไป</button><button class="btn" data-step="end">สุดท้าย</button><button class="btn" id="record-auto">เล่นอัตโนมัติ</button></div><p id="record-count"></p><div id="record-undo" class="col"></div><button class="btn" id="record-close">กลับรายการ</button></aside></div>`;
+    $('#record-slider').oninput=e=>{stop();pos=+e.target.value;paint();};$('#record-view').onclick=e=>{const b=e.target.closest('[data-step]');if(!b)return;stop();pos=b.dataset.step==='start'?0:b.dataset.step==='end'?frames.length-1:pos+(b.dataset.step==='next'?1:-1);paint();};
+    $('#record-auto').onclick=()=>{if(timer){stop();paint();return;}if(pos===frames.length-1)pos=0;timer=setInterval(()=>{if(root().hidden||pos>=frames.length-1){stop();paint();return;}pos++;paint();},700);paint();};$('#record-close').onclick=list;
+    $('#record-undo').innerHTML='<h3>เหตุการณ์ถอย</h3>'+(r.legacy?'<p>เกมเก่าไม่ได้เก็บข้อมูลนี้</p>':frames.map((f,k)=>f.label.startsWith('ถอย')?`<button class="btn" data-event="${k}">${esc(f.label)}</button>`:'').join('')||'<p>ไม่มีการถอย</p>');$('#record-undo').onclick=e=>{const b=e.target.closest('[data-event]');if(b){stop();pos=+b.dataset.event;paint();}};paint();$('#record-view').scrollIntoView({block:'start'});
+  }
+  function paint(){pos=Math.max(0,Math.min(frames.length-1,pos));const f=frames[pos];drawBoard($('#record-board'),{n:active.n,grid:f.grid,last:f.last});$('#record-position').textContent=`ตาที่ ${f.no} · ขั้นย้อนหลัง ${pos} / ${frames.length-1}${f.label?' · '+f.label:''}`;$('#record-slider').value=pos;$('#record-count').textContent=`หมากบนกระดาน: ดำ ${f.grid.filter(c=>c===1).length} เม็ด · ขาว ${f.grid.filter(c=>c===2).length} เม็ด`;$('#record-auto').textContent=timer?'หยุด':'เล่นอัตโนมัติ';}
+  return {mount,stop};
+})();
+document.addEventListener('visibilitychange',()=>{if(document.hidden)Records.stop();});
+
 // ---------- โปรไฟล์ในเครื่องนี้ ----------
 const ANIMALS = [
   { kind: 'dog', fur: '#D9A066', label: 'หมา' }, { kind: 'panda', fur: '#F4F4F0', label: 'แพนด้า' }, { kind: 'monkey', fur: '#8A5A3A', label: 'ลิง' },
@@ -2109,7 +2355,8 @@ const GKEY = 'go-game';
 function saveGame() {
   if (!G || prac || (over && over.final)) return;
   if (G.moves.length <= hcN()) return clearGame();
-  store.set(GKEY, { v: 1, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
+  recordSync();
+  store.set(GKEY, { audit:recordAudit, v: 2, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
 }
 const clearGame = () => store.del(GKEY);
 function readGame() {
@@ -2121,7 +2368,7 @@ function readGame() {
   if (d.hc && !hc) return null;
   const g = new Go(d.n, d.komi);
   for (const m of d.moves) { if (!Number.isInteger(m) || m < -1 || m >= d.n * d.n) return null; if (m < 0) g.pass(); else if (!g.play(m).ok) return null; }
-  return { s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
+  return { audit:d.audit, s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
 }
 function replayInto(res) {
   const sv = new Map(res.rec.filter(t => t && typeof t === 'object').map(t => [t.no, t]));
@@ -2154,7 +2401,7 @@ document.addEventListener('click', e => {
     showTab('play'); startGame(d.s, d.n, d.col, d);
   } else if (b.dataset.rs === 'drop') {
     slot.querySelector('.btns').innerHTML = '<span class="small">ทิ้งเกมนี้แล้วจะเอากลับไม่ได้</span> <button class="btn" data-rs="yes">ยืนยันทิ้ง</button><button class="btn" data-rs="no">ยกเลิก</button>';
-  } else if (b.dataset.rs === 'yes') { clearGame(); paintResume(); }
+  } else if (b.dataset.rs === 'yes') { const d=readGame(); if(d) { startGame(d.s,d.n,d.col,d).then(()=>{recordSave(true);clearGame();toLobby();paintResume();}); return; } clearGame(); paintResume(); }
   else if (b.dataset.rs === 'no') paintResume();
 });
 $('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.scrollIntoView({ block: 'start' }); };
@@ -2162,7 +2409,7 @@ $('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.s
 // ---------- หน้าโปรไฟล์ ----------
 const b64 = s => btoa(unescape(encodeURIComponent(s)));
 const unb64 = s => decodeURIComponent(escape(atob(s)));
-const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog }));
+const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog, records:store.get('go-records',[]) }));
 function renderProfile() {
   const top = playerRank();
   $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
@@ -2209,11 +2456,12 @@ function parseCode(text) {
     if (!r || typeof r !== 'object' || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
     const hcv = Number.isInteger(r.handicap) && r.handicap >= 2 && r.handicap <= 9 ? r.handicap : 0;
     const dp = r.deep && typeof r.deep === 'object' && numN(r.deep.avg) && r.deep.avg != null && cnt(r.deep.big) && Number.isInteger(r.deep.weak) && r.deep.weak >= -1 && r.deep.weak <= 2 ? { avg: r.deep.avg, big: r.deep.big, weak: r.deep.weak } : null;
-    lg.push({ handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
+    lg.push({ recordId:r.recordId, handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
   if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
-  return { profile: pr, done: dn, rec: rc, log: lg };
+  const records=Array.isArray(o.records)?o.records.filter(r=>r && typeof r.id==='string' && [7,9,13,19].includes(r.n) && Array.isArray(r.sequence) && r.sequence.length<=1500):[];
+  return { profile: pr, done: dn, rec: rc, log: lg, records };
 }
 let pendingRestore = null;
 $('#backup').addEventListener('click', e => {
@@ -2227,7 +2475,7 @@ $('#backup').addEventListener('click', e => {
   } else if (b.id === 'rs-no') { pendingRestore = null; msg.textContent = ''; $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>'; }
   else if (b.id === 'rs-yes' && pendingRestore) {
     const r = pendingRestore; pendingRestore = null;
-    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog);
+    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog); store.set('go-records',r.records || []);
     if (r.profile) { profile = r.profile; store.set('go-profile', profile); }
     clearGame(); renderChip(); renderProfile(); showPath(); openPuzzle(pzCur);
     msg.textContent = 'กู้คืนข้อมูลแล้ว'; msg.className = 'small good-t';
@@ -2465,90 +2713,6 @@ function ttInit() {
 const bootHash = location.hash;
 renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); ttInit();
 if (bootHash.indexOf('#t=') === 0) { if (!profile) showWelcome(); handleTeacher(bootHash); } else { showTab(bootHash.slice(1)); if (!profile) showWelcome(); }
-// ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
-// ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
-const REPORT_URL = 'https://script.google.com/macros/s/AKfycby55KS5jKtfLGoHeswXyi9z6JZrDoQaiDMSIYpWTPqsI5F3KuDks4P4DJRk_n9QPO3F/exec';
-const Rep = (() => {
-  const K = { on: 'go-rep-on', q: 'go-rep-q', id: 'go-rep-id', sent: 'go-rep-sent', ask: 'go-rep-ask' };
-  const g = (k, d) => store.get(k, d), s = (k, v) => store.set(k, v);
-  const uid = () => { let i = g(K.id, ''); if (!i) { i = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)); s(K.id, i); } return i; };
-  const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
-  let busy = false;
-  const enabled = () => !!REPORT_URL;
-  const on = () => enabled() && g(K.on, false) === true;
-  function add(ev) {
-    if (!on()) return;
-    const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
-    q.push(ev); s(K.q, q.slice(-200)); flush();
-  }
-  async function flush() {
-    if (busy || !on()) return; const q = g(K.q, []); if (!q.length) { ui(); return; }
-    if (!navigator.onLine) return;
-    busy = true;
-    try {
-      const batch = q.slice(0, 20);
-      const body = JSON.stringify({ v: 1, id: uid(), name: clip(typeof pn === 'function' ? pn() : '', 16), events: batch });
-      if (body.length > 60000) { s(K.q, q.slice(batch.length)); busy = false; return; }
-      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
-      await fetch(REPORT_URL, { method: 'POST', mode: 'no-cors', keepalive: false, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, signal: ctl.signal });
-      clearTimeout(to);
-      const now = g(K.q, []); const ids = new Set(batch.map(e => e.eid)); s(K.q, now.filter(e => !ids.has(e.eid)));
-      s(K.sent, (g(K.sent, 0) || 0) + batch.length); busy = false; ui();
-      if (g(K.q, []).length) setTimeout(flush, 500);
-    } catch (e) { busy = false; ui(); }
-  }
-  function set(v) { s(K.on, !!v); if (!v) { s(K.q, []); } else flush(); ui(); }
-  function ui() {
-    const box = document.getElementById('rep-box'); if (!box) return;
-    box.hidden = !enabled(); if (!enabled()) return;
-    const c = box.querySelector('input'); c.checked = on();
-    box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ไม่มีการส่งข้อมูลใดๆ';
-  }
-  function mount() {
-    const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
-    const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
-    box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>แบ่งปันผลการเล่นให้ผู้ดูแลสำนัก</span></label>
-      <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (SGF) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
-    bk.parentNode.insertBefore(box, bk);
-    box.querySelector('input').onchange = e => set(e.target.checked);
-    ui();
-  }
-  function nudge() {
-    if (!enabled() || on() || g(K.ask, 0)) return; s(K.ask, 1);
-    const d = document.createElement('div'); d.className = 'rep-nudge'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'ขอความร่วมมือ');
-    d.innerHTML = `<p>ช่วยปรับระดับ AI ให้ตรงขึ้นไหม? แบ่งปันผลแพ้ชนะแบบใช้ชื่อที่ตั้งไว้ ปิดได้ทุกเมื่อในหน้าโปรไฟล์</p><div class="btns"><button class="btn primary" type="button" data-a="y">ได้เลย</button><button class="btn" type="button" data-a="n">ไม่เอา</button></div>`;
-    d.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.a === 'y') set(true); d.remove(); };
-    d.addEventListener('keydown', e => { if (e.key === 'Escape') d.remove(); });
-    document.body.appendChild(d);
-  }
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) flush(); });
-  window.addEventListener('online', flush);
-  setTimeout(() => { mount(); flush(); }, 1500);
-  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
-  // ---------- สมุดบันทึกประลองของคู่ประลองแต่ละตัว (อ่านจากส่วนกลาง เฉพาะคนที่ยินยอมแบ่งปัน) ----------
-  let hallCache = null, hallAt = 0;
-  async function hall() {
-    if (hallCache && Date.now() - hallAt < 60000) return hallCache;
-    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
-    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; hallAt = Date.now(); return hallCache; }
-    finally { clearTimeout(to); }
-  }
-  const dstr = t => { try { return new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
-  const esc2 = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  async function paintHall(sid, sname) {
-    const box = document.getElementById('hall-box'); if (!box) return;
-    if (!enabled()) { box.hidden = true; return; }
-    box.hidden = false; box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">กำลังโหลด…</p>';
-    let h; try { h = await hall(); } catch (e) { if (document.getElementById('hall-box') === box) box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">โหลดไม่ได้ในตอนนี้ ลองใหม่ภายหลัง</p>'; return; }
-    if (document.getElementById('hall-box') !== box) return;
-    const d = h[sid];
-    if (!d || !d.recent || !d.recent.length) { box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">ยังไม่มีผู้ท้าชิงที่แบ่งปันผล เป็นคนแรกได้เลย</p>'; return; }
-    const tot = d.w + d.l, rate = tot ? Math.round(d.w / tot * 100) : null;
-    const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${esc2(r.name || 'นักหมาก')}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
-    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><p class="small">ผู้ท้าชิง ${esc2(d.players)} คน${rate != null ? ` · ผู้เล่นชนะ ${esc2(d.w)} แพ้ ${esc2(d.l)} (ชนะ ${rate}% ในโหมดประลองจริง)` : ''}<br>แสดงเฉพาะผู้ที่กดยินยอมแบ่งปันผล</p><ul class="hall-list">${rows}</ul>`;
-  }
-  return { add, flush, nudge, mount, on, enabled, paintHall };
-})();
 
 </script>
 </body>
