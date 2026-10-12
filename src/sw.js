@@ -1,12 +1,13 @@
 // Service worker for สำนักหมากล้อม. Works from any subfolder: all paths are resolved against the registration scope.
-const VERSION = 'v2-records';
-const SHELL_CACHE = `samnak-shell-${VERSION}`;
-const ASSET_CACHE = `samnak-assets-${VERSION}`;
+const VERSION = 'v3-records-fixes';
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 const CACHE_FIRST_DIRS = ['engine/', 'tfjs/'];
 
 const SCOPE = self.registration ? self.registration.scope : self.location.href.replace(/[^/]*$/, '');
 const SCOPE_PATH = new URL(SCOPE).pathname;
+const CACHE_PREFIX = `samnak-${encodeURIComponent(SCOPE_PATH)}-`;
+const SHELL_CACHE = `${CACHE_PREFIX}shell-${VERSION}`;
+const ASSET_CACHE = `${CACHE_PREFIX}assets-${VERSION}`;
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -26,7 +27,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keep = new Set([SHELL_CACHE, ASSET_CACHE]);
     for (const name of await caches.keys()) {
-      if (!keep.has(name)) await caches.delete(name);
+      if (name.startsWith(CACHE_PREFIX) && !keep.has(name)) await caches.delete(name);
     }
     await self.clients.claim();
   })());

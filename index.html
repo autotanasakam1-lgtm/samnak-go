@@ -539,7 +539,9 @@ function moveFacts(g, i) {
   const wasAtari = new Set();
   for (const j of g.nb[i]) if (g.grid[j] === c && g.group(j).libs.size === 1) wasAtari.add(j);
   const eyeFill = g.nb[i].every(j => g.grid[j] === c);
-  const realEye = eyeFill && new Set(g.nb[i].map(j => g.group(j).stones[0])).size === 1;
+  const x = i % n, y = (i / n) | 0, diagonals = [];
+  for (const dx of [-1, 1]) for (const dy of [-1, 1]) if (x + dx >= 0 && x + dx < n && y + dy >= 0 && y + dy < n) diagonals.push((y + dy) * n + x + dx);
+  const realEye = diagonals.filter(j => g.grid[j] === o).length <= (diagonals.length === 4 ? 1 : 0) && eyeFill && new Set(g.nb[i].map(j => Math.min(...g.group(j).stones))).size === 1;
   const r = t.play(i); if (!r.ok) return null;
   const f = { captured: r.captured.length, selfAtari: r.libs === 1 && r.captured.length === 0, size: r.size,
     ataris: [], ownAtari: [], saved: wasAtari.size > 0 && r.libs >= 2, eyeFill, realEye, moveNo: g.moves.length,
@@ -948,7 +950,7 @@ const Srv = {
 
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
 let done = store.get('go-done', {});
 const STARS = { 9: [2, 4, 6], 13: [3, 6, 9], 19: [3, 9, 15] };
 const C = 30, M = 28;
@@ -1019,10 +1021,11 @@ const WHY = { occupied: 'จุดนี้มีหมากอยู่แล�
 function Player(root, kind, onFinish, onSolve) {
   root.innerHTML = `<div class="stage"><div class="board"></div><aside class="panel"><span class="eyebrow"></span><h2></h2><div class="dots"></div><p class="text"></p><div class="choices"></div><p class="fb" aria-live="polite"></p><div class="btns"><button class="btn b-hint">ดูคำใบ้</button><button class="btn b-reset">เริ่มข้อนี้ใหม่</button><button class="btn primary b-next"></button></div><div class="btns share-row" hidden><button class="btn b-share" type="button">แชร์ผลไป LINE</button><button class="btn b-sharecopy" type="button">คัดลอกข้อความ</button></div></aside></div>`;
   const bd = $('.board', root), fbEl = $('.fb', root);
-  let L, si, g, ans, marks, solved, hint, pos, busy, fresh;
+  let L, si, g, ans, marks, solved, hint, pos, busy, fresh, generation = 0;
   const step = () => L.steps[si];
   const fb = (t, c) => { fbEl.textContent = t; fbEl.className = 'fb ' + (c || ''); };
   function load() {
+    generation++;
     const s = step(), p = parseRows(s.rows); g = p.g; ans = p.ans; marks = p.marks;
     if (s.pre) s.pre.forEach(([x, y]) => g.play(y * g.n + x));
     if (s.turn) g.turn = s.turn;
@@ -1058,7 +1061,8 @@ function Player(root, kind, onFinish, onSolve) {
       g.play(i); fresh = i; fb('');
       if (!m.reply) { solved = true; fb(s.ok, 'good'); return render(); }
       busy = true; render();
-      return setTimeout(() => { const j = m.reply[1] * g.n + m.reply[0]; g.play(j); fresh = j; pos++; busy = false; render(); }, 420);
+      const my = generation;
+      return setTimeout(() => { if (my !== generation) return; const j = m.reply[1] * g.n + m.reply[0]; g.play(j); fresh = j; pos++; busy = false; render(); }, 420);
     }
     if (s.t === 'point' && !ans.includes(i)) return fb(g.grid[i] ? WHY.occupied : s.no || 'ยังไม่ใช่ ลองนับลมหายใจของหมากอีกครั้ง', 'bad');
     const r = g.play(i); if (!r.ok) return fb(WHY[r.reason], 'bad');
@@ -1403,7 +1407,7 @@ async function startGame(s, n, col, res, opt = {}) {
   if (prac) gmode = 'teach';
   else if (res) { const gm = store.get('go-gmode', null); gmode = gm && gm.mode === 'teach' && gm.sid === (s ? s.id : null) && gm.n === n && gm.col === human ? 'teach' : 'real'; }
   else { gmode = !s || opt.mode !== 'real' ? 'teach' : 'real'; store.set('go-gmode', { mode: gmode, sid: s ? s.id : null, n, col: human }); }
-  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; redoNo = 0; review = null; degraded = false; kataOK = false; retry = false;
+  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; redoNo = 0; review = null; degraded = !!(res && res.degraded); kataOK = false; retry = false;
   $('.tutor').hidden = gmode === 'real'; $('#tutor-act').hidden = true;
   if (res) replayInto(res);
   else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
@@ -1426,7 +1430,7 @@ async function startGame(s, n, col, res, opt = {}) {
     kataOK = true;
   } else if (S && S.eng === 'kata') {
     busy = true; gfb('กำลังเรียกเซนเซ ครั้งแรกใช้เวลาสักครู่'); renderGame();
-    try { await Kata.init(); kataOK = true; } catch (e) { degraded = true; }
+    try { await Kata.init(); if (my !== token) return; kataOK = true; } catch (e) { if (my !== token) return; degraded = true; }
     if (my !== token) return;
     busy = false; gfb('');
     if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `เครื่องนี้โหลดเอนจินระดับสูงไม่สำเร็จ เกมนี้จึงเล่นต่อด้วยคอมพื้นฐาน ${S.name}กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
@@ -1513,9 +1517,10 @@ async function botTurn() {
   const my = token; busy = true; renderGame();
   let a = null;
   if (isKata()) {
+    const opponent = S, ai = engine();
     const last = rec[rec.length - 1], pend = last && last.loss == null && last.no === mno() ? last : null;
     if (pend) tutor('เซนเซกำลังคิด...');
-    try { a = await engine().analyze(G, S.visits || 16); } catch (e) { a = null; if (S.eng === 'server') { if (my !== token) return; busy = false; return srvDrop(); } degraded = true; }
+    try { a = await ai.analyze(G, opponent.visits || 16); } catch (e) { if (my !== token) return; a = null; if (opponent.eng === 'server') { busy = false; return srvDrop(); } degraded = true; }
     if (my !== token) return;
     if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `การวิเคราะห์ขัดข้อง ${S.name}จึงเล่นต่อด้วยคอมพื้นฐาน กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
     if (pend) { await settle(pend, a, my); if (my !== token) return; }
@@ -1581,15 +1586,17 @@ function finish() {
     const sc = G.score(dead), d = sc.b - sc.w; margin = Math.abs(d);
     if (S) { won = (d > 0 ? 1 : 2) === human; text = won ? `คุณชนะ ${margin} แต้ม` : `คุณแพ้ ${margin} แต้ม`; } else text = `${cname(d > 0 ? 1 : 2)}ชนะ ${margin} แต้ม`;
   }
-  o.res = { won, margin, text }; if(!prac) recordSave(); if (!prac) clearGame();
+  o.res = { won, margin, text }; let saved = true; if (!prac) recordSave();
   $('#tutor-act').hidden = true;
   if (S && !prac) {
     const r = recs[S.id] = recs[S.id] || { w: 0, l: 0 }, tm = gmode === 'teach';
     if (won) { if (!degraded) { if (tm) r.tw = (r.tw || 0) + 1; else { const e = r.we == null ? r.w : r.we; r.w++; r.we = e + (HC ? 0 : 1); } } } else if (tm) r.tl = (r.tl || 0) + 1; else r.l++;
-    store.set('go-rec', recs);
-    lastSgf = logGame(o, won, margin);
+    saved = store.set('go-rec', recs);
+    const logged = logGame(o, won, margin);
+    lastSgf = logged.sgf; saved = logged.saved && saved;
   }
-  gfb(''); renderGame(); renderReview();
+  if (!prac && saved) clearGame();
+  gfb(saved ? '' : 'บันทึกไม่สำเร็จ เก็บเกมไว้แล้ว'); renderGame(); renderReview();
   $('#review').scrollIntoView({ block: 'nearest' });
 }
 
@@ -1608,10 +1615,11 @@ function logGame(o, won, margin) {
   const ls = rec.filter(t => t.loss != null).map(t => t.loss), sgf = buildSgf(re);
   const r = { t: new Date().toISOString(), sid: S.id, sname: S.name, rank: S.rank, n: G.n, color: human, komi: G.komi, result: won ? 'W' : 'L',
     margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC, mode: gmode,
-    recordId: recordAudit?.id, undoCount: recordAudit?.undos.length || 0, undos: recordAudit?.undos || [], restarted:false, avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
-  matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
-  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, undoCount:r.undoCount, undos:r.undos, restarted:r.restarted, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
-  return sgf;
+    recordId: recordAudit?.id, undoCount: recordAudit?.undos.length || 0, undos: recordAudit?.undos || [], restarted: false,
+    avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
+  matchLog.push(r); matchLog = matchLog.slice(-200); const saved = store.set('go-log', matchLog); lastRec = r;
+  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, undoCount: r.undoCount, undos: r.undos, restarted: r.restarted, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
+  return { sgf, saved };
 }
 function clearManual() { document.querySelectorAll('textarea.manual, .manual-hint').forEach(e => e.remove()); }
 function manualCopy(text, host) {
@@ -2356,7 +2364,7 @@ function saveGame() {
   if (!G || prac || (over && over.final)) return;
   if (G.moves.length <= hcN()) return clearGame();
   recordSync();
-  store.set(GKEY, { audit:recordAudit, v: 2, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
+  store.set(GKEY, { audit:recordAudit, v: 2, degraded: !!degraded, hc: HC, sid: S ? S.id : null, n: G.n, col: human, komi: G.komi, moves: G.moves.slice(), rec: rec.map(t => ({ no: t.no, idx: t.idx, loss: t.loss == null ? null : t.loss, best: t.best })) });
 }
 const clearGame = () => store.del(GKEY);
 function readGame() {
@@ -2368,7 +2376,7 @@ function readGame() {
   if (d.hc && !hc) return null;
   const g = new Go(d.n, d.komi);
   for (const m of d.moves) { if (!Number.isInteger(m) || m < -1 || m >= d.n * d.n) return null; if (m < 0) g.pass(); else if (!g.play(m).ok) return null; }
-  return { audit:d.audit, s, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
+  return { audit:d.audit, s, degraded: d.degraded === true, n: d.n, col: d.col, komi: d.komi, hc, no: d.moves.length - base + 1, moves: d.moves, rec: Array.isArray(d.rec) ? d.rec : [] };
 }
 function replayInto(res) {
   const sv = new Map(res.rec.filter(t => t && typeof t === 'object').map(t => [t.no, t]));
@@ -2409,7 +2417,7 @@ $('#to-log').onclick = () => { showTab('me'); const l = $('#logbox'); if (l) l.s
 // ---------- หน้าโปรไฟล์ ----------
 const b64 = s => btoa(unescape(encodeURIComponent(s)));
 const unb64 = s => decodeURIComponent(escape(atob(s)));
-const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog, records:store.get('go-records',[]) }));
+const makeCode = () => b64(JSON.stringify({ v: 1, profile, done, rec: recs, log: matchLog, teacher: tList(), records:store.get('go-records',[]) }));
 function renderProfile() {
   const top = playerRank();
   $('#me-top').innerHTML = `<div class="me-head">${pav(88)}<div class="col" style="gap:2px"><h1>${esc(pn())}</h1><span class="small">ชนะถึงใครแล้ว</span><b>${top ? esc(top.name) : 'ยังไม่ชนะใคร'}</b></div></div>
@@ -2435,8 +2443,8 @@ $('#me-top').addEventListener('submit', e => {
   e.preventDefault();
   const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
   profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill };
-  store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
-  $('#me-msg').textContent = 'บันทึกแล้ว';
+  const saved = store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
+  $('#me-msg').textContent = saved ? 'บันทึกแล้ว' : 'บันทึกไม่สำเร็จ';
 });
 $('#me-back').onclick = () => { showTab(lastTab); window.scrollTo(0, 0); };
 $('#bk-copy').onclick = e => copyText($('#bk-code').value, e.target, $('#backup'));
@@ -2446,22 +2454,25 @@ function parseCode(text) {
   if (!t || t.length > 3e6 || !/^[A-Za-z0-9+/=]+$/.test(t)) return null;
   let o; try { o = JSON.parse(unb64(t)); } catch (e) { return null; }
   if (!o || typeof o !== 'object' || o.v !== 1 || !o.done || typeof o.done !== 'object' || !o.rec || typeof o.rec !== 'object' || !Array.isArray(o.log) || o.log.length > 400) return null;
-  const ids = new Set([...LESSONS, ...PUZZLES].map(x => x.id)), dn = {}, rc = {}, lg = [];
+  const teacher = [], seen = new Set();
+  if (o.teacher != null && (!Array.isArray(o.teacher) || o.teacher.length > 20)) return null;
+  for (const x of o.teacher || []) { const r = tClean(x && x.p); if (!r.p) return null; const id = tHash(r.p); if (!seen.has(id)) { seen.add(id); teacher.push({ id, p: r.p }); } }
+  const ids = new Set([...LESSONS, ...PUZZLES, ...teacher].map(x => x.id)), dn = {}, rc = {}, lg = [];
   for (const k of Object.keys(o.done)) if (ids.has(k) && o.done[k]) dn[k] = 1;
   const cnt = v => Number.isInteger(v) && v >= 0 && v < 1e6;
-  for (const s of SENSEI) { const r = o.rec[s.id]; if (r) { if (!cnt(r.w) || !cnt(r.l) || (r.we != null && !cnt(r.we))) return null; rc[s.id] = r.we == null ? { w: r.w, l: r.l } : { w: r.w, l: r.l, we: r.we }; } }
+  for (const s of SENSEI) { const r = o.rec[s.id]; if (r) { if (!cnt(r.w) || !cnt(r.l) || (r.we != null && !cnt(r.we)) || (r.tw != null && !cnt(r.tw)) || (r.tl != null && !cnt(r.tl))) return null; rc[s.id] = r.we == null ? { w: r.w, l: r.l } : { w: r.w, l: r.l, we: r.we }; rc[s.id].tw = r.tw == null ? 0 : r.tw; rc[s.id].tl = r.tl == null ? 0 : r.tl; } }
   const str = (v, m) => typeof v === 'string' && v.length <= m;
   const numN = v => v == null || (typeof v === 'number' && isFinite(v));
   for (const r of o.log.slice(-200)) {
-    if (!r || typeof r !== 'object' || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
+    if (!r || typeof r !== 'object' || (r.mode != null && !['teach', 'real'].includes(r.mode)) || !str(r.t, 40) || !bySid(r.sid) || !str(r.sname, 60) || !str(r.rank, 30) || ![7, 9, 13, 19].includes(r.n) || !['W', 'L'].includes(r.result) || !str(r.sgf, 30000) || !numN(r.margin) || !numN(r.avgLoss) || !numN(r.big) || !numN(r.komi)) return null;
     const hcv = Number.isInteger(r.handicap) && r.handicap >= 2 && r.handicap <= 9 ? r.handicap : 0;
     const dp = r.deep && typeof r.deep === 'object' && numN(r.deep.avg) && r.deep.avg != null && cnt(r.deep.big) && Number.isInteger(r.deep.weak) && r.deep.weak >= -1 && r.deep.weak <= 2 ? { avg: r.deep.avg, big: r.deep.big, weak: r.deep.weak } : null;
-    lg.push({ recordId:r.recordId, handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
+    lg.push({ recordId:r.recordId, mode: r.mode || 'real', handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
   if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
   const records=Array.isArray(o.records)?o.records.filter(r=>r && typeof r.id==='string' && [7,9,13,19].includes(r.n) && Array.isArray(r.sequence) && r.sequence.length<=1500):[];
-  return { profile: pr, done: dn, rec: rc, log: lg, records };
+  return { profile: pr, done: dn, rec: rc, log: lg, teacher, records };
 }
 let pendingRestore = null;
 $('#backup').addEventListener('click', e => {
@@ -2475,10 +2486,13 @@ $('#backup').addEventListener('click', e => {
   } else if (b.id === 'rs-no') { pendingRestore = null; msg.textContent = ''; $('#rs-btns').innerHTML = '<button class="btn" id="rs-go" type="button">กู้คืนข้อมูล</button>'; }
   else if (b.id === 'rs-yes' && pendingRestore) {
     const r = pendingRestore; pendingRestore = null;
-    done = r.done; recs = r.rec; matchLog = r.log; store.set('go-done', done); store.set('go-rec', recs); store.set('go-log', matchLog); store.set('go-records',r.records || []);
-    if (r.profile) { profile = r.profile; store.set('go-profile', profile); }
-    clearGame(); renderChip(); renderProfile(); showPath(); openPuzzle(pzCur);
-    msg.textContent = 'กู้คืนข้อมูลแล้ว'; msg.className = 'small good-t';
+    toLobby(); G = null; S = null; over = null; pre = null; rec = [];
+    done = r.done; recs = r.rec; matchLog = r.log;
+    const saved = [store.set('go-done', done), store.set('go-rec', recs), store.set('go-log', matchLog), store.set(TKEY, r.teacher), store.set('go-records', r.records || [])];
+    if (r.profile) { profile = r.profile; saved.push(store.set('go-profile', profile)); }
+    const ok = saved.every(Boolean);
+    if (ok) clearGame(); renderChip(); renderProfile(); showPath(); openPuzzle(pzCur);
+    msg.textContent = ok ? 'กู้คืนข้อมูลแล้ว' : 'กู้คืนไม่สำเร็จ'; msg.className = 'small ' + (ok ? 'good-t' : 'bad-t');
   }
 });
 
