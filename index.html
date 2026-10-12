@@ -375,7 +375,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
 .msrc{overflow-wrap:anywhere}.msrc a,.rl-note a{color:var(--accent)}
 .mbody .col li{overflow-wrap:anywhere}
 /* === จบ === */
-</style>
+.rep-sw{display:flex;gap:10px;align-items:center;font-weight:600}.rep-sw input{width:22px;height:22px}.rep-nudge{position:fixed;left:16px;right:16px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:60;max-width:460px;margin:0 auto;background:var(--panel,#fff);color:var(--ink,#222);border:1px solid var(--line,#ccc);border-radius:14px;padding:14px 16px;box-shadow:0 8px 28px rgba(0,0,0,.25)}.rep-nudge p{margin:0 0 10px}</style>
 <div class="wrap">
 <div class="topbar">
   <div class="brand"><i></i>สำนักหมากล้อม</div>
@@ -993,7 +993,7 @@ const beltCss = s => s.bc2 ? `linear-gradient(90deg,${s.bc} 0 62%,${s.bc2} 62%)`
 const belt = s => `<span class="belt"><i style="background:${beltCss(s)}"></i>${esc(s.belt)}</span>`;
 
 // ---------- หน้าเรียน ----------
-const lessonPlayer = Player($('#lesson-player'), 'lesson', L => { done[L.id] = 1; store.set('go-done', done); showPath(); });
+const lessonPlayer = Player($('#lesson-player'), 'lesson', L => { done[L.id] = 1; store.set('go-done', done); try { Rep.add({ k: 'lesson', id: L.id }); } catch (e) { } showPath(); });
 function openLesson(id) {
   const L = LESSONS.find(l => l.id === id); if (!L) return;
   showTab('learn'); $('#path-view').hidden = true; $('#lesson-view').hidden = false; lessonPlayer.open(L); window.scrollTo(0, 0);
@@ -1002,7 +1002,7 @@ $('#lesson-back').onclick = showPath;
 
 // ---------- หน้าโจทย์ ----------
 let pzCur = 0;
-const pzPlayer = Player($('#pz-player'), 'puzzle', L => { done[L.id] = 1; store.set('go-done', done); openPuzzle((pzCur + 1) % PUZZLES.length); });
+const pzPlayer = Player($('#pz-player'), 'puzzle', L => { done[L.id] = 1; store.set('go-done', done); try { Rep.add({ k: 'puzzle', id: L.id, ok: true }); } catch (e) { } openPuzzle((pzCur + 1) % PUZZLES.length); });
 function openPuzzle(k) {
   pzCur = k;
   $('#pz-list').innerHTML = PUZZLES.map((p, j) => `<button class="chip${done[p.id] ? ' done' : ''}" data-k="${j}" aria-pressed="${j === k}"><span>${esc(p.title)}</span><small>${p.level}</small></button>`).join('');
@@ -1516,6 +1516,7 @@ function logGame(o, won, margin) {
     margin: o.type === 'resign' ? null : margin, resign: o.type === 'resign', moves: G.moves.length, handicap: HC, mode: gmode,
     avgLoss: ls.length ? Math.round(ls.reduce((a, b) => a + b, 0) / ls.length * 100) / 100 : null, big: ls.length ? ls.filter(x => x >= 5).length : null, degraded: !!degraded, sgf };
   matchLog.push(r); matchLog = matchLog.slice(-200); store.set('go-log', matchLog); lastRec = r;
+  try { if (window.Rep || typeof Rep !== 'undefined') { Rep.add({ k: 'game', opp: r.sid, oppRank: r.rank, n: r.n, color: r.color, komi: r.komi, res: o.type === 'resign' ? (won ? 'W' : 'resign') : r.result, margin: r.margin, moves: r.moves, hc: r.handicap, mode: r.mode, avgLoss: r.avgLoss, big: r.big, degraded: r.degraded, sgf: String(sgf).slice(0, 6000) }); Rep.nudge(); } } catch (e) { }
   return sgf;
 }
 function clearManual() { document.querySelectorAll('textarea.manual, .manual-hint').forEach(e => e.remove()); }
@@ -2463,6 +2464,68 @@ function ttInit() {
 const bootHash = location.hash;
 renderChip(); showPath(); openPuzzle(0); renderExplain(); renderLobby(); openMaster('go'); ttInit();
 if (bootHash.indexOf('#t=') === 0) { if (!profile) showWelcome(); handleTeacher(bootHash); } else { showTab(bootHash.slice(1)); if (!profile) showWelcome(); }
+// ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
+// ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
+const REPORT_URL = '';
+const Rep = (() => {
+  const K = { on: 'go-rep-on', q: 'go-rep-q', id: 'go-rep-id', sent: 'go-rep-sent', ask: 'go-rep-ask' };
+  const g = (k, d) => store.get(k, d), s = (k, v) => store.set(k, v);
+  const uid = () => { let i = g(K.id, ''); if (!i) { i = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)); s(K.id, i); } return i; };
+  const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
+  let busy = false;
+  const enabled = () => !!REPORT_URL;
+  const on = () => enabled() && g(K.on, false) === true;
+  function add(ev) {
+    if (!on()) return;
+    const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
+    q.push(ev); s(K.q, q.slice(-200)); flush();
+  }
+  async function flush() {
+    if (busy || !on()) return; const q = g(K.q, []); if (!q.length) { ui(); return; }
+    if (!navigator.onLine) return;
+    busy = true;
+    try {
+      const batch = q.slice(0, 20);
+      const body = JSON.stringify({ v: 1, id: uid(), name: clip(typeof pn === 'function' ? pn() : '', 16), events: batch });
+      if (body.length > 60000) { s(K.q, q.slice(batch.length)); busy = false; return; }
+      const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+      await fetch(REPORT_URL, { method: 'POST', mode: 'no-cors', keepalive: false, headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, signal: ctl.signal });
+      clearTimeout(to);
+      const now = g(K.q, []); const ids = new Set(batch.map(e => e.eid)); s(K.q, now.filter(e => !ids.has(e.eid)));
+      s(K.sent, (g(K.sent, 0) || 0) + batch.length); busy = false; ui();
+      if (g(K.q, []).length) setTimeout(flush, 500);
+    } catch (e) { busy = false; ui(); }
+  }
+  function set(v) { s(K.on, !!v); if (!v) { s(K.q, []); } else flush(); ui(); }
+  function ui() {
+    const box = document.getElementById('rep-box'); if (!box) return;
+    box.hidden = !enabled(); if (!enabled()) return;
+    const c = box.querySelector('input'); c.checked = on();
+    box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ไม่มีการส่งข้อมูลใดๆ';
+  }
+  function mount() {
+    const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
+    const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
+    box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>แบ่งปันผลการเล่นให้ผู้ดูแลสำนัก</span></label>
+      <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (SGF) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
+    bk.parentNode.insertBefore(box, bk);
+    box.querySelector('input').onchange = e => set(e.target.checked);
+    ui();
+  }
+  function nudge() {
+    if (!enabled() || on() || g(K.ask, 0)) return; s(K.ask, 1);
+    const d = document.createElement('div'); d.className = 'rep-nudge'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'ขอความร่วมมือ');
+    d.innerHTML = `<p>ช่วยปรับระดับ AI ให้ตรงขึ้นไหม? แบ่งปันผลแพ้ชนะแบบใช้ชื่อที่ตั้งไว้ ปิดได้ทุกเมื่อในหน้าโปรไฟล์</p><div class="btns"><button class="btn primary" type="button" data-a="y">ได้เลย</button><button class="btn" type="button" data-a="n">ไม่เอา</button></div>`;
+    d.onclick = e => { const b = e.target.closest('button'); if (!b) return; if (b.dataset.a === 'y') set(true); d.remove(); };
+    d.addEventListener('keydown', e => { if (e.key === 'Escape') d.remove(); });
+    document.body.appendChild(d);
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) flush(); });
+  window.addEventListener('online', flush);
+  setTimeout(() => { mount(); flush(); }, 1500);
+  document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
+  return { add, flush, nudge, mount, on, enabled };
+})();
 
 </script>
 </body>
