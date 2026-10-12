@@ -36,13 +36,26 @@ function doGet(e) {
     const n = Math.min(sh.getLastRow() - 1, 800), rows = sh.getRange(sh.getLastRow() - n + 1, 1, n, 15).getValues();
     rows.forEach(r => {
       const sid = String(r[3]); if (!sid) return;
-      const h = hall[sid] = hall[sid] || { w: 0, l: 0, ids: {}, recent: [] };
+      const h = hall[sid] = hall[sid] || { w: 0, l: 0, ids: {}, recent: [], wins: [], conq: {} };
       const res = String(r[8]); const win = res === 'W';
-      if (String(r[6]) === 'match') { win ? h.w++ : h.l++; }
+      const real = String(r[6]) === 'match';
+      if (real) { win ? h.w++ : h.l++; }
       h.ids[String(r[1])] = 1;
-      h.recent.push({ t: new Date(r[0]).getTime(), name: String(r[2]).slice(0, 16), res: res, margin: r[9] === '' ? null : r[9], mode: String(r[6]), n: r[5], hc: r[7] });
+      const tag = String(r[1]).replace(/[^A-Za-z0-9]/g, '').slice(0, 4);
+      const name = String(r[2]).slice(0, 16), t = new Date(r[0]).getTime(), hc = Number(r[7]) || 0;
+      h.recent.push({ t: t, name: name, tag: tag, res: res, margin: r[9] === '' ? null : r[9], mode: String(r[6]), n: r[5], hc: r[7] });
+      // ผู้พิชิต: ชนะเกมประลองจริงแบบเสมอ (ไม่ต่อหมาก) เท่านั้น
+      if (real && win && hc === 0) {
+        if (r[9] !== '' && r[9] != null) h.wins.push({ name: name, tag: tag, margin: Number(r[9]), t: t, n: r[5] });
+        const k = String(r[1]); if (!h.conq[k] || h.conq[k].t > t) h.conq[k] = { name: name, tag: tag, t: t, n: r[5] };
+      }
     });
-    Object.keys(hall).forEach(k => { const h = hall[k]; h.players = Object.keys(h.ids).length; delete h.ids; h.recent = h.recent.slice(-12).reverse(); });
+    Object.keys(hall).forEach(k => {
+      const h = hall[k]; h.players = Object.keys(h.ids).length; delete h.ids;
+      h.recent = h.recent.slice(-12).reverse();
+      h.top = h.wins.sort((a, b) => b.margin - a.margin).slice(0, 10); delete h.wins;
+      h.conq = Object.keys(h.conq).map(i => h.conq[i]).sort((a, b) => a.t - b.t).slice(0, 20);
+    });
   }
   const s = JSON.stringify({ updated: Date.now(), hall: hall });
   cache.put('hall', s, 60);

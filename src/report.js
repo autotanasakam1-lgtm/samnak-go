@@ -76,9 +76,12 @@ const Rep = (() => {
     if (document.getElementById('hall-box') !== box) return;
     const d = h[sid];
     if (!d || !d.recent || !d.recent.length) { box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">ยังไม่มีผู้ท้าชิงที่แบ่งปันผล เป็นคนแรกได้เลย</p>'; return; }
-    const tot = d.w + d.l, rate = tot ? Math.round(d.w / tot * 100) : null;
-    const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${esc2(r.name || 'นักหมาก')}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
-    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><p class="small">ผู้ท้าชิง ${esc2(d.players)} คน${rate != null ? ` · ผู้เล่นชนะ ${esc2(d.w)} แพ้ ${esc2(d.l)} (ชนะ ${rate}% ในโหมดประลองจริง)` : ''}<br>แสดงเฉพาะผู้ที่กดยินยอมแบ่งปันผล</p><ul class="hall-list">${rows}</ul>`;
+    const tot = d.w + d.l, rate = tot ? Math.round(d.w / tot * 100) : null, nm = r => esc2(r.name || 'นักหมาก') + (r.tag ? '<small class="tg">#' + esc2(r.tag) + '</small>' : '');
+    const medal = ['🥇', '🥈', '🥉'];
+    const conq = (d.conq || []).length ? `<h4>ผู้พิชิต (ชนะเสมอในโหมดประลองจริง)</h4><ul class="hall-list">${d.conq.map(r => `<li><span class="hn">🏆 ${nm(r)}</span><span class="hr win">พิชิตแล้ว</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ul>` : '<h4>ผู้พิชิต</h4><p class="small">ยังไม่มีใครชนะท่านนี้แบบเสมอในโหมดประลองจริง</p>';
+    const top = (d.top || []).length ? `<h4>อันดับชนะแต้มมากสุด</h4><ol class="hall-list rank">${d.top.map((r, i) => `<li><span class="hn">${medal[i] || (i + 1) + '.'} ${nm(r)}</span><span class="hr win">+${esc2(r.margin)} แต้ม</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ol>` : '';
+    const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${nm(r)}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
+    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">แสดงเฉพาะผู้ที่กดยินยอมแบ่งปัน ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
   }
   return { add, flush, nudge, mount, on, enabled, paintHall };
 })();
