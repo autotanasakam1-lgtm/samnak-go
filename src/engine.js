@@ -73,7 +73,9 @@ function moveFacts(g, i) {
   const wasAtari = new Set();
   for (const j of g.nb[i]) if (g.grid[j] === c && g.group(j).libs.size === 1) wasAtari.add(j);
   const eyeFill = g.nb[i].every(j => g.grid[j] === c);
-  const realEye = eyeFill && new Set(g.nb[i].map(j => g.group(j).stones[0])).size === 1;
+  const x = i % n, y = (i / n) | 0, diagonals = [];
+  for (const dx of [-1, 1]) for (const dy of [-1, 1]) if (x + dx >= 0 && x + dx < n && y + dy >= 0 && y + dy < n) diagonals.push((y + dy) * n + x + dx);
+  const realEye = diagonals.filter(j => g.grid[j] === o).length <= (diagonals.length === 4 ? 1 : 0) && eyeFill && new Set(g.nb[i].map(j => Math.min(...g.group(j).stones))).size === 1;
   const r = t.play(i); if (!r.ok) return null;
   const f = { captured: r.captured.length, selfAtari: r.libs === 1 && r.captured.length === 0, size: r.size,
     ataris: [], ownAtari: [], saved: wasAtari.size > 0 && r.libs >= 2, eyeFill, realEye, moveNo: g.moves.length,
