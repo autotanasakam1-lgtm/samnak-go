@@ -58,5 +58,27 @@ const Rep = (() => {
   window.addEventListener('online', flush);
   setTimeout(() => { mount(); flush(); }, 1500);
   document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
-  return { add, flush, nudge, mount, on, enabled };
+  // ---------- สมุดบันทึกประลองของคู่ประลองแต่ละตัว (อ่านจากส่วนกลาง เฉพาะคนที่ยินยอมแบ่งปัน) ----------
+  let hallCache = null, hallAt = 0;
+  async function hall() {
+    if (hallCache && Date.now() - hallAt < 60000) return hallCache;
+    const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
+    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; hallAt = Date.now(); return hallCache; }
+    finally { clearTimeout(to); }
+  }
+  const dstr = t => { try { return new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
+  const esc2 = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  async function paintHall(sid, sname) {
+    const box = document.getElementById('hall-box'); if (!box) return;
+    if (!enabled()) { box.hidden = true; return; }
+    box.hidden = false; box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">กำลังโหลด…</p>';
+    let h; try { h = await hall(); } catch (e) { if (document.getElementById('hall-box') === box) box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">โหลดไม่ได้ในตอนนี้ ลองใหม่ภายหลัง</p>'; return; }
+    if (document.getElementById('hall-box') !== box) return;
+    const d = h[sid];
+    if (!d || !d.recent || !d.recent.length) { box.innerHTML = '<h3>สมุดบันทึกประลอง</h3><p class="small">ยังไม่มีผู้ท้าชิงที่แบ่งปันผล เป็นคนแรกได้เลย</p>'; return; }
+    const tot = d.w + d.l, rate = tot ? Math.round(d.w / tot * 100) : null;
+    const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${esc2(r.name || 'นักหมาก')}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
+    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><p class="small">ผู้ท้าชิง ${esc2(d.players)} คน${rate != null ? ` · ผู้เล่นชนะ ${esc2(d.w)} แพ้ ${esc2(d.l)} (ชนะ ${rate}% ในโหมดประลองจริง)` : ''}<br>แสดงเฉพาะผู้ที่กดยินยอมแบ่งปันผล</p><ul class="hall-list">${rows}</ul>`;
+  }
+  return { add, flush, nudge, mount, on, enabled, paintHall };
 })();

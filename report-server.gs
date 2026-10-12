@@ -25,7 +25,29 @@ function doPost(e) {
     return out('ok');
   } catch (err) { return out('err'); }
 }
-function doGet() { return out('ok'); }
+function doGet(e) {
+  if (!e || !e.parameter || e.parameter.a !== 'hall') return out('ok');
+  const cache = CacheService.getScriptCache(), hit = cache.get('hall');
+  if (hit) return json(hit);
+  const ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName('games');
+  const hall = {};
+  if (sh && sh.getLastRow() > 1) {
+    const n = Math.min(sh.getLastRow() - 1, 800), rows = sh.getRange(sh.getLastRow() - n + 1, 1, n, 15).getValues();
+    rows.forEach(r => {
+      const sid = String(r[3]); if (!sid) return;
+      const h = hall[sid] = hall[sid] || { w: 0, l: 0, ids: {}, recent: [] };
+      const res = String(r[8]); const win = res === 'W';
+      if (String(r[6]) === 'match') { win ? h.w++ : h.l++; }
+      h.ids[String(r[1])] = 1;
+      h.recent.push({ t: new Date(r[0]).getTime(), name: String(r[2]).slice(0, 16), res: res, margin: r[9] === '' ? null : r[9], mode: String(r[6]), n: r[5], hc: r[7] });
+    });
+    Object.keys(hall).forEach(k => { const h = hall[k]; h.players = Object.keys(h.ids).length; delete h.ids; h.recent = h.recent.slice(-12).reverse(); });
+  }
+  const s = JSON.stringify({ updated: Date.now(), hall: hall });
+  cache.put('hall', s, 60);
+  return json(s);
+}
+function json(s) { return ContentService.createTextOutput(s).setMimeType(ContentService.MimeType.JSON); }
 function out(s) { return ContentService.createTextOutput(s); }
 function str(v, n) { return String(v == null ? '' : v).replace(/^[=+\-@]/, "'$&").slice(0, n); }
 function num(v) { const x = Number(v); return isFinite(x) ? x : ''; }

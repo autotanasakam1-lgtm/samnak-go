@@ -219,6 +219,7 @@ function renderDetail() {
     ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ โคมิ 0.5</p>' : ''}</div>
     <div><p class="lab">โหมดการเล่น</p><div class="seg" id="md-seg" role="group" aria-label="โหมดการเล่น"><button data-md="teach" aria-pressed="${selMode === 'teach'}">โหมดสอน</button><button data-md="real" aria-pressed="${selMode === 'real'}">โหมดประลองจริง</button></div><p class="small">${selMode === 'teach' ? 'มีคำใบ้สองขั้น ถอยตาได้ ติวเตอร์คอยบอก และถ้าพลาดใหญ่จะเสนอให้ลองตานั้นใหม่ ชัยชนะนับแยกต่างหาก' : 'ไม่มีคำใบ้ ไม่มีถอยตา ไม่มีติวเตอร์ เหมือนแข่งจริง ชัยชนะนับเป็น \u2018ชนะแล้ว\u2019 ของคู่ประลอง'}</p></div>
     <div class="btns"><button class="btn primary" id="start"${off ? ' disabled' : ''}>เริ่มประลอง</button></div>${off ? '<p class="warn">คู่ประลองตัวนี้ใช้เครื่องของสำนัก ตอนนี้เครื่องปิดอยู่ ลองใหม่ภายหลัง หรือเลือกปรมาจารย์มังกรแทน</p>' : ''}`;
+  try { const hb = document.createElement('section'); hb.id = 'hall-box'; hb.className = 'hall'; hb.hidden = true; $('#detail').appendChild(hb); Rep.paintHall(s.id, s.name); } catch (e) { }
 }
 // ---------- ไม้บรรทัดระดับ ----------
 // ตำแหน่ง: 30 คิว = 0, 1 คิว = 29, 1 ดั้ง = 30, 7 ดั้ง = 36, โซนอาชีพอยู่หลังรอยตัด
