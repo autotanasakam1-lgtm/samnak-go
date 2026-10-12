@@ -1,5 +1,5 @@
 // Service worker for สำนักหมากล้อม. Works from any subfolder: all paths are resolved against the registration scope.
-const VERSION = 'v7-proof2';
+const VERSION = 'v8-autolog';
 const PRECACHE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 const CACHE_FIRST_DIRS = ['engine/', 'tfjs/'];
 

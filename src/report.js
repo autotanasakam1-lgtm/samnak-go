@@ -1,4 +1,4 @@
-// ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
+// ---------- บันทึกผลการเล่นเข้าส่วนกลางอัตโนมัติ (ผู้เล่นปิดเองได้ในหน้าโปรไฟล์) ----------
 // ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
 const REPORT_URL = 'https://script.google.com/macros/s/AKfycby55KS5jKtfLGoHeswXyi9z6JZrDoQaiDMSIYpWTPqsI5F3KuDks4P4DJRk_n9QPO3F/exec';
 const Rep = (() => {
@@ -8,7 +8,7 @@ const Rep = (() => {
   const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
   let busy = false;
   const enabled = () => !!REPORT_URL;
-  const on = () => enabled() && g(K.on, false) === true;
+  const on = () => enabled() && g(K.on, null) !== false; // เปิดอัตโนมัติ ผู้เล่นปิดเองได้ในหน้าโปรไฟล์
   function add(ev) {
     if (!on()) return;
     const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
@@ -35,18 +35,19 @@ const Rep = (() => {
     const box = document.getElementById('rep-box'); if (!box) return;
     box.hidden = !enabled(); if (!enabled()) return;
     const c = box.querySelector('input'); c.checked = on();
-    box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ไม่มีการส่งข้อมูลใดๆ';
+    box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ผลการเล่นของคุณจะไม่ถูกส่ง';
   }
   function mount() {
     const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
     const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
-    box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>แบ่งปันผลการเล่นให้ผู้ดูแลสำนัก</span></label>
+    box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>บันทึกผลการเล่นของฉันลงสมุดบันทึกประลองของสำนัก (เปิดอัตโนมัติ)</span></label>
       <p class="small">ส่งเฉพาะ: ชื่อที่คุณตั้ง รหัสสุ่มของเครื่องนี้ ผลแพ้ชนะ คู่ประลอง ขนาดกระดาน โหมด จำนวนตา แต้มที่ต่าง และบันทึกตาเดิน (บันทึกตาเดิน) ผลบทเรียนและโจทย์ ไม่เก็บอีเมล ตำแหน่ง หรือข้อมูลอื่น ใช้เพื่อปรับระดับและความแรงของ AI เท่านั้น ปิดได้ทุกเมื่อ เมื่อปิดจะไม่ส่งอีก (ข้อมูลที่ส่งไปแล้วขอให้ลบได้โดยแจ้งผู้ดูแลพร้อมชื่อของคุณ)</p><p class="small rep-st" role="status"></p>`;
     bk.parentNode.insertBefore(box, bk);
     box.querySelector('input').onchange = e => set(e.target.checked);
     ui();
   }
   function nudge() {
+    return; // บันทึกอัตโนมัติแล้ว ไม่ต้องขอ
     if (!enabled() || on() || g(K.ask, 0)) return; s(K.ask, 1);
     const d = document.createElement('div'); d.className = 'rep-nudge'; d.setAttribute('role', 'dialog'); d.setAttribute('aria-label', 'ขอความร่วมมือ');
     d.innerHTML = `<p>ช่วยปรับระดับ AI ให้ตรงขึ้นไหม? แบ่งปันผลแพ้ชนะแบบใช้ชื่อที่ตั้งไว้ ปิดได้ทุกเมื่อในหน้าโปรไฟล์</p><div class="btns"><button class="btn primary" type="button" data-a="y">ได้เลย</button><button class="btn" type="button" data-a="n">ไม่เอา</button></div>`;
@@ -81,7 +82,7 @@ const Rep = (() => {
     const conq = (d.conq || []).length ? `<h4>ผู้พิชิต (ชนะเสมอในโหมดประลองจริง)</h4><ul class="hall-list">${d.conq.map(r => `<li><span class="hn">🏆 ${nm(r)}</span><span class="hr win">พิชิตแล้ว</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ul>` : '<h4>ผู้พิชิต</h4><p class="small">ยังไม่มีใครชนะท่านนี้แบบเสมอในโหมดประลองจริง</p>';
     const top = (d.top || []).length ? `<h4>อันดับชนะแต้มมากสุด</h4><ol class="hall-list rank">${d.top.map((r, i) => `<li><span class="hn">${medal[i] || (i + 1) + '.'} ${nm(r)}</span><span class="hr win">+${esc2(r.margin)} แต้ม</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ol>` : '';
     const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${nm(r)}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
-    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">แสดงเฉพาะผู้ที่กดยินยอมแบ่งปัน ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
+    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">แสดงผลของผู้เล่นที่ไม่ได้ปิดการบันทึก ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
   }
   return { add, flush, nudge, mount, on, enabled, paintHall };
 })();
