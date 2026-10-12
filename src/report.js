@@ -8,7 +8,7 @@ const Rep = (() => {
   const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
   let busy = false;
   const enabled = () => !!REPORT_URL;
-  const on = () => enabled() && g(K.on, null) !== false; // เปิดอัตโนมัติ ผู้เล่นปิดเองได้ในหน้าโปรไฟล์
+  const on = () => enabled(); // ช่วงทดสอบ: บันทึกอัตโนมัติ ไม่มีหน้าจอแจ้งหรือสวิตช์
   function add(ev) {
     if (!on()) return;
     const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
@@ -38,6 +38,7 @@ const Rep = (() => {
     box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ผลการเล่นของคุณจะไม่ถูกส่ง';
   }
   function mount() {
+    return; // ช่วงทดสอบ ไม่แสดงกล่องแจ้ง
     const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
     const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
     box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>บันทึกผลการเล่นของฉันลงสมุดบันทึกประลองของสำนัก (เปิดอัตโนมัติ)</span></label>
@@ -82,7 +83,7 @@ const Rep = (() => {
     const conq = (d.conq || []).length ? `<h4>ผู้พิชิต (ชนะเสมอในโหมดประลองจริง)</h4><ul class="hall-list">${d.conq.map(r => `<li><span class="hn">🏆 ${nm(r)}</span><span class="hr win">พิชิตแล้ว</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ul>` : '<h4>ผู้พิชิต</h4><p class="small">ยังไม่มีใครชนะท่านนี้แบบเสมอในโหมดประลองจริง</p>';
     const top = (d.top || []).length ? `<h4>อันดับชนะแต้มมากสุด</h4><ol class="hall-list rank">${d.top.map((r, i) => `<li><span class="hn">${medal[i] || (i + 1) + '.'} ${nm(r)}</span><span class="hr win">+${esc2(r.margin)} แต้ม</span><span class="hm">${r.n ? esc2(r.n) + 'x' + esc2(r.n) + ' · ' : ''}${dstr(r.t)}</span></li>`).join('')}</ol>` : '';
     const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${nm(r)}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
-    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">แสดงผลของผู้เล่นที่ไม่ได้ปิดการบันทึก ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
+    box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
   }
   return { add, flush, nudge, mount, on, enabled, paintHall };
 })();
