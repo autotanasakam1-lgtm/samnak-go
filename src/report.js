@@ -1,6 +1,6 @@
 // ---------- ส่งผลการเล่นเข้าส่วนกลาง (ต้องกดยินยอมเอง ปิดได้ทุกเมื่อ) ----------
 // ตั้งค่าที่อยู่รับข้อมูล (Google Apps Script Web App) ใน REPORT_URL ถ้าเว้นว่าง ฟีเจอร์นี้จะไม่แสดงและไม่เก็บอะไร
-const REPORT_URL = '';
+const REPORT_URL = 'https://script.google.com/macros/s/AKfycby55KS5jKtfLGoHeswXyi9z6JZrDoQaiDMSIYpWTPqsI5F3KuDks4P4DJRk_n9QPO3F/exec';
 const Rep = (() => {
   const K = { on: 'go-rep-on', q: 'go-rep-q', id: 'go-rep-id', sent: 'go-rep-sent', ask: 'go-rep-ask' };
   const g = (k, d) => store.get(k, d), s = (k, v) => store.set(k, v);
