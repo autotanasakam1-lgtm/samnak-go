@@ -4,6 +4,9 @@ const ANIMALS = [
   { kind: 'elephant', fur: '#A9B4C2', label: 'ช้าง' }, { kind: 'frog', fur: '#7CC46A', label: 'กบ' }, { kind: 'bear', fur: '#9A6B45', label: 'หมี' }
 ];
 const cleanName = v => String(v || '').replace(/\s+/g, ' ').trim().slice(0, 16);
+const LVLS = [['', 'ไม่ตอบ'], ['new', 'ไม่เคยเล่น'], ['beg', 'เริ่มต้น']].concat(Array.from({ length: 20 }, (_, i) => ['k' + (20 - i), (20 - i) + ' คิว']), Array.from({ length: 7 }, (_, i) => ['d' + (i + 1), (i + 1) + ' ดั้ง']), [['unsure', 'ไม่แน่ใจ']]);
+const lvlOpts = cur => LVLS.map(l => `<option value="${l[0]}"${l[0] === (cur || '') ? ' selected' : ''}>${l[1]}</option>`).join('');
+const lvlOk = v => LVLS.some(l => l[0] === v);
 let profile = store.get('go-profile', null);
 if (!(profile && typeof profile.name === 'string' && cleanName(profile.name) && ANIMALS.some(a => a.kind === profile.animal))) profile = null;
 const pn = () => profile ? profile.name : 'นักหมาก';
@@ -21,6 +24,7 @@ function showWelcome() {
   w.innerHTML = `<form class="sheet" role="dialog" aria-modal="true" aria-labelledby="wl-h"><h2 id="wl-h">ยินดีต้อนรับสู่สำนักหมากล้อม</h2>
     <div><label for="player-name" class="lab">ตั้งชื่อนักหมากของคุณ</label><input id="player-name" class="field" maxlength="16" autocomplete="off"></div>
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(ANIMALS[0].kind)}</div>
+    <div><label for="player-lvl" class="lab">ระดับหมากล้อมของคุณ (ไม่บังคับ)</label><select id="player-lvl" class="field">${lvlOpts('')}</select></div>
     <div class="btns"><button class="btn primary" type="submit">เข้าสำนัก</button><button class="btn" type="button" id="wl-skip">ไว้ทีหลัง</button></div>
     <p class="small">ชื่อและผลการเรียนเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครสมาชิก</p></form>`;
   document.body.appendChild(w);
@@ -28,7 +32,7 @@ function showWelcome() {
   const form = $('form', w);
   const close = skip => {
     const picked = $('.animals [aria-pressed="true"]', w), nm = skip ? '' : cleanName($('#player-name').value);
-    profile = { name: nm || 'นักหมาก', animal: picked ? picked.dataset.k : ANIMALS[0].kind, created: Date.now() };
+    profile = { name: nm || 'นักหมาก', animal: picked ? picked.dataset.k : ANIMALS[0].kind, created: Date.now(), lvl: skip ? '' : ($('#player-lvl', w).value || '') };
     store.set('go-profile', profile); justJoined = true;
     $('.wrap').inert = false; w.remove(); renderChip(); showPath();
     const ft = $('#pchip') || $('[role=tab]') || $('h1'); if (ft) { if (!ft.matches('button,a,[tabindex]')) ft.tabIndex = -1; ft.focus(); }
@@ -185,7 +189,7 @@ function renderProfile() {
     <div class="btns"><button class="btn" type="button" data-psh="line">แชร์ผลไป LINE</button><button class="btn" type="button" data-psh="copy">คัดลอกข้อความ</button></div>
     ${skProfileBlock()}
     <section class="hsec"><h2>ผลกับคู่ประลอง</h2><ul class="recs">${SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 }; return `<li>${avatar(s, 32)}<span>${esc(s.name)}</span><span>ชนะ ${r.w} แพ้ ${r.l}</span></li>`; }).join('')}</ul></section>
-    <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div>
+    <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div><div><label class="lab" for="me-lvl">ระดับหมากล้อมของคุณ (ไม่บังคับ)</label><select id="me-lvl" class="field">${lvlOpts(profile && profile.lvl)}</select></div>
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(profile ? profile.animal : ANIMALS[0].kind)}</div>
     <div class="btns"><button class="btn primary" type="submit">บันทึก</button></div><p class="small" id="me-msg" role="status"></p></form>`;
   renderLog();
@@ -202,7 +206,7 @@ $('#me-top').addEventListener('click', e => {
 $('#me-top').addEventListener('submit', e => {
   e.preventDefault();
   const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
-  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill };
+  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill, lvl: ($('#me-lvl') ? $('#me-lvl').value : (profile && profile.lvl)) || '' };
   const saved = store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
   $('#me-msg').textContent = saved ? 'บันทึกแล้ว' : 'บันทึกไม่สำเร็จ';
 });
@@ -230,7 +234,7 @@ function parseCode(text) {
     lg.push({ recordId:r.recordId, mode: r.mode || 'real', handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
-  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
+  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; if (lvlOk(o.profile.lvl)) pr.lvl = o.profile.lvl; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
   const records=Array.isArray(o.records)?o.records.filter(r=>r && typeof r.id==='string' && [7,9,13,19].includes(r.n) && Array.isArray(r.sequence) && r.sequence.length<=1500):[];
   return { profile: pr, done: dn, rec: rc, log: lg, teacher, records };
 }

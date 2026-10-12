@@ -646,6 +646,24 @@ async function endScoring() {
   gfb('ถ้ามีหมากที่ตายแล้วค้างอยู่ในพื้นที่ของอีกฝ่าย แตะที่กลุ่มนั้นเพื่อเอาออก แล้วกดยืนยันผลการนับ');
   renderGame();
 }
+
+// ---------- ความเห็นหลังเกม: เซียนคนนี้เก่งระดับไหน ----------
+function opinionBox() {
+  const R = $('#review'); if (!R || !S || prac || !over || !over.res || over.res.won == null || $('#op-box')) return;
+  const sid = S.id, won = over.res.won, key = 'go-op-' + (lastRec && lastRec.t || '');
+  const b = document.createElement('div'); b.id = 'op-box'; b.className = 'op-box';
+  b.innerHTML = `<p class="small"><b>คุณคิดว่า${esc(S.name)}เก่งระดับไหน</b> (ไม่บังคับ ตอบแล้วช่วยปรับระดับให้ตรงขึ้น)</p><div class="btns"><button class="btn" data-op="lo">อ่อนกว่าที่ป้ายบอก</button><button class="btn" data-op="eq">ตรงกับที่ป้ายบอก</button><button class="btn" data-op="hi">เก่งกว่าที่ป้ายบอก</button></div><div class="btns"><select class="field" id="op-lvl" aria-label="หรือเลือกระดับที่คิดว่าใช่">${lvlOpts('').replace('>ไม่ตอบ<', '>หรือเลือกระดับที่คิดว่าใช่<')}</select><button class="btn" data-op="lvl">ส่ง</button></div>`;
+  R.appendChild(b);
+  b.onclick = e => {
+    const x = e.target.closest('[data-op]'); if (!x) return;
+    let v = x.dataset.op, lv = '';
+    if (v === 'lvl') { lv = $('#op-lvl', b).value; if (!lv) return; v = 'lvl'; }
+    const pl = (profile && profile.lvl) || '', ver = profile && profile.skill && profile.skill.self >= 2;
+    const wt = /^d/.test(pl) || ver ? 2 : (pl === 'new' || pl === 'beg' || !pl) ? 0.5 : 1;
+    try { Rep.add({ k: 'opinion', opp: sid, op: v, lv, plvl: pl, wt, res: won ? 'W' : 'L', hc: HC, n: G.n }); } catch (er) {}
+    b.innerHTML = '<p class="small">ขอบคุณสำหรับความเห็น</p>';
+  };
+}
 function finish() {
   const o = over; o.final = true; let won = null, margin = 0, text;
   if (o.type === 'resign') {
@@ -664,7 +682,7 @@ function finish() {
     lastSgf = logged.sgf; saved = logged.saved && saved;
   }
   if (!prac && saved) clearGame();
-  gfb(saved ? '' : 'บันทึกไม่สำเร็จ เก็บเกมไว้แล้ว'); renderGame(); renderReview();
+  gfb(saved ? '' : 'บันทึกไม่สำเร็จ เก็บเกมไว้แล้ว'); renderGame(); renderReview(); try { opinionBox(); } catch (e) {}
   $('#review').scrollIntoView({ block: 'nearest' });
 }
 

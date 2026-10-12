@@ -465,6 +465,7 @@ textarea.codebox{width:100%;font-family:var(--mono);font-size:.8rem;background:v
   <radialGradient id="gW" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eeebe2"/><stop offset="1" stop-color="#c9c4b6"/></radialGradient>
   <linearGradient id="gWood" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E3BC6E"/><stop offset="1" stop-color="#D3A552"/></linearGradient>
 </defs></svg>
+<style>.op-box{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line,#ccc)}.op-box .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.rec-op{margin:8px 0 0}</style>
 
 <script>
 const BLACK = 1, WHITE = 2;
@@ -1610,6 +1611,24 @@ async function endScoring() {
   gfb('ถ้ามีหมากที่ตายแล้วค้างอยู่ในพื้นที่ของอีกฝ่าย แตะที่กลุ่มนั้นเพื่อเอาออก แล้วกดยืนยันผลการนับ');
   renderGame();
 }
+
+// ---------- ความเห็นหลังเกม: เซียนคนนี้เก่งระดับไหน ----------
+function opinionBox() {
+  const R = $('#review'); if (!R || !S || prac || !over || !over.res || over.res.won == null || $('#op-box')) return;
+  const sid = S.id, won = over.res.won, key = 'go-op-' + (lastRec && lastRec.t || '');
+  const b = document.createElement('div'); b.id = 'op-box'; b.className = 'op-box';
+  b.innerHTML = `<p class="small"><b>คุณคิดว่า${esc(S.name)}เก่งระดับไหน</b> (ไม่บังคับ ตอบแล้วช่วยปรับระดับให้ตรงขึ้น)</p><div class="btns"><button class="btn" data-op="lo">อ่อนกว่าที่ป้ายบอก</button><button class="btn" data-op="eq">ตรงกับที่ป้ายบอก</button><button class="btn" data-op="hi">เก่งกว่าที่ป้ายบอก</button></div><div class="btns"><select class="field" id="op-lvl" aria-label="หรือเลือกระดับที่คิดว่าใช่">${lvlOpts('').replace('>ไม่ตอบ<', '>หรือเลือกระดับที่คิดว่าใช่<')}</select><button class="btn" data-op="lvl">ส่ง</button></div>`;
+  R.appendChild(b);
+  b.onclick = e => {
+    const x = e.target.closest('[data-op]'); if (!x) return;
+    let v = x.dataset.op, lv = '';
+    if (v === 'lvl') { lv = $('#op-lvl', b).value; if (!lv) return; v = 'lvl'; }
+    const pl = (profile && profile.lvl) || '', ver = profile && profile.skill && profile.skill.self >= 2;
+    const wt = /^d/.test(pl) || ver ? 2 : (pl === 'new' || pl === 'beg' || !pl) ? 0.5 : 1;
+    try { Rep.add({ k: 'opinion', opp: sid, op: v, lv, plvl: pl, wt, res: won ? 'W' : 'L', hc: HC, n: G.n }); } catch (er) {}
+    b.innerHTML = '<p class="small">ขอบคุณสำหรับความเห็น</p>';
+  };
+}
 function finish() {
   const o = over; o.final = true; let won = null, margin = 0, text;
   if (o.type === 'resign') {
@@ -1628,7 +1647,7 @@ function finish() {
     lastSgf = logged.sgf; saved = logged.saved && saved;
   }
   if (!prac && saved) clearGame();
-  gfb(saved ? '' : 'บันทึกไม่สำเร็จ เก็บเกมไว้แล้ว'); renderGame(); renderReview();
+  gfb(saved ? '' : 'บันทึกไม่สำเร็จ เก็บเกมไว้แล้ว'); renderGame(); renderReview(); try { opinionBox(); } catch (e) {}
   $('#review').scrollIntoView({ block: 'nearest' });
 }
 
@@ -2186,11 +2205,11 @@ const Rep = (() => {
   setTimeout(() => { mount(); flush(); }, 1500);
   document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
   // ---------- สมุดบันทึกประลองของคู่ประลองแต่ละตัว (อ่านจากส่วนกลาง เฉพาะคนที่ยินยอมแบ่งปัน) ----------
-  let hallCache = null, hallAt = 0;
+  let hallCache = null, hallAt = 0, opsCache = {};
   async function hall() {
     if (hallCache && Date.now() - hallAt < 60000) return hallCache;
     const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
-    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; hallAt = Date.now(); return hallCache; }
+    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; opsCache = j && j.ops ? j.ops : {}; hallAt = Date.now(); return hallCache; }
     finally { clearTimeout(to); }
   }
   const dstr = t => { try { return new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
@@ -2210,7 +2229,7 @@ const Rep = (() => {
     const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${nm(r)}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
     box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
   }
-  return { add, flush, nudge, mount, on, enabled, paintHall };
+  return { add, flush, nudge, mount, on, enabled, paintHall, hall, ops: () => opsCache };
 })();
 
 ﻿let recordAudit=null;
@@ -2256,6 +2275,12 @@ function recordArchivePending() {
   const mine=()=>all().filter(r=>r.type==='human'&&r.sid!=='friend'&&!r.sample);
   function stat(rows){const f=rows.filter(r=>won(r)!==null),w=f.filter(r=>won(r)===true),l=f.filter(r=>won(r)===false),ms=w.filter(r=>!r.resign).map(r=>r.margin).filter(x=>typeof x==='number');
     return {n:rows.length,w:w.length,l:l.length,pct:f.length?Math.round(w.length/f.length*100):0,best:ms.length?Math.max(...ms):null};}
+
+  function opinions(){try{if(typeof Rep==='undefined'||!Rep.enabled())return;Rep.hall().then(()=>{const ops=Rep.ops();document.querySelectorAll('#rec-map [data-cs]').forEach(b=>{const o=ops[b.dataset.cs],body=b.parentNode.querySelector('.rec-body');if(!body||body.querySelector('.rec-op'))return;
+    const p=document.createElement('p');p.className='small rec-op';
+    if(!o||o.n<10){p.textContent=o?`ความเห็นผู้เล่น: ${o.n} คน (ยังไม่พอสรุป ต้องมีอย่างน้อย 10 คน)`:'ความเห็นผู้เล่น: ยังไม่มี';}
+    else{const t=o.lo+o.eq+o.hi,m=[['อ่อนกว่าที่ป้ายบอก',o.lo],['ตรงกับที่ป้ายบอก',o.eq],['เก่งกว่าที่ป้ายบอก',o.hi]].sort((a,b)=>b[1]-a[1])[0];p.textContent=`ผู้เล่น ${o.n} คนให้ความเห็น ส่วนใหญ่บอกว่า${t?m[0][0]:'ยังไม่ชัด'} (คนระดับดั้ง ${o.dan} คน)`;}
+    body.appendChild(p);});}).catch(()=>{});}catch(e){}}
   let shown=[];
   async function mount(){stop();root().innerHTML='<h1>ประวัติการเล่น</h1><p class="small">แผนที่ขั้นบันได: ระดับสูงสุดอยู่บนสุด · แต่ละท่านมีผลของคุณและอันดับชัยชนะดีที่สุด · แตะการ์ดเพื่อดูเกมทั้งหมดและเล่นย้อนหลัง</p><div id="rec-map" class="rec-map"></div><div id="record-summary"></div><div id="record-view" hidden></div>';
     if(!bots){try{const r=await fetch('records/bot-games.json');if(!r.ok)throw Error();bots=await r.json();loadError=false;}catch(e){loadError=true;}}
@@ -2272,7 +2297,7 @@ function recordArchivePending() {
       let body=top.length?`<ol class="rec-top">${top.map((r,i)=>`<li>${medal[i]} ชนะ ${r.margin} แต้ม <small>${esc(new Date(r.t).toLocaleDateString('th-TH'))}</small></li>`).join('')}</ol>`:'<p class="small rec-none">ยังไม่เคยชนะท่านนี้</p>';
       if(open_){body+=rows.length?'<div class="rec-games">'+rows.map(r=>{shown.push(r);const w=won(r),chip=w==null?'<span class="rec-chip">ไม่จบ</span>':w?'<span class="rec-chip win">ชนะ</span>':'<span class="rec-chip loss">แพ้</span>';return `<div class="rec-row"><div class="rec-main"><b>${chip} ${esc(result(r))}</b><small>${r.n}×${r.n} · ต่อ ${r.handicap||0} · ${r.sequence?.length||r.moves||0} ตา · ${esc(new Date(r.t).toLocaleDateString('th-TH'))} · ${badge(r)}</small></div><button class="btn" data-replay="${shown.length-1}" type="button">ดู</button></div>`;}).join('')+'</div>':'';
         if(bot)body+=`<p class="small">เกมทดสอบคอม: ต่อ ${bot.handicap} เม็ด เล่น ${bot.games} ชนะ ${bot.wins} (${bot.winPercent}%)</p>`;}
-      return `<div class="rec-node ${k%2?'r':'l'}${open_?' open':''}"><button class="rec-card" data-cs="${s.id}" type="button" aria-expanded="${open_}"><span class="rec-rk">${k+1}</span><span class="rec-av">${avatar(s,56)}</span><span class="rec-nm"><b>${esc(s.name)}</b><small>${esc(s.rank||'')}</small></span><span class="rec-wl"><i class="w">ชนะ ${st.w}</i><i class="l">แพ้ ${st.l}</i></span></button><div class="rec-body">${body}</div></div>`;}).join('')+sampleBlock();
+      return `<div class="rec-node ${k%2?'r':'l'}${open_?' open':''}"><button class="rec-card" data-cs="${s.id}" type="button" aria-expanded="${open_}"><span class="rec-rk">${k+1}</span><span class="rec-av">${avatar(s,56)}</span><span class="rec-nm"><b>${esc(s.name)}</b><small>${esc(s.rank||'')}</small></span><span class="rec-wl"><i class="w">ชนะ ${st.w}</i><i class="l">แพ้ ${st.l}</i></span></button><div class="rec-body">${body}</div></div>`;}).join('')+sampleBlock();opinions();
   }
   function sampleBlock(){const hide=store.get('go-hide-record-samples',false),rs=all().filter(r=>(r.sample||r.type==='bot')&&!(hide&&r.sample));
     const sum=(bots?.summary||[]).map(x=>`<p class="small">${esc(x.sname)} · ต่อ ${x.handicap} เม็ด · เล่น ${x.games} เกม · ชนะ ${x.wins} เกม (${x.winPercent}%)</p>`).join('');
@@ -2297,6 +2322,9 @@ const ANIMALS = [
   { kind: 'elephant', fur: '#A9B4C2', label: 'ช้าง' }, { kind: 'frog', fur: '#7CC46A', label: 'กบ' }, { kind: 'bear', fur: '#9A6B45', label: 'หมี' }
 ];
 const cleanName = v => String(v || '').replace(/\s+/g, ' ').trim().slice(0, 16);
+const LVLS = [['', 'ไม่ตอบ'], ['new', 'ไม่เคยเล่น'], ['beg', 'เริ่มต้น']].concat(Array.from({ length: 20 }, (_, i) => ['k' + (20 - i), (20 - i) + ' คิว']), Array.from({ length: 7 }, (_, i) => ['d' + (i + 1), (i + 1) + ' ดั้ง']), [['unsure', 'ไม่แน่ใจ']]);
+const lvlOpts = cur => LVLS.map(l => `<option value="${l[0]}"${l[0] === (cur || '') ? ' selected' : ''}>${l[1]}</option>`).join('');
+const lvlOk = v => LVLS.some(l => l[0] === v);
 let profile = store.get('go-profile', null);
 if (!(profile && typeof profile.name === 'string' && cleanName(profile.name) && ANIMALS.some(a => a.kind === profile.animal))) profile = null;
 const pn = () => profile ? profile.name : 'นักหมาก';
@@ -2314,6 +2342,7 @@ function showWelcome() {
   w.innerHTML = `<form class="sheet" role="dialog" aria-modal="true" aria-labelledby="wl-h"><h2 id="wl-h">ยินดีต้อนรับสู่สำนักหมากล้อม</h2>
     <div><label for="player-name" class="lab">ตั้งชื่อนักหมากของคุณ</label><input id="player-name" class="field" maxlength="16" autocomplete="off"></div>
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(ANIMALS[0].kind)}</div>
+    <div><label for="player-lvl" class="lab">ระดับหมากล้อมของคุณ (ไม่บังคับ)</label><select id="player-lvl" class="field">${lvlOpts('')}</select></div>
     <div class="btns"><button class="btn primary" type="submit">เข้าสำนัก</button><button class="btn" type="button" id="wl-skip">ไว้ทีหลัง</button></div>
     <p class="small">ชื่อและผลการเรียนเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครสมาชิก</p></form>`;
   document.body.appendChild(w);
@@ -2321,7 +2350,7 @@ function showWelcome() {
   const form = $('form', w);
   const close = skip => {
     const picked = $('.animals [aria-pressed="true"]', w), nm = skip ? '' : cleanName($('#player-name').value);
-    profile = { name: nm || 'นักหมาก', animal: picked ? picked.dataset.k : ANIMALS[0].kind, created: Date.now() };
+    profile = { name: nm || 'นักหมาก', animal: picked ? picked.dataset.k : ANIMALS[0].kind, created: Date.now(), lvl: skip ? '' : ($('#player-lvl', w).value || '') };
     store.set('go-profile', profile); justJoined = true;
     $('.wrap').inert = false; w.remove(); renderChip(); showPath();
     const ft = $('#pchip') || $('[role=tab]') || $('h1'); if (ft) { if (!ft.matches('button,a,[tabindex]')) ft.tabIndex = -1; ft.focus(); }
@@ -2478,7 +2507,7 @@ function renderProfile() {
     <div class="btns"><button class="btn" type="button" data-psh="line">แชร์ผลไป LINE</button><button class="btn" type="button" data-psh="copy">คัดลอกข้อความ</button></div>
     ${skProfileBlock()}
     <section class="hsec"><h2>ผลกับคู่ประลอง</h2><ul class="recs">${SENSEI.map(s => { const r = recs[s.id] || { w: 0, l: 0 }; return `<li>${avatar(s, 32)}<span>${esc(s.name)}</span><span>ชนะ ${r.w} แพ้ ${r.l}</span></li>`; }).join('')}</ul></section>
-    <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div>
+    <form class="panel col" id="me-form"><h2>เปลี่ยนชื่อและหน้าตา</h2><div><label class="lab" for="me-name">ชื่อนักหมาก</label><input id="me-name" class="field" maxlength="16" autocomplete="off" value="${esc(pn())}"></div><div><label class="lab" for="me-lvl">ระดับหมากล้อมของคุณ (ไม่บังคับ)</label><select id="me-lvl" class="field">${lvlOpts(profile && profile.lvl)}</select></div>
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(profile ? profile.animal : ANIMALS[0].kind)}</div>
     <div class="btns"><button class="btn primary" type="submit">บันทึก</button></div><p class="small" id="me-msg" role="status"></p></form>`;
   renderLog();
@@ -2495,7 +2524,7 @@ $('#me-top').addEventListener('click', e => {
 $('#me-top').addEventListener('submit', e => {
   e.preventDefault();
   const nm = cleanName($('#me-name').value), pk = $('#me-top .animals [aria-pressed="true"]');
-  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill };
+  profile = { name: nm || pn(), animal: pk ? pk.dataset.k : (profile ? profile.animal : ANIMALS[0].kind), created: profile ? profile.created : Date.now(), skill: profile && profile.skill, lvl: ($('#me-lvl') ? $('#me-lvl').value : (profile && profile.lvl)) || '' };
   const saved = store.set('go-profile', profile); renderChip(); renderProfile(); showPath();
   $('#me-msg').textContent = saved ? 'บันทึกแล้ว' : 'บันทึกไม่สำเร็จ';
 });
@@ -2523,7 +2552,7 @@ function parseCode(text) {
     lg.push({ recordId:r.recordId, mode: r.mode || 'real', handicap: hcv, deep: dp, t: r.t, sid: r.sid, sname: r.sname, rank: r.rank, n: r.n, color: r.color === 2 ? 2 : 1, komi: r.komi == null ? 6.5 : r.komi, result: r.result, margin: r.margin == null ? null : r.margin, resign: !!r.resign, moves: cnt(r.moves) ? r.moves : 0, avgLoss: r.avgLoss == null ? null : r.avgLoss, big: r.big == null ? null : r.big, degraded: !!r.degraded, sgf: r.sgf });
   }
   let pr = null;
-  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
+  if (o.profile) { const nm = typeof o.profile.name === 'string' ? cleanName(o.profile.name) : ''; if (!nm || !ANIMALS.some(a => a.kind === o.profile.animal)) return null; pr = { name: nm, animal: o.profile.animal, created: typeof o.profile.created === 'number' ? o.profile.created : Date.now() }; if (lvlOk(o.profile.lvl)) pr.lvl = o.profile.lvl; const k = o.profile.skill; if (k && typeof k === 'object' && bySid(k.sid) && LESSONS.some(l => l.id === k.lesson) && [0, 1, 2, 3].includes(k.self)) pr.skill = { self: k.self, score: Math.max(0, Math.min(9, k.score | 0)), total: Math.max(0, Math.min(9, k.total | 0)), sid: k.sid, lesson: k.lesson, t: +k.t || 0 }; }
   const records=Array.isArray(o.records)?o.records.filter(r=>r && typeof r.id==='string' && [7,9,13,19].includes(r.n) && Array.isArray(r.sequence) && r.sequence.length<=1500):[];
   return { profile: pr, done: dn, rec: rc, log: lg, teacher, records };
 }

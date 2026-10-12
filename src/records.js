@@ -13,6 +13,12 @@
   const mine=()=>all().filter(r=>r.type==='human'&&r.sid!=='friend'&&!r.sample);
   function stat(rows){const f=rows.filter(r=>won(r)!==null),w=f.filter(r=>won(r)===true),l=f.filter(r=>won(r)===false),ms=w.filter(r=>!r.resign).map(r=>r.margin).filter(x=>typeof x==='number');
     return {n:rows.length,w:w.length,l:l.length,pct:f.length?Math.round(w.length/f.length*100):0,best:ms.length?Math.max(...ms):null};}
+
+  function opinions(){try{if(typeof Rep==='undefined'||!Rep.enabled())return;Rep.hall().then(()=>{const ops=Rep.ops();document.querySelectorAll('#rec-map [data-cs]').forEach(b=>{const o=ops[b.dataset.cs],body=b.parentNode.querySelector('.rec-body');if(!body||body.querySelector('.rec-op'))return;
+    const p=document.createElement('p');p.className='small rec-op';
+    if(!o||o.n<10){p.textContent=o?`ความเห็นผู้เล่น: ${o.n} คน (ยังไม่พอสรุป ต้องมีอย่างน้อย 10 คน)`:'ความเห็นผู้เล่น: ยังไม่มี';}
+    else{const t=o.lo+o.eq+o.hi,m=[['อ่อนกว่าที่ป้ายบอก',o.lo],['ตรงกับที่ป้ายบอก',o.eq],['เก่งกว่าที่ป้ายบอก',o.hi]].sort((a,b)=>b[1]-a[1])[0];p.textContent=`ผู้เล่น ${o.n} คนให้ความเห็น ส่วนใหญ่บอกว่า${t?m[0][0]:'ยังไม่ชัด'} (คนระดับดั้ง ${o.dan} คน)`;}
+    body.appendChild(p);});}).catch(()=>{});}catch(e){}}
   let shown=[];
   async function mount(){stop();root().innerHTML='<h1>ประวัติการเล่น</h1><p class="small">แผนที่ขั้นบันได: ระดับสูงสุดอยู่บนสุด · แต่ละท่านมีผลของคุณและอันดับชัยชนะดีที่สุด · แตะการ์ดเพื่อดูเกมทั้งหมดและเล่นย้อนหลัง</p><div id="rec-map" class="rec-map"></div><div id="record-summary"></div><div id="record-view" hidden></div>';
     if(!bots){try{const r=await fetch('records/bot-games.json');if(!r.ok)throw Error();bots=await r.json();loadError=false;}catch(e){loadError=true;}}
@@ -29,7 +35,7 @@
       let body=top.length?`<ol class="rec-top">${top.map((r,i)=>`<li>${medal[i]} ชนะ ${r.margin} แต้ม <small>${esc(new Date(r.t).toLocaleDateString('th-TH'))}</small></li>`).join('')}</ol>`:'<p class="small rec-none">ยังไม่เคยชนะท่านนี้</p>';
       if(open_){body+=rows.length?'<div class="rec-games">'+rows.map(r=>{shown.push(r);const w=won(r),chip=w==null?'<span class="rec-chip">ไม่จบ</span>':w?'<span class="rec-chip win">ชนะ</span>':'<span class="rec-chip loss">แพ้</span>';return `<div class="rec-row"><div class="rec-main"><b>${chip} ${esc(result(r))}</b><small>${r.n}×${r.n} · ต่อ ${r.handicap||0} · ${r.sequence?.length||r.moves||0} ตา · ${esc(new Date(r.t).toLocaleDateString('th-TH'))} · ${badge(r)}</small></div><button class="btn" data-replay="${shown.length-1}" type="button">ดู</button></div>`;}).join('')+'</div>':'';
         if(bot)body+=`<p class="small">เกมทดสอบคอม: ต่อ ${bot.handicap} เม็ด เล่น ${bot.games} ชนะ ${bot.wins} (${bot.winPercent}%)</p>`;}
-      return `<div class="rec-node ${k%2?'r':'l'}${open_?' open':''}"><button class="rec-card" data-cs="${s.id}" type="button" aria-expanded="${open_}"><span class="rec-rk">${k+1}</span><span class="rec-av">${avatar(s,56)}</span><span class="rec-nm"><b>${esc(s.name)}</b><small>${esc(s.rank||'')}</small></span><span class="rec-wl"><i class="w">ชนะ ${st.w}</i><i class="l">แพ้ ${st.l}</i></span></button><div class="rec-body">${body}</div></div>`;}).join('')+sampleBlock();
+      return `<div class="rec-node ${k%2?'r':'l'}${open_?' open':''}"><button class="rec-card" data-cs="${s.id}" type="button" aria-expanded="${open_}"><span class="rec-rk">${k+1}</span><span class="rec-av">${avatar(s,56)}</span><span class="rec-nm"><b>${esc(s.name)}</b><small>${esc(s.rank||'')}</small></span><span class="rec-wl"><i class="w">ชนะ ${st.w}</i><i class="l">แพ้ ${st.l}</i></span></button><div class="rec-body">${body}</div></div>`;}).join('')+sampleBlock();opinions();
   }
   function sampleBlock(){const hide=store.get('go-hide-record-samples',false),rs=all().filter(r=>(r.sample||r.type==='bot')&&!(hide&&r.sample));
     const sum=(bots?.summary||[]).map(x=>`<p class="small">${esc(x.sname)} · ต่อ ${x.handicap} เม็ด · เล่น ${x.games} เกม · ชนะ ${x.wins} เกม (${x.winPercent}%)</p>`).join('');

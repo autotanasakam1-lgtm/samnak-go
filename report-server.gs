@@ -19,6 +19,7 @@ function doPost(e) {
       if (ev.k === 'game') games.appendRow([t, id, name, str(ev.opp, 6), str(ev.oppRank, 20), num(ev.n), str(ev.mode, 8), num(ev.hc), str(ev.res, 8), num(ev.margin), num(ev.moves), num(ev.avgLoss), num(ev.big), ev.degraded ? 1 : 0, eid, str(ev.sgf, 6000), num(ev.undoCount), str(JSON.stringify(ev.undos || []), 45000), ev.restarted ? 1 : 0]);
       else if(ev.k === 'record') sheet(ss,'records',['เวลา','รหัสเครื่อง','ชื่อ','บันทึก']).appendRow([t,id,name,str(JSON.stringify(ev),45000)]);
       else if (ev.k === 'lesson' || ev.k === 'puzzle') other.appendRow([t, id, name, ev.k, str(ev.id, 20), ev.ok === false ? 0 : 1, eid]);
+      else if (ev.k === 'opinion') sheet(ss, 'opinions', ['เวลา', 'รหัสเครื่อง', 'ชื่อ', 'เซียน', 'ความเห็น', 'ระดับที่เลือก', 'ระดับผู้ตอบ', 'น้ำหนัก', 'ผลเกม', 'แต้มต่อ', 'กระดาน', 'eid']).appendRow([t, id, name, str(ev.opp, 6), str(ev.op, 4), str(ev.lv, 8), str(ev.plvl, 8), num(ev.wt), str(ev.res, 2), num(ev.hc), num(ev.n), eid]);
       else return;
       seenSh.appendRow([eid]);
     });
@@ -57,7 +58,19 @@ function doGet(e) {
       h.conq = Object.keys(h.conq).map(i => h.conq[i]).sort((a, b) => a.t - b.t).slice(0, 20);
     });
   }
-  const s = JSON.stringify({ updated: Date.now(), hall: hall });
+  const osh = ss.getSheetByName('opinions'), ops = {};
+  if (osh && osh.getLastRow() > 1) {
+    const n = Math.min(osh.getLastRow() - 1, 1500), rows = osh.getRange(osh.getLastRow() - n + 1, 1, n, 12).getValues(), last = {};
+    rows.forEach(r => { last[String(r[1]) + '|' + String(r[3])] = r; }); // หนึ่งเครื่องต่อหนึ่งเซียน นับความเห็นล่าสุด
+    Object.keys(last).forEach(k => {
+      const r = last[k], sid = String(r[3]), o = ops[sid] = ops[sid] || { n: 0, lo: 0, eq: 0, hi: 0, dan: 0, lv: {} };
+      const w = Number(r[7]) || 1, op = String(r[4]); o.n++;
+      if (/^d/.test(String(r[6]))) o.dan++;
+      if (op === 'lo' || op === 'eq' || op === 'hi') o[op] += w;
+      else if (op === 'lvl' && r[5]) { const l = String(r[5]); o.lv[l] = (o.lv[l] || 0) + w; }
+    });
+  }
+  const s = JSON.stringify({ updated: Date.now(), hall: hall, ops: ops });
   cache.put('hall', s, 60);
   return json(s);
 }

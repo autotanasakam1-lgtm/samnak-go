@@ -61,11 +61,11 @@ const Rep = (() => {
   setTimeout(() => { mount(); flush(); }, 1500);
   document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-tab="me"],#pchip')) setTimeout(mount, 50); });
   // ---------- สมุดบันทึกประลองของคู่ประลองแต่ละตัว (อ่านจากส่วนกลาง เฉพาะคนที่ยินยอมแบ่งปัน) ----------
-  let hallCache = null, hallAt = 0;
+  let hallCache = null, hallAt = 0, opsCache = {};
   async function hall() {
     if (hallCache && Date.now() - hallAt < 60000) return hallCache;
     const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 8000);
-    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; hallAt = Date.now(); return hallCache; }
+    try { const r = await fetch(REPORT_URL + (REPORT_URL.includes('?') ? '&' : '?') + 'a=hall', { signal: ctl.signal }); const j = await r.json(); hallCache = j && j.hall ? j.hall : {}; opsCache = j && j.ops ? j.ops : {}; hallAt = Date.now(); return hallCache; }
     finally { clearTimeout(to); }
   }
   const dstr = t => { try { return new Date(t).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
@@ -85,5 +85,5 @@ const Rep = (() => {
     const rows = d.recent.map(r => { const won = r.res === 'W'; return `<li><span class="hn">${nm(r)}</span><span class="hr ${won ? 'win' : 'loss'}">${won ? 'ชนะ' : r.res === 'resign' ? 'ยอมแพ้' : 'แพ้'}${r.margin != null && r.margin !== '' ? ' ' + esc2(r.margin) + ' แต้ม' : ''}</span><span class="hm">${r.mode === 'teach' ? 'โหมดสอน' : 'ประลองจริง'} · ${esc2(r.n)}x${esc2(r.n)}${r.hc ? ' · ต่อ ' + esc2(r.hc) : ''} · ${dstr(r.t)}</span></li>`; }).join('');
     box.innerHTML = `<h3>สมุดบันทึกประลอง</h3><div class="hall-tiles"><div><b>${esc2(d.players)}</b><small>ผู้ท้าชิง</small></div><div><b>${esc2(tot)}</b><small>เกมจริง</small></div><div><b>${rate != null ? rate + '%' : '–'}</b><small>ผู้เล่นชนะ</small></div></div>${conq}${top}<h4>ล่าสุด</h4><ul class="hall-list">${rows}</ul><p class="small">ผลทั้งหมดยังเป็นแบบ "รอตรวจสอบ" ชื่อมีรหัสสั้นท้ายชื่อกันสวมรอย ก่อนมอบรางวัลใด ๆ ต้องตรวจบันทึกเกมก่อน</p>`;
   }
-  return { add, flush, nudge, mount, on, enabled, paintHall };
+  return { add, flush, nudge, mount, on, enabled, paintHall, hall, ops: () => opsCache };
 })();
