@@ -210,13 +210,31 @@ function renderRoster(rid) {
     return `<button class="scard" data-id="${s.id}" aria-pressed="${s.id === sel}">${avatar(s, 48)}<span class="nm">${esc(s.name)}${s.id === rid ? '<span class="tag">แนะนำ</span>' : ''}</span><span class="rk">${esc(s.rank)} ${belt(s)}</span><span class="rec">ชนะ ${r.w} แพ้ ${r.l}${r.tw || r.tl ? ` <small>(สอน ${r.tw || 0}/${r.tl || 0})</small>` : ''}${s.eng === 'server' ? ' ' + srvChip() : ''}</span></button>`; }).join('');
   paintScene(rid);
 }
+
+// ---------- ทำไมท่านนี้ถึงได้ระดับนี้ ----------
+function proofHtml(s) {
+  const how = s.eng === 'basic' ? 'เป็นโปรแกรมกฎพื้นฐาน เดินตามหลักง่าย ๆ (จับกิน หนีอาตาริ กินตา) แล้วสุ่มพลาดบ้างตามระดับ'
+    : s.eng === 'server' ? 'ใช้ KataGo รุ่นใหญ่บนเครื่องของสำนัก ค้นหาอ่านล่วงหน้าหลายร้อยรอบต่อตา เปิดเฉพาะตอนเครื่องออนไลน์'
+    : s.mode === 'search' ? `ใช้ KataGo ค้นหาอ่านล่วงหน้า (${s.visits || 16} รอบต่อตา) แล้วเลือกตาที่ดีที่สุด`
+    : s.mode === 'policy' || (s.temp != null && s.temp <= 0.3 && !s.blunder) ? 'ใช้ KataGo เลือกตาตามสัญชาตญาณที่ฝึกมา เกือบเลือกตาที่ดีที่สุดเสมอ แต่ไม่ได้ค้นหาลึก จึงอาจพลาดเมื่อถูกโจมตีด้วยการอ่านยาว ๆ'
+    : `ใช้ KataGo เลือกตาตามสัญชาตญาณ แล้วสุ่มให้พลาดบ้าง และมีโอกาสเดินตาพลาดหนักประมาณ ${Math.round((s.blunder || 0) * 100)}% ของตา`;
+  const c = typeof CALIB !== 'undefined' ? CALIB[s.id] : null;
+  const test = c ? `<p>ผลทดสอบ: เล่นกับบอทอ้างอิง KataGo ที่จำลองผู้เล่นหลายระดับ รวม <b>${c.n} เกม</b> ชนะ <b>${c.w}</b> เกม</p>
+      <div class="pf-chips">${c.by.map(([r, w, n]) => `<span class="pf-chip${w * 2 >= n ? ' ok' : ''}">เจอระดับ ${esc(r.replace('k', ' คิว').replace('d', ' ดั้ง'))}: ชนะ ${w}/${n}</span>`).join('')}</div>
+      <p>จากผลนี้ ท่านนี้เล่นใกล้เคียงระดับ <b>ประมาณ ${esc(c.est.replace('k', ' คิว').replace('d', ' ดั้ง'))}</b> เมื่อเทียบกับบอทอ้างอิง</p>`
+    : '<p>ยังไม่มีผลทดสอบเป็นตัวเลขของท่านนี้</p>';
+  return `<details class="proof"><summary>ทำไมท่านนี้ถึงได้ระดับ ${esc(s.rank)}</summary>
+    <h3>วิธีเล่นของท่าน</h3><p>${how}</p>
+    <h3>ผ่านการทดสอบอะไรมาแล้ว</h3>${test}
+    <h3>ควรรู้ไว้</h3><p class="small">ระดับนี้เป็นค่าประมาณจากการทดสอบกับบอท ยังไม่ได้ยืนยันกับผู้เล่นจริง และเกมที่ทดสอบน้อย จึงอาจคลาดเคลื่อนได้ ผู้เล่นที่อ่านหมากเก่งอาจชนะง่ายกว่าป้าย เราจะปรับป้ายเมื่อมีผลใหม่</p></details>`;
+}
 function renderDetail() {
   const s = bySid(sel), sizes = s.eng === 'basic' ? [7, 9, 13, 19] : [9, 13, 19], off = s.eng === 'server' && !Srv.online, hm = hcMax(selSize);
   if (selHc > hm) selHc = hm;
   const hcList = [0]; for (let k = 2; k <= hm; k++) hcList.push(k);
   const hcSeg = hm ? `<div><p class="lab">หมากต่อ</p><div class="seg" id="hc-seg" role="group" aria-label="หมากต่อ">${hcList.map(k => `<button data-hc="${k}" aria-pressed="${k === selHc}"${k ? ` aria-label="ต่อ ${k} เม็ด"` : ''}>${k || 'ไม่ต่อ'}</button>`).join('')}</div><p class="small">ฝ่ายที่อ่อนกว่าวางหมากดำไว้ก่อนเพื่อให้เกมสูสี</p></div>` : '';
   $('#detail').innerHTML = `<div class="dhead">${avatar(s, 96)}<div><h2>${esc(s.name)}</h2><span>${esc(approx(s))}</span>${belt(s)}${s.eng === 'server' ? srvChip() : ''}</div></div>
-    <dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
+    ${proofHtml(s)}<dl class="facts"><dt>ประสบการณ์</dt><dd>${esc(s.exp)}</dd><dt>สไตล์การเดิน</dt><dd>${esc(s.style)}</dd><dt>เหมาะกับ</dt><dd>${esc(s.fit)}</dd><dt>เป้าหมายของคุณ</dt><dd>${esc(s.goal)}</dd><dt>กระดาน</dt><dd>แนะนำ ${s.n} x ${s.n}</dd></dl>
     <div><p class="lab">ขนาดกระดาน</p><div class="seg" id="size-seg" role="group" aria-label="ขนาดกระดาน">${sizeBtns(sizes, selSize, 'sz')}</div></div>
     ${hcSeg}<div><p class="lab">สีของคุณ</p><div class="seg" id="col-seg" role="group" aria-label="สีของคุณ"><button data-col="1" aria-pressed="${(selHc ? 1 : selCol) === 1}"${selHc ? ' disabled' : ''}>ดำ เดินก่อน</button><button data-col="2" aria-pressed="${(selHc ? 1 : selCol) === 2}"${selHc ? ' disabled' : ''}>ขาว</button></div>${selHc ? '<p class="small">เมื่อรับหมากต่อ คุณถือดำเสมอ แต้มชดเชยให้ขาว 0.5</p>' : ''}</div>
     <div><p class="lab">โหมดการเล่น</p><div class="seg" id="md-seg" role="group" aria-label="โหมดการเล่น"><button data-md="teach" aria-pressed="${selMode === 'teach'}">โหมดสอน</button><button data-md="real" aria-pressed="${selMode === 'real'}">โหมดประลองจริง</button></div><p class="small">${selMode === 'teach' ? 'มีคำใบ้สองขั้น ถอยตาได้ ติวเตอร์คอยบอก และถ้าพลาดใหญ่จะเสนอให้ลองตานั้นใหม่ ชัยชนะนับแยกต่างหาก' : 'ไม่มีคำใบ้ ไม่มีถอยตา ไม่มีติวเตอร์ เหมือนแข่งจริง ชัยชนะนับเป็น \u2018ชนะแล้ว\u2019 ของคู่ประลอง'}</p></div>

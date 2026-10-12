@@ -46,7 +46,7 @@ await test('6 degraded save and resume excludes wins', async () => {
  h.run("store.set(GKEY,{n:9,col:1,komi:6.5,moves:[0]})"); assert.equal(h.run('readGame().degraded'),false);
 });
 await test('7 cache cleanup is application and scope specific', async () => {
- const handlers={}, deleted=[]; const prefix='samnak-%2Fgo%2F-'; const c={URL,self:{registration:{scope:'https://example.test/go/'},location:{origin:'https://example.test'},addEventListener:(t,f)=>handlers[t]=f,clients:{claim:async()=>{}}},caches:{keys:async()=>[prefix+'shell-v0',prefix+'shell-v4-history-map',prefix+'assets-v4-history-map','unrelated-app-cache','samnak-%2Fother%2F-shell-v0','samnak-shell-v0'],delete:async n=>deleted.push(n)}}; vm.createContext(c); vm.runInContext(read('sw.js'),c); let p; handlers.activate({waitUntil:v=>p=v}); await p; assert.deepEqual(deleted,[prefix+'shell-v0']);
+ const handlers={}, deleted=[]; const prefix='samnak-%2Fgo%2F-'; const c={URL,self:{registration:{scope:'https://example.test/go/'},location:{origin:'https://example.test'},addEventListener:(t,f)=>handlers[t]=f,clients:{claim:async()=>{}}},caches:{keys:async()=>[prefix+'shell-v0',prefix+'shell-v5-proof',prefix+'assets-v5-proof','unrelated-app-cache','samnak-%2Fother%2F-shell-v0','samnak-shell-v0'],delete:async n=>deleted.push(n)}}; vm.createContext(c); vm.runInContext(read('sw.js'),c); let p; handlers.activate({waitUntil:v=>p=v}); await p; assert.deepEqual(deleted,[prefix+'shell-v0']);
 });
 await test('8 stale ladder replies after reset and replacement', () => {
  const h=harness(); h.run("const root=document.querySelector('root'); const player=Player(root,'puzzle',()=>{}); player.open(PUZZLES.find(p=>p.id==='p13'))");
