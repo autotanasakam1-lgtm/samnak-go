@@ -221,7 +221,7 @@ function proofHtml(s) {
   const c = typeof CALIB !== 'undefined' ? CALIB[s.id] : null;
   const test = c ? `<p>ผลทดสอบ: เล่นกับบอทอ้างอิง KataGo ที่จำลองผู้เล่นหลายระดับ รวม <b>${c.n} เกม</b> ชนะ <b>${c.w}</b> เกม</p>
       <div class="pf-chips">${c.by.map(([r, w, n]) => `<span class="pf-chip${w * 2 >= n ? ' ok' : ''}">เจอระดับ ${esc(r.replace('k', ' คิว').replace('d', ' ดั้ง'))}: ชนะ ${w}/${n}</span>`).join('')}</div>
-      ${c.hc ? `<p>ทดสอบแบบต่อหมาก: ท่านนี้รับหมากต่อจากบอทที่จำลองผู้เล่น 3 ดั้ง</p><div class="pf-chips">${c.hc.map(([h, w, n]) => `<span class="pf-chip${w * 2 >= n ? ' ok' : ''}">รับ ${h} เม็ด: ชนะ ${w}/${n}</span>`).join('')}</div><p class="small">${c.hcNote || ''}</p>` : ''}<p>จากผลนี้ ท่านนี้เล่นใกล้เคียงระดับ <b>ประมาณ ${esc(c.est.replace('k', ' คิว').replace('d', ' ดั้ง'))}</b> เมื่อเทียบกับบอทอ้างอิง</p>`
+      ${c.hc ? `<p>ทดสอบแบบต่อหมาก: ท่านนี้รับหมากต่อจากบอทที่จำลองผู้เล่น ${c.anchor || '3 ดั้ง'}</p><div class="pf-chips">${c.hc.map(([h, w, n]) => `<span class="pf-chip${w * 2 >= n ? ' ok' : ''}">รับ ${h} เม็ด: ชนะ ${w}/${n}</span>`).join('')}</div><p class="small">${c.hcNote || ''}</p>` : ''}<p>จากผลนี้ ท่านนี้เล่นใกล้เคียงระดับ <b>ประมาณ ${esc(c.est.replace('k', ' คิว').replace('d', ' ดั้ง'))}</b> เมื่อเทียบกับบอทอ้างอิง</p>`
     : '<p>ยังไม่มีผลทดสอบเป็นตัวเลขของท่านนี้</p>';
   return `<details class="proof"><summary>ทำไมท่านนี้ถึงได้ระดับ ${esc(s.rank)}</summary>
     <h3>วิธีเล่นของท่าน</h3><p>${how}</p>
