@@ -8,7 +8,7 @@ const Rep = (() => {
   const clip = (v, n) => String(v == null ? '' : v).slice(0, n);
   let busy = false;
   const enabled = () => !!REPORT_URL;
-  const on = () => enabled(); // ช่วงทดสอบ: บันทึกอัตโนมัติ ไม่มีหน้าจอแจ้งหรือสวิตช์
+  const on = () => enabled() && g(K.on, null) !== false; // เปิดอัตโนมัติ ผู้เล่นปิดเองได้ในหน้าโปรไฟล์
   function add(ev) {
     if (!on()) return;
     const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
@@ -38,7 +38,6 @@ const Rep = (() => {
     box.querySelector('.rep-st').textContent = on() ? `ส่งแล้ว ${g(K.sent, 0)} รายการ · รอส่ง ${g(K.q, []).length} รายการ` : 'ปิดอยู่ ผลการเล่นของคุณจะไม่ถูกส่ง';
   }
   function mount() {
-    return; // ช่วงทดสอบ ไม่แสดงกล่องแจ้ง
     const bk = document.getElementById('backup'); if (!bk || document.getElementById('rep-box')) return;
     const box = document.createElement('section'); box.id = 'rep-box'; box.className = 'panel col'; box.style.marginTop = '20px'; box.hidden = true;
     box.innerHTML = `<h2>ช่วยปรับปรุงสำนัก</h2><label class="rep-sw"><input type="checkbox" id="rep-on"> <span>บันทึกผลการเล่นของฉันลงสมุดบันทึกประลองของสำนัก (เปิดอัตโนมัติ)</span></label>

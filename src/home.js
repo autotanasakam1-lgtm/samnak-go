@@ -26,7 +26,7 @@ function showWelcome() {
     <div class="animals" role="group" aria-label="เลือกหน้าตาของคุณ">${animalBtns(ANIMALS[0].kind)}</div>
     <div><label for="player-lvl" class="lab">ระดับหมากล้อมของคุณ (ไม่บังคับ)</label><select id="player-lvl" class="field">${lvlOpts('')}</select></div>
     <div class="btns"><button class="btn primary" type="submit">เข้าสำนัก</button><button class="btn" type="button" id="wl-skip">ไว้ทีหลัง</button></div>
-    <p class="small">ชื่อและผลการเรียนเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครสมาชิก</p></form>`;
+    <p class="small">ชื่อและผลการเรียนเก็บไว้ในเครื่องนี้ ไม่ต้องสมัครสมาชิก</p><p class="small">ผลการเล่นกับความเห็นของคุณจะถูกส่งไปสมุดบันทึกกลางของสำนักเพื่อปรับระดับ AI ปิดได้ทุกเมื่อในหน้าโปรไฟล์</p></form>`;
   document.body.appendChild(w);
   $('.wrap').inert = true;
   const form = $('form', w);
