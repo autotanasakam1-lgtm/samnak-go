@@ -455,6 +455,15 @@ function setupHandicap(g, hc) {
 }
 const cname = c => c === 1 ? 'ดำ' : 'ขาว';
 const delay = ms => new Promise(r => setTimeout(r, ms));
+// นาฬิกานับเวลาที่ใช้คิด (ไม่มีแพ้เวลา) และจังหวะเดินของเอไอให้เหมือนแข่งจริง ไม่เร็วหรือช้าเกินไป
+let clk = { 1: 0, 2: 0 };
+const fmtClk = () => { const f = v => Math.floor(v / 60) + ':' + String(v % 60).padStart(2, '0'); return `ดำ ${f(clk[1])} · ขาว ${f(clk[2])}`; };
+setInterval(() => { try { if (!G || over || review || $('#game').hidden || document.hidden) return; clk[G.turn]++; const e = $('#clk'); if (e) e.textContent = fmtClk(); } catch (e) { } }, 1000);
+function paceMs() {
+  const k = S ? SENSEI.indexOf(S) : 0, [lo, hi] = k < 2 ? [700, 1800] : k < 4 ? [1200, 3000] : k < 6 ? [1800, 4200] : [2500, 6000];
+  let t = lo + Math.random() * (hi - lo); if (mno() > 4 && Math.random() < 0.12) t += 800 + Math.random() * 1500;
+  return Math.min(t, 7000);
+}
 const gfb = t => { $('#play-fb').textContent = t; };
 const tutor = t => { if ((prac && prac.lock) || gmode === 'real') return; $('#tutor-text').textContent = t; };
 const usesAI = s => !!s && (s.eng === 'kata' || s.eng === 'server');
@@ -479,7 +488,7 @@ async function startGame(s, n, col, res, opt = {}) {
   if (prac) gmode = 'teach';
   else if (res) { const gm = store.get('go-gmode', null); gmode = gm && gm.mode === 'teach' && gm.sid === (s ? s.id : null) && gm.n === n && gm.col === human ? 'teach' : 'real'; }
   else { gmode = !s || opt.mode !== 'real' ? 'teach' : 'real'; store.set('go-gmode', { mode: gmode, sid: s ? s.id : null, n, col: human }); }
-  over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; redoNo = 0; review = null; degraded = !!(res && res.degraded); kataOK = false; retry = false;
+  clk = { 1: 0, 2: 0 }; over = null; dead = new Set(); busy = false; rec = []; pre = null; fresh = -1; hintIdx = -1; hintStage = 0; hintPt = -1; redoNo = 0; review = null; degraded = !!(res && res.degraded); kataOK = false; retry = false;
   $('.tutor').hidden = gmode === 'real'; $('#tutor-act').hidden = true;
   if (res) replayInto(res);
   else if (prac) { for (const m of prac.moves) m < 0 ? G.pass() : G.play(m); if (HC) G.passes = 0; fresh = G.last; }
@@ -530,7 +539,7 @@ function renderGame() {
   else t.innerHTML = `<span class="st ${G.turn === 1 ? 'b' : 'w'}"></span>${esc(gameTitle())}`;
   $('#tally').innerHTML = sc
     ? `<tr><td>ดำ (หมาก + พื้นที่)</td><td>${sc.b}</td></tr><tr><td>ขาว (รวมแต้มชดเชยให้ขาว ${G.komi})</td><td>${sc.w}</td></tr>`
-    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>แต้มชดเชยให้ขาว</td><td>${G.komi}</td></tr>`;
+    : `<tr><td>ดำกินได้</td><td>${G.caps[1]} เม็ด</td></tr><tr><td>ขาวกินได้</td><td>${G.caps[2]} เม็ด</td></tr><tr><td>แต้มชดเชยให้ขาว</td><td>${G.komi}</td></tr><tr><td>เวลาที่ใช้คิด (ไม่มีแพ้เวลา)</td><td id="clk">${fmtClk()}</td></tr>`;
   const fin = !!over && !!over.final;
   $('#b-pass').disabled = !myTurn; $('#b-resign').disabled = !!over || busy || !!review;
   const ub = $('#b-undo'); ub.hidden = gmode === 'real'; ub.disabled = G.moves.length <= undoBase() || busy || fin;
@@ -586,7 +595,7 @@ async function settle(t, a, my) {
   if (t.loss != null) { kataTutor(t); if (gmode === 'teach' && !prac && t.loss >= 5) { redoNo = t.no; $('#tutor-act').hidden = false; } } else if (t.facts) tutorSay(t.facts, G.name(t.idx));
 }
 async function botTurn() {
-  const my = token; busy = true; renderGame();
+  const my = token, t0 = Date.now(); busy = true; renderGame();
   let a = null;
   if (isKata()) {
     const opponent = S, ai = engine();
@@ -596,7 +605,8 @@ async function botTurn() {
     if (my !== token) return;
     if (degraded) { $('#gnote').hidden = false; $('#gnote').textContent = `การวิเคราะห์ขัดข้อง ${S.name}จึงเล่นต่อด้วยคอมพื้นฐาน กำลังเล่นต่ำกว่าระดับ ${S.rank} ที่แสดงไว้ และถ้าชนะกระดานนี้จะไม่นับเป็นสถิติ`; }
     if (pend) { await settle(pend, a, my); if (my !== token) return; }
-  } else { await delay(400); if (my !== token || over) return; }
+  }
+  { const wait = paceMs() - (Date.now() - t0); if (wait > 0) { await delay(wait); if (my !== token || over) return; } }
   const play = m => m >= 0 && G.play(m).ok;
   let mv = -1, ok = false;
   if (a) {

@@ -28,7 +28,7 @@ const Kata = {
     this.pend.clear();
   },
   // วิเคราะห์ตำแหน่งปัจจุบันของเกม g ; คืน {lead (มุมมองดำ), best (idx หรือ -1), policy, ownership, moves}
-  analyze(g, visits = 16, ms = 8000) {
+  analyze(g, visits = 16, ms = 5000) {
     const n = g.n, toB = grid => { const b = []; for (let y = 0; y < n; y++) { const r = []; for (let x = 0; x < n; x++) { const v = grid[y * n + x]; r.push(v === 1 ? 'black' : v === 2 ? 'white' : null); } b.push(r); } return b; };
     const req = { board: toB(g.grid), previousBoard: g.hist.length ? toB(g.hist[g.hist.length - 1].grid) : undefined,
       currentPlayer: g.turn === 1 ? 'black' : 'white', komi: g.komi,

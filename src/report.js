@@ -12,7 +12,7 @@ const Rep = (() => {
   function add(ev) {
     if (!on()) return;
     const q = g(K.q, []); ev.t = Date.now(); ev.eid = uid().slice(0, 8) + '-' + ev.t.toString(36) + Math.random().toString(36).slice(2, 5);
-    q.push(ev); s(K.q, q.slice(-200)); flush();
+    q.push(ev); s(K.q, q.slice(-200)); setTimeout(flush, 200 + Math.random() * 2500);
   }
   async function flush() {
     if (busy || !on()) return; const q = g(K.q, []); if (!q.length) { ui(); return; }
