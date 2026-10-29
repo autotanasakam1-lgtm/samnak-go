@@ -84,6 +84,18 @@ function boardDeco() {
   return `<svg class="deco" viewBox="0 0 230 230" aria-hidden="true" focusable="false"><g transform="rotate(-12 115 115)"><rect x="20" y="20" width="190" height="190" rx="12" fill="#E3BC6E" opacity=".4"/><path d="${g}" stroke="currentColor" stroke-width="1.2" opacity=".3" fill="none"/></g>
     <circle cx="96" cy="96" r="14" fill="#1c1c1f"/><circle cx="142" cy="112" r="14" fill="#f4f2ec" stroke="#0005"/><circle cx="119" cy="146" r="14" fill="#1c1c1f"/></svg>`;
 }
+
+const studyPlan = () => {
+  const st = studyStreak(), cur = (LESSONS.find(l => !done[l.id]) || {}).stage;
+  const wk = [
+    ['สัปดาห์ 1–2', 'ขั้น 1 ทำความรู้จักกระดาน ลมหายใจ การกิน และการนับแต้ม วันละ 1–2 บท เล่น 9x9 กับคู่ประลองคนแรกวันละหนึ่งตา'],
+    ['สัปดาห์ 3–4', 'ขั้น 2 ตา เป็นและตาย บันได ตาข่าย ทำโจทย์ระดับ 30–20 คิววันละ 5 ข้อ'],
+    ['สัปดาห์ 5–7', 'ขั้น 3 รูปร่างหมากและการเปิดเกม เล่นกับคู่ประลองระดับ 15–10 คิวสัปดาห์ละ 3 เกม ทบทวนเกมที่แพ้ด้วยการฝึกจากตาที่พลาด'],
+    ['สัปดาห์ 8–10', 'ขั้น 4 เทสุจิ ศึกลมหายใจ การบุกและลดทอน ทำโจทย์กลุ่มมุม 5–10 ข้อต่อวัน'],
+    ['สัปดาห์ 11 เป็นต้นไป', 'ขั้น 5–6 การอ่านลึก การประเมินกระดาน เรียนจากเกมเซียน ท้าคู่ประลองระดับดั้ง แล้ววนฝึกโจทย์ยากสม่ำเสมอ']
+  ];
+  return `<h2 class="path-h">แผนการเรียน</h2><p class="small">${st ? `ฝึกต่อเนื่อง ${st} วันแล้ว` : 'ฝึกวันนี้สักบทหรือสักโจทย์ เพื่อเริ่มนับวันต่อเนื่อง'}${cur ? ` · ตอนนี้อยู่ขั้น ${cur}` : ' · เรียนครบทุกขั้นแล้ว'}</p><details><summary>ดูตารางแนะนำแบบสัปดาห์</summary><ol class="path">${wk.map(w => `<li><div class="lv"><b>${w[0]}</b></div><div><p class="small">${w[1]}</p></div></li>`).join('')}</ol><p class="small">ระยะเวลาเป็นเพียงแนวทาง คนที่เล่นอยู่แล้วข้ามไปขั้นที่เหมาะได้ ทุกบทเปิดให้เรียนอิสระ และเวลาที่ใช้ขึ้นกับความสม่ำเสมอของแต่ละคน</p></details>`;
+};
 function showPath() {
   $('#lesson-view').hidden = true; $('#path-view').hidden = false;
   const tot = LESSONS.length, nd = nLessons(), next = LESSONS.find(l => !done[l.id]), rs = bySid(recId() || 's9'), top = playerRank();
@@ -108,8 +120,8 @@ function showPath() {
     ${teacherCard()}
     <section class="hsec"><h2>โจทย์ประจำวัน</h2><div class="daily"><div class="board static thumb" id="daily-b"></div><div class="col"><b>${esc(pz.title)}</b><span class="small">ระดับ ${esc(pz.level)}${done[pz.id] ? ' · ผ่านแล้ว' : ''}</span><div><button class="btn" data-daily="${pk}">ลองโจทย์นี้</button></div></div></div></section>
     <section class="hsec"><h2>ประลองเร็ว</h2><div class="quick">${avatar(rs, 56)}<div class="col"><b>${esc(rs.name)}</b><span class="small">${esc(rs.rank)}</span><div><button class="btn" data-play="${rs.id}">ประลองเลย</button></div></div></div></section></div></div>
-    <section class="hsec"><h2 class="path-h">เส้นทางเรียน</h2><ol class="path">${stages.map(s => `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)}</h2><div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div></div></li>`).join('')}</ol>
-    <p class="soon">ขั้นถัดไปกำลังเขียนร่วมกับครูผู้สอน</p></section>`;
+    <section class="hsec"><h2 class="path-h">เส้นทางเรียน</h2><ol class="path">${stages.map(s => { const ls = LESSONS.filter(l => l.stage === s.n), dn = ls.filter(l => done[l.id]).length; return `<li><div class="lv"><b>ขั้น ${s.n}</b>${esc(s.level)}</div><div><h2>${esc(s.title)} <small>${dn}/${ls.length}${dn === ls.length ? ' · ผ่านขั้นนี้แล้ว' : ''}</small></h2><div class="lessons">${LESSONS.filter(l => l.stage === s.n).map(l => `<button class="lesson${done[l.id] ? ' done' : ''}" data-id="${l.id}"><span>${esc(l.title)}</span><small>${done[l.id] ? 'เรียนแล้ว' : l.steps.length + ' ข้อ'}</small></button>`).join('')}</div></div></li>`; }).join('')}</ol>
+    ${studyPlan()}</section>`;
   const p = parseRows(pz.steps[0].rows); drawBoard($('#daily-b'), { n: p.g.n, grid: p.g.grid });
   paintTeacher(); paintResume();
 }

@@ -2,6 +2,10 @@ const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const store = { get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }, del(k) { try { localStorage.removeItem(k); } catch (e) { } } };
 let done = store.get('go-done', {});
+let studyDays = store.get('go-days', []);
+const todayNo = () => { const d = new Date(); return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5); };
+function markStudy() { const t = todayNo(); if (!Array.isArray(studyDays)) studyDays = []; if (studyDays[studyDays.length - 1] !== t) { studyDays = studyDays.filter(x => typeof x === 'number').concat(t).slice(-400); store.set('go-days', studyDays); } }
+function studyStreak() { const a = Array.isArray(studyDays) ? studyDays : [], t = todayNo(); let n = 0, d = a.includes(t) ? t : t - 1; while (a.includes(d)) { n++; d--; } return n; }
 const STARS = { 9: [2, 4, 6], 13: [3, 6, 9], 19: [3, 9, 15] };
 const C = 30, M = 28;
 
@@ -137,7 +141,7 @@ const beltCss = s => s.bc2 ? `linear-gradient(90deg,${s.bc} 0 62%,${s.bc2} 62%)`
 const belt = s => `<span class="belt"><i style="background:${beltCss(s)}"></i>${esc(s.belt)}</span>`;
 
 // ---------- หน้าเรียน ----------
-const lessonPlayer = Player($('#lesson-player'), 'lesson', L => { done[L.id] = 1; store.set('go-done', done); try { Rep.add({ k: 'lesson', id: L.id }); } catch (e) { } showPath(); });
+const lessonPlayer = Player($('#lesson-player'), 'lesson', L => { done[L.id] = 1; store.set('go-done', done); markStudy(); try { Rep.add({ k: 'lesson', id: L.id }); } catch (e) { } showPath(); });
 function openLesson(id) {
   const L = LESSONS.find(l => l.id === id); if (!L) return;
   showTab('learn'); $('#path-view').hidden = true; $('#lesson-view').hidden = false; lessonPlayer.open(L); window.scrollTo(0, 0);
@@ -146,7 +150,7 @@ $('#lesson-back').onclick = showPath;
 
 // ---------- หน้าโจทย์ ----------
 let pzCur = 0;
-const pzPlayer = Player($('#pz-player'), 'puzzle', L => { done[L.id] = 1; store.set('go-done', done); try { Rep.add({ k: 'puzzle', id: L.id, ok: true }); } catch (e) { } openPuzzle((pzCur + 1) % PUZZLES.length); });
+const pzPlayer = Player($('#pz-player'), 'puzzle', L => { done[L.id] = 1; store.set('go-done', done); markStudy(); try { Rep.add({ k: 'puzzle', id: L.id, ok: true }); } catch (e) { } openPuzzle((pzCur + 1) % PUZZLES.length); });
 function openPuzzle(k) {
   pzCur = k;
   $('#pz-list').innerHTML = PUZZLES.map((p, j) => `<button class="chip${done[p.id] ? ' done' : ''}" data-k="${j}" aria-pressed="${j === k}"><span>${esc(p.title)}</span><small>${p.level}</small></button>`).join('');
